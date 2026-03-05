@@ -13,8 +13,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class NullableResolverTest {
-    private val config = SomeConfig()
-    private val chain = config.buildChain()
+    private val chain = SomeConfig().buildChain()
     
     @Test
     fun `NullableResolver with AlwaysNull strategy returns null`() {
@@ -23,8 +22,10 @@ class NullableResolverTest {
             nullableStrategy = NullableStrategy.AlwaysNull
         })
         
-        val result = resolver.resolve(typeOf<String?>(), context, chain)
-        assertNull(result)
+        repeat(1000) {
+            val result = resolver.resolve(typeOf<String?>(), context, chain)
+            assertNull(result)
+        }
     }
     
     @Test
@@ -33,21 +34,48 @@ class NullableResolverTest {
             nullableStrategy = NullableStrategy.NeverNull
         })
         
-        val result = chain.resolve(typeOf<String?>(), context)
-        assertNotNull(result)
-        assertIs<String>(result)
+        repeat(1000) {
+            val result = chain.resolve(typeOf<String?>(), context)
+            assertNotNull(result)
+            assertIs<String>(result)
+        }
     }
     
     @Test
     fun `NullableResolver with Random strategy can return null or value`() {
         val context = FixtureContext(Random.Default, emptyList(), SomeConfig().apply {
-            nullableStrategy = NullableStrategy.Random
+            nullableStrategy = NullableStrategy.Random()
         })
         
         val results = (1..100).map { chain.resolve(typeOf<String?>(), context) }
         val hasNull = results.any { it == null }
         val hasValue = results.any { it != null }
         assertTrue(hasNull && hasValue)
+    }
+    
+    @Test
+    fun `NullableResolver with Random strategy and probability 0_0 always returns non-null`() {
+        val context = FixtureContext(Random.Default, emptyList(), SomeConfig().apply {
+            nullableStrategy = NullableStrategy.Random(probability = 0.0)
+        })
+        
+        repeat(1000) {
+            val result = chain.resolve(typeOf<String?>(), context)
+            assertNotNull(result)
+            assertIs<String>(result)
+        }
+    }
+    
+    @Test
+    fun `NullableResolver with Random strategy and probability 1_0 always returns null`() {
+        val context = FixtureContext(Random.Default, emptyList(), SomeConfig().apply {
+            nullableStrategy = NullableStrategy.Random(probability = 1.0)
+        })
+        
+        repeat(1000) {
+            val result = chain.resolve(typeOf<String?>(), context)
+            assertNull(result)
+        }
     }
     
     @Test
