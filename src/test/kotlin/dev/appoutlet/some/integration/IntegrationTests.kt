@@ -154,4 +154,100 @@ class IntegrationTests {
         val result2: Int = some<Int>()
         assertNotEquals(result1, result2)
     }
+    
+    @Test
+    fun `aggregated configs does not override base config`() {
+        data class TestData(val name: String, val optional: String?)
+        
+        // Base config: seed for reproducibility, NeverNull strategy
+        val baseSome = someSetup {
+            seed = 42L
+            nullableStrategy = NullableStrategy.NeverNull
+        }
+        
+        // First call with base config - should have non-null optional
+        repeat(100) {
+            val result1: TestData = baseSome()
+            assertTrue(result1.optional != null, "Base config should produce non-null optional")
+        }
+        
+        // Second call with aggregated config - override to AlwaysNull
+        // This should NOT mutate the base config
+        repeat(100) {
+            val result2: TestData = baseSome {
+                nullableStrategy = NullableStrategy.AlwaysNull
+            }
+            assertEquals(null, result2.optional, "Aggregated config should override to null")
+        }
+        
+        // Third call with base config - should still use original base config (NeverNull)
+        repeat(100) {
+            val result3: TestData = baseSome()
+            assertTrue(result3.optional != null, "Base config should NOT be mutated by aggregation")
+        }
+        
+        // Test that we can aggregate again with custom probability
+        repeat(100) {
+            val result4: TestData = baseSome {
+                nullableStrategy = NullableStrategy.Random(probability = 0.0)
+            }
+            assertTrue(result4.optional != null, "Aggregated config with 0.0 probability should never produce null")
+        }
+    }
+    
+    @Test
+    fun `aggregated configs can override multiple strategies`() {
+        data class ComplexData(
+            val id: String,
+            val items: List<Int>,
+            val optional: String?
+        )
+        
+        // Base config with specific strategies
+        val baseSome = someSetup {
+            stringStrategy = StringStrategy.Uuid
+            collectionStrategy = CollectionStrategy(1..3)
+            nullableStrategy = NullableStrategy.NeverNull
+        }
+        
+        val baseResult: ComplexData = baseSome()
+        assertTrue(baseResult.id.matches(Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")))
+        assertTrue(baseResult.items.size in 1..3)
+        assertTrue(baseResult.optional != null)
+        
+        // Override multiple strategies at once
+        val overriddenResult: ComplexData = baseSome {
+            stringStrategy = StringStrategy.Random
+            collectionStrategy = CollectionStrategy(10..15)
+            nullableStrategy = NullableStrategy.AlwaysNull
+        }
+        
+        // String should not be UUID anymore (very unlikely to match UUID pattern with Random)
+        assertTrue(overriddenResult.items.size in 10..15)
+        assertEquals(null, overriddenResult.optional)
+    }
+    
+    @Test
+    fun `aggregated configs work with custom factories`() {
+        data class Product(val name: String, val price: Double)
+        
+        // Base config with custom factory
+        val baseSome = someSetup {
+            register(String::class) { "base-string" }
+        }
+        
+        val result1: Product = baseSome()
+        assertEquals("base-string", result1.name)
+        
+        // Aggregate with another custom factory - should override in the aggregated config
+        // This should NOT mutate the base config
+        val result2: Product = baseSome {
+            register(String::class) { "overridden-string" }
+        }
+        assertEquals("overridden-string", result2.name)
+        
+        // Base config should NOT be mutated, so it will still use the original factory
+        val result3: Product = baseSome()
+        assertEquals("base-string", result3.name)
+    }
 }

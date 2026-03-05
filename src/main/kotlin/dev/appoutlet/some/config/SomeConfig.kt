@@ -33,19 +33,37 @@ import dev.appoutlet.some.resolver.ValueClassResolver
 import kotlin.reflect.KClass
 import kotlin.random.Random
 
-class SomeConfig {
-    var nullableStrategy: NullableStrategy = NullableStrategy.Random()
-    var stringStrategy: StringStrategy = StringStrategy.Random
-    var collectionStrategy: CollectionStrategy = CollectionStrategy()
-    var seed: Long? = null
-
-    private val factories = mutableMapOf<KClass<*>, FixtureContext.() -> Any?>()
-
+data class SomeConfig(
+    var nullableStrategy: NullableStrategy = NullableStrategy.Random(),
+    var stringStrategy: StringStrategy = StringStrategy.Random,
+    var collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    var seed: Long? = null,
+    val factories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf(),
+) {
     fun <T : Any> register(kClass: KClass<T>, factory: FixtureContext.() -> T) {
         factories[kClass] = factory
     }
 
-    internal fun buildChain(): ResolverChain {
+    /**
+     * Creates a deep copy of this configuration, including a copy of the factories map
+     * to prevent shared mutable state between config instances.
+     */
+    fun copy(
+        nullableStrategy: NullableStrategy = this.nullableStrategy,
+        stringStrategy: StringStrategy = this.stringStrategy,
+        collectionStrategy: CollectionStrategy = this.collectionStrategy,
+        seed: Long? = this.seed,
+    ): SomeConfig {
+        return SomeConfig(
+            nullableStrategy = nullableStrategy,
+            stringStrategy = stringStrategy,
+            collectionStrategy = collectionStrategy,
+            seed = seed,
+            factories = this.factories.toMutableMap()
+        )
+    }
+
+    fun buildChain(): ResolverChain {
         val resolvers = listOf(
             CustomFactoryResolver(factories),
             NullableResolver(),

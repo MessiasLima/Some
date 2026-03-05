@@ -16,6 +16,11 @@ class Some(
     }
 
     inline operator fun <reified T> invoke(): T = some()
+
+    inline operator fun <reified T> invoke(noinline config: SomeConfig.() -> Unit = {}): T {
+        val aggregatedConfig = this.config.copy().apply(config)
+        return Some(aggregatedConfig.buildChain(), random, aggregatedConfig).some()
+    }
 }
 
 fun someSetup(config: SomeConfig.() -> Unit = {}): Some {
