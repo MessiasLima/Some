@@ -4,6 +4,7 @@ import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
 import kotlin.random.Random
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 class ArrayResolver(
@@ -11,7 +12,8 @@ class ArrayResolver(
     val random: Random
 ) : TypeResolver {
     override fun canResolve(type: KType): Boolean {
-        return type.toString().endsWith("Array<*>")
+        val kClass = type.classifier as? KClass<*> ?: return false
+        return kClass.qualifiedName == "kotlin.Array"
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
