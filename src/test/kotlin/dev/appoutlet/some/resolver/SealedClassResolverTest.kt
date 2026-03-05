@@ -9,18 +9,34 @@ import kotlin.test.assertTrue
 
 sealed class TestPaymentMethod {
     data class Card(val last4: String) : TestPaymentMethod()
-    object Cash : TestPaymentMethod()
+    data object Cash : TestPaymentMethod()
+}
+
+sealed interface UiState {
+    data object Idle : UiState
+    data object Loading : UiState
+    data class Success(val paymentMethod: TestPaymentMethod) : UiState
+    data class Failure(val message: String) : UiState
 }
 
 class SealedClassResolverTest {
     @Test
     fun `SealedClassResolver picks random subclass`() {
         val resolver = SealedClassResolver(Random.Default)
-        
+
         val result = resolver.resolve(typeOf<TestPaymentMethod>(), defaultTestChain)
         assertTrue(result is TestPaymentMethod)
     }
-    
+
+    @Test
+    fun `SealedClassResolver resolves sealed interfaces`() {
+        val resolver = SealedClassResolver(Random.Default)
+
+        val result = resolver.resolve(typeOf<UiState>(), defaultTestChain)
+        assertTrue(result is UiState)
+    }
+
+
     @Test
     fun `SealedClassResolver canResolve detects sealed types`() {
         val resolver = SealedClassResolver(Random.Default)

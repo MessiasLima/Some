@@ -28,7 +28,6 @@ class MapResolver(
             collectionStrategy.sizeRange.last + 1
         )
 
-        // TODO is it possible to use typeOf or isSubclassOf here?
         val isMutable = type.toString().startsWith("kotlin.collections.MutableMap")
         
         val entries = (1..size).map {
