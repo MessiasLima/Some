@@ -1,6 +1,6 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -8,14 +8,11 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class BooleanResolverTest {
-    private val config = SomeConfig()
-    private val chain = config.buildChain()
-    
     @Test
     fun `BooleanResolver generates boolean values`() {
         val resolver = BooleanResolver(Random.Default)
         
-        val result = resolver.resolve(typeOf<Boolean>(), chain)
+        val result = resolver.resolve(typeOf<Boolean>(), defaultTestChain)
         assertIs<Boolean>(result)
     }
     

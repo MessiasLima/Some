@@ -2,36 +2,39 @@ package dev.appoutlet.some
 
 import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 
 class Some(
-    val chain: ResolverChain,
+    val resolvers: List<TypeResolver>,
     val random: Random,
     val config: SomeConfig
 ) {
     inline fun <reified T> some(): T {
-        return chain.resolve(typeOf<T>()) as T
+        val session = ResolverChain(resolvers)
+        return session.resolve(typeOf<T>()) as T
     }
 
     inline operator fun <reified T> invoke(): T = some()
 
     inline operator fun <reified T> invoke(noinline config: SomeConfig.() -> Unit = {}): T {
         val aggregatedConfig = this.config.copy().apply(config)
-        return Some(aggregatedConfig.buildChain(random), random, aggregatedConfig).some()
+        return Some(aggregatedConfig.buildResolvers(random), random, aggregatedConfig).some()
     }
 }
 
 fun someSetup(config: SomeConfig.() -> Unit = {}): Some {
     val someConfig = SomeConfig().apply(config)
     val random = someConfig.buildRandom()
-    return Some(someConfig.buildChain(random), random, someConfig)
+    return Some(someConfig.buildResolvers(random), random, someConfig)
 }
 
-val defaultChain: ResolverChain by lazy { SomeConfig().buildChain() }
+val defaultResolvers: List<TypeResolver> by lazy { SomeConfig().buildResolvers() }
 
 inline fun <reified T> some(): T {
-    return defaultChain.resolve(typeOf<T>()) as T
+    val session = ResolverChain(defaultResolvers)
+    return session.resolve(typeOf<T>()) as T
 }
 
 inline fun <reified T> some(noinline config: SomeConfig.() -> Unit = {}): T {

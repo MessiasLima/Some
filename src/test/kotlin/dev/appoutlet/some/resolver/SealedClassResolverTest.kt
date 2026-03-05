@@ -1,6 +1,6 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -12,14 +12,11 @@ sealed class TestPaymentMethod {
 }
 
 class SealedClassResolverTest {
-    private val config = SomeConfig()
-    private val chain = config.buildChain()
-    
     @Test
     fun `SealedClassResolver picks random subclass`() {
         val resolver = SealedClassResolver(Random.Default)
         
-        val result = resolver.resolve(typeOf<TestPaymentMethod>(), chain)
+        val result = resolver.resolve(typeOf<TestPaymentMethod>(), defaultTestChain)
         assertTrue(result is TestPaymentMethod)
     }
     

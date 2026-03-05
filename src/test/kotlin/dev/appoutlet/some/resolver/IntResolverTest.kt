@@ -1,6 +1,6 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -8,14 +8,11 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class IntResolverTest {
-    private val config = SomeConfig()
-    private val chain = config.buildChain()
-    
     @Test
     fun `IntResolver generates int values`() {
         val resolver = IntResolver(Random.Default)
         
-        val result = resolver.resolve(typeOf<Int>(), chain)
+        val result = resolver.resolve(typeOf<Int>(), defaultTestChain)
         assertIs<Int>(result)
     }
     

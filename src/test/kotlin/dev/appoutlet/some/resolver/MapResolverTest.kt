@@ -2,6 +2,8 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -9,18 +11,15 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class MapResolverTest {
-    private val config = SomeConfig()
-    private val chain = config.buildChain()
-    
     @Test
     fun `MapResolver generates map with correct size`() {
         val config = SomeConfig().apply {
             collectionStrategy = CollectionStrategy(2..4)
         }
-        val chain = config.buildChain()
+        val resolvers = config.buildResolvers()
         val resolver = MapResolver(CollectionStrategy(2..4), Random.Default)
         
-        val result = resolver.resolve(typeOf<Map<String, Int>>(), chain)
+        val result = resolver.resolve(typeOf<Map<String, Int>>(), ResolverChain(resolvers))
         assertIs<Map<*, *>>(result)
         assertTrue(result.size in 2..4)
     }
@@ -29,7 +28,7 @@ class MapResolverTest {
     fun `MapResolver generates MutableMap when requested`() {
         val resolver = MapResolver(CollectionStrategy(), Random.Default)
         
-        val result = resolver.resolve(typeOf<MutableMap<String, Int>>(), chain)
+        val result = resolver.resolve(typeOf<MutableMap<String, Int>>(), defaultTestChain)
         assertIs<MutableMap<*, *>>(result)
     }
     

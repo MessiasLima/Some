@@ -1,7 +1,6 @@
 package dev.appoutlet.some.config
 
 import dev.appoutlet.some.core.FixtureContext
-import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.resolver.ArrayResolver
 import dev.appoutlet.some.resolver.BigDecimalResolver
@@ -63,8 +62,11 @@ data class SomeConfig(
         )
     }
 
-    fun buildChain(random: Random = buildRandom()): ResolverChain {
-        val resolvers = listOf(
+    /**
+     * Builds the list of resolvers configured with this config's strategies and random instance.
+     */
+    fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
+        return listOf(
             CustomFactoryResolver(factories, random, nullableStrategy, stringStrategy, collectionStrategy),
             NullableResolver(nullableStrategy, random),
             ObjectResolver(),
@@ -93,7 +95,6 @@ data class SomeConfig(
             ArrayResolver(collectionStrategy, random),
             DataClassResolver()
         )
-        return ResolverChain(resolvers)
     }
 
     internal fun buildRandom(): Random = seed?.let { Random(it) } ?: Random.Default

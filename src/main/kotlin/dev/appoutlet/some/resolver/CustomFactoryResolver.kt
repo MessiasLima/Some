@@ -26,10 +26,10 @@ class CustomFactoryResolver(
         val kClass = type.classifier as KClass<*>
         val factory = factories[kClass] ?: return null
         
-        // Bridge: Create FixtureContext for user factories
+        // Bridge: Create FixtureContext for user factories with an immutable copy of the stack
         val context = FixtureContext(
             random = random,
-            resolutionStack = chain.resolutionStack,
+            resolutionStack = chain.stack, // This returns an immutable snapshot
             nullableStrategy = nullableStrategy,
             stringStrategy = stringStrategy,
             collectionStrategy = collectionStrategy
