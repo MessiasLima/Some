@@ -25,7 +25,8 @@ class SetResolver(
             collectionStrategy.sizeRange.first,
             collectionStrategy.sizeRange.last + 1
         )
-        
+
+        // TODO is it possible to use typeOf or isSubclassOf here?
         val isMutable = type.toString().startsWith("kotlin.collections.MutableSet")
         
         val elements = (1..size).map { chain.resolve(elementType) }

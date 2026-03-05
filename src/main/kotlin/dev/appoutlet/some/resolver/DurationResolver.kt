@@ -4,11 +4,12 @@ import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
 import kotlin.random.Random
 import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import java.time.Duration
 
 class DurationResolver(val random: Random) : TypeResolver {
     override fun canResolve(type: KType): Boolean {
-        return type.toString().contains("Duration")
+        return type == typeOf<Duration>()
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {

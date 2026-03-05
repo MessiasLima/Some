@@ -6,7 +6,7 @@ import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
-
+// TODO test if it works with sealed interfaces
 class SealedClassResolver(val random: Random) : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
