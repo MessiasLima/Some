@@ -1,25 +1,17 @@
 package dev.appoutlet.some.integration
 
-import dev.appoutlet.some.SomeUnresolvableTypeException
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.some
-import kotlin.random.Random
+import dev.appoutlet.some.someSetup
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 data class Address(val street: String, val city: String)
 data class Person(val name: String, val age: Int, val address: Address)
-sealed class PaymentMethod {
-    data class Card(val last4: String) : PaymentMethod()
-    data class BankTransfer(val iban: String) : PaymentMethod()
-    object Cash : PaymentMethod()
-}
 
 sealed class BaseSealed {
     data class A(val x: Int) : BaseSealed()
@@ -79,7 +71,7 @@ class IntegrationTests {
     
     @Test
     fun `custom factory overrides built-in resolver`() {
-        val customSome = some {
+        val customSome = someSetup {
             register(String::class) { "custom-value" }
         }
         
@@ -92,11 +84,11 @@ class IntegrationTests {
     fun `seeded random produces identical output across runs`() {
         data class SimpleData(val id: Int, val name: String)
         
-        val some1 = some { seed = 12345L }
-        val some2 = some { seed = 12345L }
+        val some1 = someSetup { seed = 12345L }
+        val some2 = someSetup { seed = 12345L }
         
-        val result1: SimpleData = some1.some<SimpleData>()
-        val result2: SimpleData = some2.some<SimpleData>()
+        val result1: SimpleData = some1<SimpleData>()
+        val result2: SimpleData = some2<SimpleData>()
         
         assertEquals(result1.id, result2.id)
         assertEquals(result1.name, result2.name)
@@ -106,12 +98,12 @@ class IntegrationTests {
     fun `nullable strategy NeverNull produces no nulls in 1000 runs`() {
         data class WithNullable(val required: String, val optional: String?)
         
-        val someWithConfig = some {
+        val someWithConfig = someSetup {
             nullableStrategy = NullableStrategy.NeverNull
         }
         
         repeat(1000) {
-            val result: WithNullable = someWithConfig.some<WithNullable>()
+            val result: WithNullable = someWithConfig<WithNullable>()
             assertTrue(result.required.isNotEmpty())
             assertTrue(result.optional != null)
         }
@@ -121,37 +113,37 @@ class IntegrationTests {
     fun `nullable strategy AlwaysNull produces all nulls`() {
         data class WithNullable(val optional: String?)
         
-        val someWithConfig = some {
+        val someWithConfig = someSetup {
             nullableStrategy = NullableStrategy.AlwaysNull
         }
         
         repeat(100) {
-            val result: WithNullable = someWithConfig.some<WithNullable>()
-            assertTrue(result.optional == null)
+            val result: WithNullable = someWithConfig<WithNullable>()
+            assertEquals(result.optional, null)
         }
     }
     
     @Test
     fun `collection strategy size range is respected`() {
-        val someWithConfig = some {
+        val someWithConfig = someSetup {
             collectionStrategy = CollectionStrategy(5..10)
         }
         
-        val listResult: List<String> = someWithConfig.some<List<String>>()
+        val listResult: List<String> = someWithConfig<List<String>>()
         assertTrue(listResult.size in 5..10)
         
-        val mapResult: Map<String, String> = someWithConfig.some<Map<String, String>>()
+        val mapResult: Map<String, String> = someWithConfig<Map<String, String>>()
         assertTrue(mapResult.size in 5..10)
     }
     
     @Test
     fun `string strategy Uuid produces valid UUIDs`() {
-        val someWithConfig = some {
+        val someWithConfig = someSetup {
             stringStrategy = StringStrategy.Uuid
         }
         
         repeat(10) {
-            val result: String = someWithConfig.some<String>()
+            val result: String = someWithConfig<String>()
             assertTrue(result.matches(Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")))
         }
     }
