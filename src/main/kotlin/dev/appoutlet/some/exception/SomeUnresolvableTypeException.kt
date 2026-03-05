@@ -1,9 +1,6 @@
-package dev.appoutlet.some
+package dev.appoutlet.some.exception
 
 import kotlin.reflect.KType
-
-class SomeCircularReferenceException(type: KType, stack: List<KType>) :
-    Exception("Circular reference detected for $type. Resolution stack: $stack")
 
 class SomeUnresolvableTypeException(type: KType) :
     Exception("No resolver found for type $type. Register a custom factory using SomeConfig.register<T> { ... }")

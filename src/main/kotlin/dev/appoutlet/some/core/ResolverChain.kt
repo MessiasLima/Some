@@ -1,7 +1,7 @@
 package dev.appoutlet.some.core
 
-import dev.appoutlet.some.SomeCircularReferenceException
-import dev.appoutlet.some.SomeUnresolvableTypeException
+import dev.appoutlet.some.exception.SomeCircularReferenceException
+import dev.appoutlet.some.exception.SomeUnresolvableTypeException
 import kotlin.reflect.KType
 
 /**

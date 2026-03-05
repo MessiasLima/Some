@@ -10,76 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-data class Address(val street: String, val city: String)
-data class Person(val name: String, val age: Int, val address: Address)
-
-sealed class BaseSealed {
-    data class A(val x: Int) : BaseSealed()
-    data class B(val y: String) : BaseSealed()
-    object C : BaseSealed()
-}
-
-class IntegrationTests {
-    @Test
-    fun `simple data class with primitives`() {
-        val person: Person = some<Person>()
-        assertTrue(person.name.isNotEmpty())
-        assertTrue(person.age is Int)
-        assertTrue(person.address.street.isNotEmpty())
-    }
-    
-    @Test
-    fun `deeply nested data classes`() {
-        data class Level3(val value: String)
-        data class Level2(val level3: Level3)
-        data class Level1(val level2: Level2)
-        
-        val result: Level1 = some<Level1>()
-        assertTrue(result.level2.level3.value.isNotEmpty())
-    }
-    
-    @Test
-    fun `sealed class hierarchy`() {
-        val result: BaseSealed = some<BaseSealed>()
-        assertTrue(result is BaseSealed)
-    }
-    
-    @Test
-    fun `generic wrapper class with various types`() {
-        data class Wrapper<T>(val value: T)
-        
-        val stringWrapper: Wrapper<String> = some<Wrapper<String>>()
-        val intWrapper: Wrapper<Int> = some<Wrapper<Int>>()
-        
-        assertTrue(stringWrapper.value.isNotEmpty())
-        assertTrue(intWrapper.value is Int)
-    }
-    
-    @Test
-    fun `list of data classes populated correctly`() {
-        val users: List<Person> = some<List<Person>>()
-        assertTrue(users.isNotEmpty())
-        assertTrue(users.all { it.name.isNotEmpty() })
-    }
-    
-    @Test
-    fun `map of strings to data classes populated correctly`() {
-        val userMap: Map<String, Person> = some<Map<String, Person>>()
-        assertTrue(userMap.isNotEmpty())
-        assertTrue(userMap.values.all { it.name.isNotEmpty() })
-    }
-    
-    @Test
-    fun `custom factory overrides built-in resolver`() {
-        val customSome = someSetup {
-            register(String::class) { "custom-value" }
-        }
-        
-        data class Simple(val text: String)
-        val result: Simple = customSome.some<Simple>()
-        assertEquals("custom-value", result.text)
-    }
-    
+class SetupIntegrationTest {
     @Test
     fun `seeded random produces identical output across runs`() {
         data class SimpleData(val id: Int, val name: String)
@@ -225,29 +156,5 @@ class IntegrationTests {
         // String should not be UUID anymore (very unlikely to match UUID pattern with Random)
         assertTrue(overriddenResult.items.size in 10..15)
         assertEquals(null, overriddenResult.optional)
-    }
-    
-    @Test
-    fun `aggregated configs work with custom factories`() {
-        data class Product(val name: String, val price: Double)
-        
-        // Base config with custom factory
-        val baseSome = someSetup {
-            register(String::class) { "base-string" }
-        }
-        
-        val result1: Product = baseSome()
-        assertEquals("base-string", result1.name)
-        
-        // Aggregate with another custom factory - should override in the aggregated config
-        // This should NOT mutate the base config
-        val result2: Product = baseSome {
-            register(String::class) { "overridden-string" }
-        }
-        assertEquals("overridden-string", result2.name)
-        
-        // Base config should NOT be mutated, so it will still use the original factory
-        val result3: Product = baseSome()
-        assertEquals("base-string", result3.name)
     }
 }
