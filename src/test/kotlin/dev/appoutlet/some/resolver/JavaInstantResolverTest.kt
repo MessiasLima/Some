@@ -9,18 +9,18 @@ import kotlin.test.assertIs
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class InstantResolverTest {
+class JavaInstantResolverTest {
     @Test
-    fun `InstantResolver generates Instant values`() {
-        val resolver = InstantResolver(Random.Default)
+    fun `JavaInstantResolver generates Instant values`() {
+        val resolver = JavaInstantResolver(Random.Default)
         
         val result = resolver.resolve(typeOf<Instant>(), defaultTestChain)
         assertIs<Instant>(result)
     }
     
     @Test
-    fun `InstantResolver generates instants within valid range`() {
-        val resolver = InstantResolver(Random.Default)
+    fun `JavaInstantResolver generates instants within valid range`() {
+        val resolver = JavaInstantResolver(Random.Default)
         val epochStart = Instant.ofEpochSecond(0)
         val year2100 = Instant.ofEpochSecond(4102444800)
         
@@ -32,15 +32,16 @@ class InstantResolverTest {
     }
     
     @Test
-    fun `InstantResolver canResolve detects Instant type`() {
-        val resolver = InstantResolver(Random.Default)
+    fun `JavaInstantResolver canResolve detects Instant type`() {
+        val resolver = JavaInstantResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<Instant>()))
     }
     
     @Test
-    fun `InstantResolver rejects non-Instant types`() {
-        val resolver = InstantResolver(Random.Default)
+    fun `JavaInstantResolver rejects non-Instant types`() {
+        val resolver = JavaInstantResolver(Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<Long>()))
+        assertFalse(resolver.canResolve(typeOf<kotlin.time.Instant>()))
     }
 }

@@ -8,22 +8,23 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.uuid.ExperimentalUuidApi
 
-class UuidResolverTest {
+class JavaUuidResolverTest {
     // UUID format: 8-4-4-4-12 hex digits
     private val uuidPattern = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
 
     @Test
-    fun `UuidResolver generates UUID values`() {
-        val resolver = UuidResolver()
+    fun `JavaUuidResolver generates UUID values`() {
+        val resolver = JavaUuidResolver()
 
         val result = resolver.resolve(typeOf<UUID>(), defaultTestChain)
         assertIs<UUID>(result)
     }
 
     @Test
-    fun `UuidResolver generates valid UUID format`() {
-        val resolver = UuidResolver()
+    fun `JavaUuidResolver generates valid UUID format`() {
+        val resolver = JavaUuidResolver()
 
         repeat(10) {
             val result = resolver.resolve(typeOf<UUID>(), defaultTestChain) as UUID
@@ -33,8 +34,8 @@ class UuidResolverTest {
     }
 
     @Test
-    fun `UuidResolver generates unique UUIDs`() {
-        val resolver = UuidResolver()
+    fun `JavaUuidResolver generates unique UUIDs`() {
+        val resolver = JavaUuidResolver()
 
         val uuids = mutableSetOf<UUID>()
         repeat(100) {
@@ -47,16 +48,18 @@ class UuidResolverTest {
     }
 
     @Test
-    fun `UuidResolver canResolve detects UUID type`() {
-        val resolver = UuidResolver()
+    fun `JavaUuidResolver canResolve detects UUID type`() {
+        val resolver = JavaUuidResolver()
         assertTrue(resolver.canResolve(typeOf<UUID>()))
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     @Test
-    fun `UuidResolver rejects non-UUID types`() {
-        val resolver = UuidResolver()
+    fun `JavaUuidResolver rejects non-UUID types`() {
+        val resolver = JavaUuidResolver()
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<Long>()))
+        assertFalse(resolver.canResolve(typeOf<kotlin.uuid.Uuid>()))
     }
 }

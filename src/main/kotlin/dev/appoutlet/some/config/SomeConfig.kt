@@ -11,11 +11,15 @@ import dev.appoutlet.some.resolver.CharResolver
 import dev.appoutlet.some.resolver.CustomFactoryResolver
 import dev.appoutlet.some.resolver.DataClassResolver
 import dev.appoutlet.some.resolver.DoubleResolver
-import dev.appoutlet.some.resolver.DurationResolver
 import dev.appoutlet.some.resolver.EnumResolver
 import dev.appoutlet.some.resolver.FloatResolver
-import dev.appoutlet.some.resolver.InstantResolver
 import dev.appoutlet.some.resolver.IntResolver
+import dev.appoutlet.some.resolver.JavaDurationResolver
+import dev.appoutlet.some.resolver.JavaInstantResolver
+import dev.appoutlet.some.resolver.JavaUuidResolver
+import dev.appoutlet.some.resolver.KotlinDurationResolver
+import dev.appoutlet.some.resolver.KotlinInstantResolver
+import dev.appoutlet.some.resolver.KotlinUuidResolver
 import dev.appoutlet.some.resolver.ListResolver
 import dev.appoutlet.some.resolver.LocalDateResolver
 import dev.appoutlet.some.resolver.LocalDateTimeResolver
@@ -27,7 +31,6 @@ import dev.appoutlet.some.resolver.SealedClassResolver
 import dev.appoutlet.some.resolver.SetResolver
 import dev.appoutlet.some.resolver.ShortResolver
 import dev.appoutlet.some.resolver.StringResolver
-import dev.appoutlet.some.resolver.UuidResolver
 import dev.appoutlet.some.resolver.ValueClassResolver
 import kotlin.reflect.KClass
 import kotlin.random.Random
@@ -82,13 +85,16 @@ data class SomeConfig(
             CharResolver(random),
             ByteResolver(random),
             ShortResolver(random),
-            UuidResolver(),
+            KotlinUuidResolver(),
+            KotlinInstantResolver(random),
+            KotlinDurationResolver(random),
+            JavaUuidResolver(),
+            JavaInstantResolver(random),
+            JavaDurationResolver(random),
             BigDecimalResolver(random),
             BigIntegerResolver(random),
             LocalDateResolver(random),
             LocalDateTimeResolver(random),
-            InstantResolver(random),
-            DurationResolver(random),
             ListResolver(collectionStrategy, random),
             SetResolver(collectionStrategy, random),
             MapResolver(collectionStrategy, random),

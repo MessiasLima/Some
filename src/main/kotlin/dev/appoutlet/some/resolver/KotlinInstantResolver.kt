@@ -5,15 +5,15 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
-import java.time.Duration
+import kotlin.time.Instant
 
-class DurationResolver(val random: Random) : TypeResolver {
+class KotlinInstantResolver(val random: Random) : TypeResolver {
     override fun canResolve(type: KType): Boolean {
-        return type == typeOf<Duration>()
+        return type == typeOf<Instant>()
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
-        val seconds = random.nextLong(0, 86400) // max 1 day
-        return Duration.ofSeconds(seconds)
+        val epochSecond = random.nextLong(0, 4102444800) // 2100-01-01
+        return Instant.fromEpochSeconds(epochSecond)
     }
 }

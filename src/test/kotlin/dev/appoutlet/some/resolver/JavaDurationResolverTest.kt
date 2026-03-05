@@ -9,18 +9,18 @@ import kotlin.test.assertIs
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class DurationResolverTest {
+class JavaDurationResolverTest {
     @Test
-    fun `DurationResolver generates Duration values`() {
-        val resolver = DurationResolver(Random.Default)
+    fun `JavaDurationResolver generates Duration values`() {
+        val resolver = JavaDurationResolver(Random.Default)
         
         val result = resolver.resolve(typeOf<Duration>(), defaultTestChain)
         assertIs<Duration>(result)
     }
     
     @Test
-    fun `DurationResolver generates durations within valid range`() {
-        val resolver = DurationResolver(Random.Default)
+    fun `JavaDurationResolver generates durations within valid range`() {
+        val resolver = JavaDurationResolver(Random.Default)
         
         repeat(100) {
             val result = resolver.resolve(typeOf<Duration>(), defaultTestChain) as Duration
@@ -30,16 +30,17 @@ class DurationResolverTest {
     }
     
     @Test
-    fun `DurationResolver canResolve detects Duration type`() {
-        val resolver = DurationResolver(Random.Default)
+    fun `JavaDurationResolver canResolve detects Duration type`() {
+        val resolver = JavaDurationResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<Duration>()))
     }
     
     @Test
-    fun `DurationResolver rejects non-Duration types`() {
-        val resolver = DurationResolver(Random.Default)
+    fun `JavaDurationResolver rejects non-Duration types`() {
+        val resolver = JavaDurationResolver(Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<Long>()))
+        assertFalse(resolver.canResolve(typeOf<kotlin.time.Duration>()))
     }
 }
