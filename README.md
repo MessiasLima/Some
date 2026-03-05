@@ -1,14 +1,9 @@
 # Some
 
+> [!WARNING]
+> **Early Development Stage:** This project is in its early stages and is not yet ready for production use. APIs are subject to change, and it has not been officially released.
+
 A Kotlin JVM library that generates populated instances of any Kotlin class for testing purposes, with zero configuration required.
-
-## Installation
-
-Add to your `build.gradle.kts` (or `build.gradle`) test dependencies:
-
-```kotlin
-testImplementation("dev.appoutlet:some:0.1.0")
-```
 
 ## Usage
 
@@ -94,9 +89,11 @@ val result: MyDataClass = custom.some<MyDataClass>()
 - `String`, `Int`, `Long`, `Double`, `Float`, `Boolean`, `Char`, `Byte`, `Short`
 
 ### Standard Library
-- `UUID`
+- `UUID` (Kotlin & Java)
 - `BigDecimal`, `BigInteger`
-- `LocalDate`, `LocalDateTime`, `Instant`, `Duration`
+- `LocalDate`, `LocalDateTime`
+- `Instant` (Kotlin & Java)
+- `Duration` (Kotlin & Java)
 
 ### Collections
 - `List`, `MutableList`, `Set`, `MutableSet`
