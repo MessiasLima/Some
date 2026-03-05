@@ -2,7 +2,6 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -16,11 +15,10 @@ class NullableResolverTest {
     
     @Test
     fun `NullableResolver with AlwaysNull strategy returns null`() {
-        val resolver = NullableResolver(NullableStrategy.AlwaysNull)
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = NullableResolver(NullableStrategy.AlwaysNull, Random.Default)
         
         repeat(1000) {
-            val result = resolver.resolve(typeOf<String?>(), context, chain)
+            val result = resolver.resolve(typeOf<String?>(), chain)
             assertNull(result)
         }
     }
@@ -31,10 +29,9 @@ class NullableResolverTest {
             nullableStrategy = NullableStrategy.NeverNull
         }
         val chain = config.buildChain()
-        val context = FixtureContext(Random.Default, emptyList())
         
         repeat(1000) {
-            val result = chain.resolve(typeOf<String?>(), context)
+            val result = chain.resolve(typeOf<String?>())
             assertNotNull(result)
             assertIs<String>(result)
         }
@@ -46,9 +43,8 @@ class NullableResolverTest {
             nullableStrategy = NullableStrategy.Random()
         }
         val chain = config.buildChain()
-        val context = FixtureContext(Random.Default, emptyList())
         
-        val results = (1..100).map { chain.resolve(typeOf<String?>(), context) }
+        val results = (1..100).map { chain.resolve(typeOf<String?>()) }
         val hasNull = results.any { it == null }
         val hasValue = results.any { it != null }
         assertTrue(hasNull && hasValue)
@@ -60,10 +56,9 @@ class NullableResolverTest {
             nullableStrategy = NullableStrategy.Random(probability = 0.0)
         }
         val chain = config.buildChain()
-        val context = FixtureContext(Random.Default, emptyList())
         
         repeat(1000) {
-            val result = chain.resolve(typeOf<String?>(), context)
+            val result = chain.resolve(typeOf<String?>())
             assertNotNull(result)
             assertIs<String>(result)
         }
@@ -75,23 +70,22 @@ class NullableResolverTest {
             nullableStrategy = NullableStrategy.Random(probability = 1.0)
         }
         val chain = config.buildChain()
-        val context = FixtureContext(Random.Default, emptyList())
         
         repeat(1000) {
-            val result = chain.resolve(typeOf<String?>(), context)
+            val result = chain.resolve(typeOf<String?>())
             assertNull(result)
         }
     }
     
     @Test
     fun `NullableResolver canResolve detects nullable types`() {
-        val resolver = NullableResolver()
+        val resolver = NullableResolver(NullableStrategy.Random(), Random.Default)
         assertTrue(resolver.canResolve(typeOf<String?>()))
     }
     
     @Test
     fun `NullableResolver rejects non-nullable types`() {
-        val resolver = NullableResolver()
+        val resolver = NullableResolver(NullableStrategy.Random(), Random.Default)
         assertTrue(!resolver.canResolve(typeOf<String>()))
     }
 }

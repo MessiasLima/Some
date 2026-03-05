@@ -1,7 +1,6 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -14,22 +13,21 @@ class LongResolverTest {
     
     @Test
     fun `LongResolver generates long values`() {
-        val resolver = LongResolver()
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = LongResolver(Random.Default)
         
-        val result = resolver.resolve(typeOf<Long>(), context, chain)
+        val result = resolver.resolve(typeOf<Long>(), chain)
         assertIs<Long>(result)
     }
     
     @Test
     fun `LongResolver canResolve detects Long type`() {
-        val resolver = LongResolver()
+        val resolver = LongResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<Long>()))
     }
     
     @Test
     fun `LongResolver rejects non-Long types`() {
-        val resolver = LongResolver()
+        val resolver = LongResolver(Random.Default)
         assertTrue(!resolver.canResolve(typeOf<String>()))
         assertTrue(!resolver.canResolve(typeOf<Int>()))
     }

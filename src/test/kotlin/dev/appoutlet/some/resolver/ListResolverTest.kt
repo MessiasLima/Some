@@ -2,7 +2,6 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -19,32 +18,30 @@ class ListResolverTest {
             collectionStrategy = CollectionStrategy(3..5)
         }
         val chain = config.buildChain()
-        val resolver = ListResolver(config.collectionStrategy)
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = ListResolver(CollectionStrategy(3..5), Random.Default)
         
-        val result = resolver.resolve(typeOf<List<String>>(), context, chain)
+        val result = resolver.resolve(typeOf<List<String>>(), chain)
         assertIs<List<*>>(result)
         assertTrue(result.size in 3..5)
     }
     
     @Test
     fun `ListResolver generates MutableList when requested`() {
-        val resolver = ListResolver()
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = ListResolver(CollectionStrategy(), Random.Default)
         
-        val result = resolver.resolve(typeOf<MutableList<String>>(), context, chain)
+        val result = resolver.resolve(typeOf<MutableList<String>>(), chain)
         assertIs<MutableList<*>>(result)
     }
     
     @Test
     fun `ListResolver canResolve detects List types`() {
-        val resolver = ListResolver()
+        val resolver = ListResolver(CollectionStrategy(), Random.Default)
         assertTrue(resolver.canResolve(typeOf<List<String>>()))
     }
     
     @Test
     fun `ListResolver rejects non-List types`() {
-        val resolver = ListResolver()
+        val resolver = ListResolver(CollectionStrategy(), Random.Default)
         assertTrue(!resolver.canResolve(typeOf<String>()))
         assertTrue(!resolver.canResolve(typeOf<Int>()))
     }

@@ -1,7 +1,6 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -16,22 +15,21 @@ class EnumResolverTest {
     
     @Test
     fun `EnumResolver picks random enum value`() {
-        val resolver = EnumResolver()
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = EnumResolver(Random.Default)
         
-        val result = resolver.resolve(typeOf<TestColor>(), context, chain)
+        val result = resolver.resolve(typeOf<TestColor>(), chain)
         assertIs<TestColor>(result)
     }
     
     @Test
     fun `EnumResolver canResolve detects enum types`() {
-        val resolver = EnumResolver()
+        val resolver = EnumResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<TestColor>()))
     }
     
     @Test
     fun `EnumResolver rejects non-enum types`() {
-        val resolver = EnumResolver()
+        val resolver = EnumResolver(Random.Default)
         assertTrue(!resolver.canResolve(typeOf<String>()))
         assertTrue(!resolver.canResolve(typeOf<Int>()))
     }

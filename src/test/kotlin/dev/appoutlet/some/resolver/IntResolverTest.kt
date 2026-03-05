@@ -1,7 +1,6 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -14,22 +13,21 @@ class IntResolverTest {
     
     @Test
     fun `IntResolver generates int values`() {
-        val resolver = IntResolver()
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = IntResolver(Random.Default)
         
-        val result = resolver.resolve(typeOf<Int>(), context, chain)
+        val result = resolver.resolve(typeOf<Int>(), chain)
         assertIs<Int>(result)
     }
     
     @Test
     fun `IntResolver canResolve detects Int type`() {
-        val resolver = IntResolver()
+        val resolver = IntResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<Int>()))
     }
     
     @Test
     fun `IntResolver rejects non-Int types`() {
-        val resolver = IntResolver()
+        val resolver = IntResolver(Random.Default)
         assertTrue(!resolver.canResolve(typeOf<String>()))
         assertTrue(!resolver.canResolve(typeOf<Long>()))
     }

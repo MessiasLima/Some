@@ -1,8 +1,6 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
-import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertSame
@@ -19,9 +17,8 @@ class ObjectResolverTest {
     @Test
     fun `ObjectResolver returns singleton`() {
         val resolver = ObjectResolver()
-        val context = FixtureContext(Random.Default, emptyList())
         
-        val result = resolver.resolve(typeOf<TestSingletonObject>(), context, chain)
+        val result = resolver.resolve(typeOf<TestSingletonObject>(), chain)
         assertSame(result, TestSingletonObject)
     }
     

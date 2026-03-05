@@ -1,9 +1,9 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
+import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
@@ -15,20 +15,21 @@ import kotlin.reflect.full.createType
  * - **Random** – returns `null` based on the strategy's probability.
  */
 class NullableResolver(
-    private val nullableStrategy: NullableStrategy = NullableStrategy.Random()
+    private val nullableStrategy: NullableStrategy = NullableStrategy.Random(),
+    private val random: Random
 ) : TypeResolver {
     override fun canResolve(type: KType): Boolean = type.isMarkedNullable
 
-    override fun resolve(type: KType, context: FixtureContext, chain: ResolverChain): Any? {
+    override fun resolve(type: KType, chain: ResolverChain): Any? {
         return when (nullableStrategy) {
             is NullableStrategy.AlwaysNull -> null
-            is NullableStrategy.NeverNull -> createNonNullInstance(type, chain, context)
+            is NullableStrategy.NeverNull -> createNonNullInstance(type, chain)
             is NullableStrategy.Random -> {
                 // Use the probability supplied by the Random strategy instance
-                if (context.random.nextDouble() < nullableStrategy.probability) {
+                if (random.nextDouble() < nullableStrategy.probability) {
                     null
                 } else {
-                    createNonNullInstance(type, chain, context)
+                    createNonNullInstance(type, chain)
                 }
             }
         }
@@ -36,11 +37,10 @@ class NullableResolver(
 
     private fun createNonNullInstance(
         type: KType,
-        chain: ResolverChain,
-        context: FixtureContext
+        chain: ResolverChain
     ): Any? {
         val nonNullType = createNonNullType(type)
-        return chain.resolve(nonNullType, context)
+        return chain.resolve(nonNullType)
     }
 
     private fun createNonNullType(type: KType): KType {

@@ -1,7 +1,6 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -18,22 +17,21 @@ class SealedClassResolverTest {
     
     @Test
     fun `SealedClassResolver picks random subclass`() {
-        val resolver = SealedClassResolver()
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = SealedClassResolver(Random.Default)
         
-        val result = resolver.resolve(typeOf<TestPaymentMethod>(), context, chain)
+        val result = resolver.resolve(typeOf<TestPaymentMethod>(), chain)
         assertTrue(result is TestPaymentMethod)
     }
     
     @Test
     fun `SealedClassResolver canResolve detects sealed types`() {
-        val resolver = SealedClassResolver()
+        val resolver = SealedClassResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<TestPaymentMethod>()))
     }
     
     @Test
     fun `SealedClassResolver rejects non-sealed types`() {
-        val resolver = SealedClassResolver()
+        val resolver = SealedClassResolver(Random.Default)
         assertTrue(!resolver.canResolve(typeOf<String>()))
         assertTrue(!resolver.canResolve(typeOf<Int>()))
     }

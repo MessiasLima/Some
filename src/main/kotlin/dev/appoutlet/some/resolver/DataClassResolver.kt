@@ -1,6 +1,5 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KClass
@@ -25,7 +24,7 @@ class DataClassResolver : TypeResolver {
         return true
     }
 
-    override fun resolve(type: KType, context: FixtureContext, chain: ResolverChain): Any {
+    override fun resolve(type: KType, chain: ResolverChain): Any {
         val kClass = type.classifier as KClass<*>
         val constructor = kClass.primaryConstructor
             ?: error("No primary constructor found for ${kClass.simpleName}")
@@ -37,7 +36,7 @@ class DataClassResolver : TypeResolver {
             .associateWith { param ->
                 val paramType = param.type
                 val resolvedType = typeArgMap[paramType.toString()] ?: paramType
-                chain.resolve(resolvedType, context)
+                chain.resolve(resolvedType)
             }
         
         return constructor.callBy(args)

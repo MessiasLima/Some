@@ -1,6 +1,5 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KClass
@@ -14,7 +13,7 @@ class ValueClassResolver : TypeResolver {
         return kClass.isValue
     }
 
-    override fun resolve(type: KType, context: FixtureContext, chain: ResolverChain): Any {
+    override fun resolve(type: KType, chain: ResolverChain): Any {
         val kClass = type.classifier as KClass<*>
         val constructor = kClass.primaryConstructor
             ?: error("Value class ${kClass.simpleName} has no primary constructor")
@@ -22,7 +21,7 @@ class ValueClassResolver : TypeResolver {
         val parameter = constructor.parameters.firstOrNull()
             ?: error("Value class ${kClass.simpleName} has no constructor parameters")
         
-        val resolvedValue = chain.resolve(parameter.type, context)
+        val resolvedValue = chain.resolve(parameter.type)
         
         return constructor.call(resolvedValue)
     }

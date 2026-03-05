@@ -2,7 +2,6 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -19,32 +18,30 @@ class MapResolverTest {
             collectionStrategy = CollectionStrategy(2..4)
         }
         val chain = config.buildChain()
-        val resolver = MapResolver(config.collectionStrategy)
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = MapResolver(CollectionStrategy(2..4), Random.Default)
         
-        val result = resolver.resolve(typeOf<Map<String, Int>>(), context, chain)
+        val result = resolver.resolve(typeOf<Map<String, Int>>(), chain)
         assertIs<Map<*, *>>(result)
         assertTrue(result.size in 2..4)
     }
     
     @Test
     fun `MapResolver generates MutableMap when requested`() {
-        val resolver = MapResolver()
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = MapResolver(CollectionStrategy(), Random.Default)
         
-        val result = resolver.resolve(typeOf<MutableMap<String, Int>>(), context, chain)
+        val result = resolver.resolve(typeOf<MutableMap<String, Int>>(), chain)
         assertIs<MutableMap<*, *>>(result)
     }
     
     @Test
     fun `MapResolver canResolve detects Map types`() {
-        val resolver = MapResolver()
+        val resolver = MapResolver(CollectionStrategy(), Random.Default)
         assertTrue(resolver.canResolve(typeOf<Map<String, Int>>()))
     }
     
     @Test
     fun `MapResolver rejects non-Map types`() {
-        val resolver = MapResolver()
+        val resolver = MapResolver(CollectionStrategy(), Random.Default)
         assertTrue(!resolver.canResolve(typeOf<String>()))
         assertTrue(!resolver.canResolve(typeOf<Int>()))
     }

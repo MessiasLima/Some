@@ -1,7 +1,6 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.core.FixtureContext
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -14,22 +13,21 @@ class BooleanResolverTest {
     
     @Test
     fun `BooleanResolver generates boolean values`() {
-        val resolver = BooleanResolver()
-        val context = FixtureContext(Random.Default, emptyList())
+        val resolver = BooleanResolver(Random.Default)
         
-        val result = resolver.resolve(typeOf<Boolean>(), context, chain)
+        val result = resolver.resolve(typeOf<Boolean>(), chain)
         assertIs<Boolean>(result)
     }
     
     @Test
     fun `BooleanResolver canResolve detects Boolean type`() {
-        val resolver = BooleanResolver()
+        val resolver = BooleanResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<Boolean>()))
     }
     
     @Test
     fun `BooleanResolver rejects non-Boolean types`() {
-        val resolver = BooleanResolver()
+        val resolver = BooleanResolver(Random.Default)
         assertTrue(!resolver.canResolve(typeOf<String>()))
         assertTrue(!resolver.canResolve(typeOf<Int>()))
     }
