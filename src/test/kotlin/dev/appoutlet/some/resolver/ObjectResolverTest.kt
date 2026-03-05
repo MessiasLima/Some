@@ -4,6 +4,7 @@ import dev.appoutlet.some.test.defaultTestChain
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertSame
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 object TestSingletonObject {
@@ -28,7 +29,7 @@ class ObjectResolverTest {
     @Test
     fun `ObjectResolver rejects non-object types`() {
         val resolver = ObjectResolver()
-        assertTrue(!resolver.canResolve(typeOf<String>()))
-        assertTrue(!resolver.canResolve(typeOf<Int>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<Int>()))
     }
 }

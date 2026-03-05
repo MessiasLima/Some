@@ -5,6 +5,7 @@ import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertIs
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FloatResolverTest {
@@ -35,8 +36,8 @@ class FloatResolverTest {
     @Test
     fun `FloatResolver rejects non-Float types`() {
         val resolver = FloatResolver(Random.Default)
-        assertTrue(!resolver.canResolve(typeOf<String>()))
-        assertTrue(!resolver.canResolve(typeOf<Int>()))
-        assertTrue(!resolver.canResolve(typeOf<Double>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<Int>()))
+        assertFalse(resolver.canResolve(typeOf<Double>()))
     }
 }

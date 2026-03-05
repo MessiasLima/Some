@@ -5,6 +5,7 @@ import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertIs
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 enum class TestColor { RED, GREEN, BLUE }
@@ -27,7 +28,7 @@ class EnumResolverTest {
     @Test
     fun `EnumResolver rejects non-enum types`() {
         val resolver = EnumResolver(Random.Default)
-        assertTrue(!resolver.canResolve(typeOf<String>()))
-        assertTrue(!resolver.canResolve(typeOf<Int>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<Int>()))
     }
 }

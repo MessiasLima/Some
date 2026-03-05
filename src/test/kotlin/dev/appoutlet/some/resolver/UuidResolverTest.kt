@@ -6,6 +6,7 @@ import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class UuidResolverTest {
@@ -54,8 +55,8 @@ class UuidResolverTest {
     @Test
     fun `UuidResolver rejects non-UUID types`() {
         val resolver = UuidResolver()
-        assertTrue(!resolver.canResolve(typeOf<String>()))
-        assertTrue(!resolver.canResolve(typeOf<Int>()))
-        assertTrue(!resolver.canResolve(typeOf<Long>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<Int>()))
+        assertFalse(resolver.canResolve(typeOf<Long>()))
     }
 }

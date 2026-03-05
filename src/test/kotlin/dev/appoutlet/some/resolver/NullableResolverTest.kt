@@ -10,6 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NullableResolverTest {
@@ -86,6 +87,6 @@ class NullableResolverTest {
     @Test
     fun `NullableResolver rejects non-nullable types`() {
         val resolver = NullableResolver(NullableStrategy.Random(), Random.Default)
-        assertTrue(!resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
     }
 }

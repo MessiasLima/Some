@@ -4,6 +4,7 @@ import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 sealed class TestPaymentMethod {
@@ -29,7 +30,7 @@ class SealedClassResolverTest {
     @Test
     fun `SealedClassResolver rejects non-sealed types`() {
         val resolver = SealedClassResolver(Random.Default)
-        assertTrue(!resolver.canResolve(typeOf<String>()))
-        assertTrue(!resolver.canResolve(typeOf<Int>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<Int>()))
     }
 }

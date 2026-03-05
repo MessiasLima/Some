@@ -4,6 +4,7 @@ import dev.appoutlet.some.test.defaultTestChain
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertIs
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 // Test value classes
@@ -61,9 +62,9 @@ class ValueClassResolverTest {
     @Test
     fun `ValueClassResolver rejects non-value classes`() {
         val resolver = ValueClassResolver()
-        assertTrue(!resolver.canResolve(typeOf<String>()))
-        assertTrue(!resolver.canResolve(typeOf<Int>()))
-        assertTrue(!resolver.canResolve(typeOf<Long>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<Int>()))
+        assertFalse(resolver.canResolve(typeOf<Long>()))
     }
     
     @Test

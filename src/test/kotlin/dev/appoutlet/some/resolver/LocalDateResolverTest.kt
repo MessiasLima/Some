@@ -8,6 +8,7 @@ import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class LocalDateResolverTest {
@@ -39,14 +40,14 @@ class LocalDateResolverTest {
     @Test
     fun `LocalDateResolver does NOT match LocalDateTime`() {
         val resolver = LocalDateResolver(Random.Default)
-        assertTrue(!resolver.canResolve(typeOf<LocalDateTime>()), 
+        assertFalse(resolver.canResolve(typeOf<LocalDateTime>()), 
             "LocalDateResolver should NOT match LocalDateTime type")
     }
     
     @Test
     fun `LocalDateResolver rejects non-LocalDate types`() {
         val resolver = LocalDateResolver(Random.Default)
-        assertTrue(!resolver.canResolve(typeOf<String>()))
-        assertTrue(!resolver.canResolve(typeOf<Int>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<Int>()))
     }
 }

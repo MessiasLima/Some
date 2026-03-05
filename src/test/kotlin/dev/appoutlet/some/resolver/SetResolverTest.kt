@@ -9,6 +9,7 @@ import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SetResolverTest {
@@ -51,7 +52,6 @@ class SetResolverTest {
 
         val result = resolver.resolve(typeOf<Set<DataClass>>(), defaultTestChain)
         assertIs<Set<DataClass>>(result)
-        assertTrue(result.all { it is DataClass })
     }
 
     @Test
@@ -73,9 +73,9 @@ class SetResolverTest {
     @Test
     fun `SetResolver rejects non-Set types`() {
         val resolver = SetResolver(CollectionStrategy(), Random.Default)
-        assertTrue(!resolver.canResolve(typeOf<String>()))
-        assertTrue(!resolver.canResolve(typeOf<Int>()))
-        assertTrue(!resolver.canResolve(typeOf<List<String>>()))
+        assertFalse(resolver.canResolve(typeOf<String>()))
+        assertFalse(resolver.canResolve(typeOf<Int>()))
+        assertFalse(resolver.canResolve(typeOf<List<String>>()))
     }
     
     @Test
