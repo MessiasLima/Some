@@ -9,6 +9,7 @@ public class ResolverChain(public val resolvers: List<TypeResolver>) {
         if (context.isCircular(type)) {
             throw SomeCircularReferenceException(type, context.resolutionStack)
         }
+
         val nextContext = context.push(type)
         
         for (resolver in resolvers) {
