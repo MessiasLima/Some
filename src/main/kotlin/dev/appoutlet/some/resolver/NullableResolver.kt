@@ -7,7 +7,7 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
-public class NullableResolver : TypeResolver {
+class NullableResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean = type.isMarkedNullable
 
     override fun resolve(type: KType, context: FixtureContext, chain: ResolverChain): Any? {

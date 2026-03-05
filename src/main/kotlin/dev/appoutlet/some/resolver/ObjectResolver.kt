@@ -6,7 +6,7 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
-public class ObjectResolver : TypeResolver {
+class ObjectResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         return kClass.objectInstance != null

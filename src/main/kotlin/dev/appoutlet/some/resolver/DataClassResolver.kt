@@ -9,7 +9,7 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 
-public class DataClassResolver : TypeResolver {
+class DataClassResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         

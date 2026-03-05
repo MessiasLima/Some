@@ -6,7 +6,7 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import java.util.UUID
 
-public class UuidResolver : TypeResolver {
+class UuidResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         return type.toString().contains("UUID")
     }

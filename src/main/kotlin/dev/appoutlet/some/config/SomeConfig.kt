@@ -4,16 +4,16 @@ import dev.appoutlet.some.core.FixtureContext
 import kotlin.reflect.KClass
 import kotlin.random.Random
 
-public class SomeConfig {
-    public var nullableStrategy: NullableStrategy = NullableStrategy.Random
-    public var nullableWeightedProbability: Double = 0.5
-    public var stringStrategy: StringStrategy = StringStrategy.Random
-    public var collectionStrategy: CollectionStrategy = CollectionStrategy()
-    public var seed: Long? = null
+class SomeConfig {
+    var nullableStrategy: NullableStrategy = NullableStrategy.Random
+    var nullableWeightedProbability: Double = 0.5
+    var stringStrategy: StringStrategy = StringStrategy.Random
+    var collectionStrategy: CollectionStrategy = CollectionStrategy()
+    var seed: Long? = null
 
     private val factories = mutableMapOf<KClass<*>, FixtureContext.() -> Any?>()
 
-    public fun <T : Any> register(kClass: KClass<T>, factory: FixtureContext.() -> T) {
+    fun <T : Any> register(kClass: KClass<T>, factory: FixtureContext.() -> T) {
         factories[kClass] = factory
     }
 

@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSubclassOf
 
-public class SetResolver : TypeResolver {
+class SetResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         return kClass.isSubclassOf(Set::class)

@@ -4,8 +4,8 @@ import dev.appoutlet.some.SomeCircularReferenceException
 import dev.appoutlet.some.SomeUnresolvableTypeException
 import kotlin.reflect.KType
 
-public class ResolverChain(public val resolvers: List<TypeResolver>) {
-    public fun resolve(type: KType, context: FixtureContext): Any? {
+class ResolverChain(val resolvers: List<TypeResolver>) {
+    fun resolve(type: KType, context: FixtureContext): Any? {
         if (context.isCircular(type)) {
             throw SomeCircularReferenceException(type, context.resolutionStack)
         }

@@ -6,7 +6,7 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import java.time.Duration
 
-public class DurationResolver : TypeResolver {
+class DurationResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         return type.toString().contains("Duration")
     }

@@ -6,7 +6,7 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import java.math.BigDecimal
 
-public class BigDecimalResolver : TypeResolver {
+class BigDecimalResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         return type.toString().contains("BigDecimal")
     }

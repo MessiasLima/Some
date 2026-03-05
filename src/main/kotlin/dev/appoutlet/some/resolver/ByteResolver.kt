@@ -6,7 +6,7 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-public class ByteResolver : TypeResolver {
+class ByteResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean = type == typeOf<Byte>()
 
     override fun resolve(type: KType, context: FixtureContext, chain: ResolverChain): Any {

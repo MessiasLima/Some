@@ -6,7 +6,7 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import java.time.LocalDateTime
 
-public class LocalDateTimeResolver : TypeResolver {
+class LocalDateTimeResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         return type.toString().contains("LocalDateTime")
     }

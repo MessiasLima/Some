@@ -6,7 +6,7 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-public class CharResolver : TypeResolver {
+class CharResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean = type == typeOf<Char>()
 
     override fun resolve(type: KType, context: FixtureContext, chain: ResolverChain): Any {

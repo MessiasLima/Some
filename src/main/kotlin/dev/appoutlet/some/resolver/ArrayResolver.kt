@@ -5,7 +5,7 @@ import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 
-public class ArrayResolver : TypeResolver {
+class ArrayResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         return type.toString().endsWith("Array<*>")
     }
