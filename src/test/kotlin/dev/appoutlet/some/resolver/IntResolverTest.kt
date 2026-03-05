@@ -15,7 +15,7 @@ class IntResolverTest {
     @Test
     fun `IntResolver generates int values`() {
         val resolver = IntResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig())
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<Int>(), context, chain)
         assertIs<Int>(result)

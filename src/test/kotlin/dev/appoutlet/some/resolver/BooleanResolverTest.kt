@@ -15,7 +15,7 @@ class BooleanResolverTest {
     @Test
     fun `BooleanResolver generates boolean values`() {
         val resolver = BooleanResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig())
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<Boolean>(), context, chain)
         assertIs<Boolean>(result)

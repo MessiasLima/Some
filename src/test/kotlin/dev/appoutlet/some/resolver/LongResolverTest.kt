@@ -15,7 +15,7 @@ class LongResolverTest {
     @Test
     fun `LongResolver generates long values`() {
         val resolver = LongResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig())
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<Long>(), context, chain)
         assertIs<Long>(result)

@@ -12,7 +12,7 @@ class Some(
     val config: SomeConfig
 ) {
     inline fun <reified T> some(): T {
-        return chain.resolve(typeOf<T>(), FixtureContext(random, emptyList(), config)) as T
+        return chain.resolve(typeOf<T>(), FixtureContext(random, emptyList())) as T
     }
 
     inline operator fun <reified T> invoke(): T = some()
@@ -32,7 +32,7 @@ val defaultChain: ResolverChain by lazy { SomeConfig().buildChain() }
 val defaultRandom: Random by lazy { Random.Default }
 
 inline fun <reified T> some(): T {
-    return defaultChain.resolve(typeOf<T>(), FixtureContext(defaultRandom, emptyList(), SomeConfig())) as T
+    return defaultChain.resolve(typeOf<T>(), FixtureContext(defaultRandom, emptyList())) as T
 }
 
 inline fun <reified T> some(noinline config: SomeConfig.() -> Unit = {}): T {

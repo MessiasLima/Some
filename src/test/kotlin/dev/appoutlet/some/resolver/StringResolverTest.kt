@@ -15,10 +15,8 @@ class StringResolverTest {
     
     @Test
     fun `StringResolver generates random string of length 8`() {
-        val resolver = StringResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig().apply {
-            stringStrategy = StringStrategy.Random
-        })
+        val resolver = StringResolver(StringStrategy.Random)
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<String>(), context, chain)
         assertIs<String>(result)
@@ -27,10 +25,8 @@ class StringResolverTest {
     
     @Test
     fun `StringResolver generates UUID when configured`() {
-        val resolver = StringResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig().apply {
-            stringStrategy = StringStrategy.Uuid
-        })
+        val resolver = StringResolver(StringStrategy.Uuid)
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<String>(), context, chain)
         assertIs<String>(result)

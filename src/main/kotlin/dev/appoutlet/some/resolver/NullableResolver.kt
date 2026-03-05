@@ -7,16 +7,25 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
-class NullableResolver : TypeResolver {
+/**
+ * Resolves nullable Kotlin types according to the configured [NullableStrategy].
+ *
+ * - **AlwaysNull** – always returns `null`.
+ * - **NeverNull** – always resolves a non‑null value.
+ * - **Random** – returns `null` based on the strategy's probability.
+ */
+class NullableResolver(
+    private val nullableStrategy: NullableStrategy = NullableStrategy.Random()
+) : TypeResolver {
     override fun canResolve(type: KType): Boolean = type.isMarkedNullable
 
     override fun resolve(type: KType, context: FixtureContext, chain: ResolverChain): Any? {
-        return when (val strategy = context.config.nullableStrategy) {
+        return when (nullableStrategy) {
             is NullableStrategy.AlwaysNull -> null
             is NullableStrategy.NeverNull -> createNonNullInstance(type, chain, context)
             is NullableStrategy.Random -> {
                 // Use the probability supplied by the Random strategy instance
-                if (context.random.nextDouble() < strategy.probability) {
+                if (context.random.nextDouble() < nullableStrategy.probability) {
                     null
                 } else {
                     createNonNullInstance(type, chain, context)

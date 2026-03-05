@@ -17,7 +17,7 @@ class EnumResolverTest {
     @Test
     fun `EnumResolver picks random enum value`() {
         val resolver = EnumResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig())
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<TestColor>(), context, chain)
         assertIs<TestColor>(result)

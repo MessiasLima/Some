@@ -19,7 +19,7 @@ class ObjectResolverTest {
     @Test
     fun `ObjectResolver returns singleton`() {
         val resolver = ObjectResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig())
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<TestSingletonObject>(), context, chain)
         assertSame(result, TestSingletonObject)

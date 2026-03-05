@@ -7,11 +7,13 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-class StringResolver : TypeResolver {
+class StringResolver(
+    private val stringStrategy: StringStrategy = StringStrategy.Random
+) : TypeResolver {
     override fun canResolve(type: KType): Boolean = type == typeOf<String>()
 
     override fun resolve(type: KType, context: FixtureContext, chain: ResolverChain): Any {
-        return when (context.config.stringStrategy) {
+        return when (stringStrategy) {
             StringStrategy.Random -> generateRandomString(context)
             StringStrategy.Uuid -> java.util.UUID.randomUUID().toString()
             StringStrategy.Readable -> generateReadableString(context)
@@ -26,8 +28,6 @@ class StringResolver : TypeResolver {
     }
 
     private fun generateReadableString(context: FixtureContext): String {
-        val counter = context.config.toString().hashCode() // This won't work well
-        // Need a better approach - let's use a simple counter in the context
         return "string-${context.random.nextInt(10000)}"
     }
 }

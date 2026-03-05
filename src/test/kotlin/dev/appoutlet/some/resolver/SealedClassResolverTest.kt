@@ -19,7 +19,7 @@ class SealedClassResolverTest {
     @Test
     fun `SealedClassResolver picks random subclass`() {
         val resolver = SealedClassResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig())
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<TestPaymentMethod>(), context, chain)
         assertTrue(result is TestPaymentMethod)

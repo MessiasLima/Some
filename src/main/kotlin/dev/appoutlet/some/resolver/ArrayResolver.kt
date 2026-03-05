@@ -1,11 +1,14 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.KType
 
-class ArrayResolver : TypeResolver {
+class ArrayResolver(
+    private val collectionStrategy: CollectionStrategy = CollectionStrategy()
+) : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         return type.toString().endsWith("Array<*>")
     }
@@ -15,8 +18,8 @@ class ArrayResolver : TypeResolver {
             ?: error("Star projection not supported in Array")
         
         val size = context.random.nextInt(
-            context.config.collectionStrategy.sizeRange.first,
-            context.config.collectionStrategy.sizeRange.last + 1
+            collectionStrategy.sizeRange.first,
+            collectionStrategy.sizeRange.last + 1
         )
         
         return Array(size) { chain.resolve(elementType, context) }

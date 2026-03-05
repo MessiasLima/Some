@@ -66,12 +66,12 @@ data class SomeConfig(
     fun buildChain(): ResolverChain {
         val resolvers = listOf(
             CustomFactoryResolver(factories),
-            NullableResolver(),
+            NullableResolver(nullableStrategy),
             ObjectResolver(),
             EnumResolver(),
             SealedClassResolver(),
             ValueClassResolver(),
-            StringResolver(),
+            StringResolver(stringStrategy),
             IntResolver(),
             LongResolver(),
             DoubleResolver(),
@@ -87,10 +87,10 @@ data class SomeConfig(
             LocalDateTimeResolver(),
             InstantResolver(),
             DurationResolver(),
-            ListResolver(),
-            SetResolver(),
-            MapResolver(),
-            ArrayResolver(),
+            ListResolver(collectionStrategy),
+            SetResolver(collectionStrategy),
+            MapResolver(collectionStrategy),
+            ArrayResolver(collectionStrategy),
             DataClassResolver()
         )
         return ResolverChain(resolvers)

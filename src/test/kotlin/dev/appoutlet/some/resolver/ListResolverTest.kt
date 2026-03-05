@@ -15,10 +15,12 @@ class ListResolverTest {
     
     @Test
     fun `ListResolver generates list with correct size`() {
-        val resolver = ListResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig().apply {
+        val config = SomeConfig().apply {
             collectionStrategy = CollectionStrategy(3..5)
-        })
+        }
+        val chain = config.buildChain()
+        val resolver = ListResolver(config.collectionStrategy)
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<List<String>>(), context, chain)
         assertIs<List<*>>(result)
@@ -28,7 +30,7 @@ class ListResolverTest {
     @Test
     fun `ListResolver generates MutableList when requested`() {
         val resolver = ListResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig())
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<MutableList<String>>(), context, chain)
         assertIs<MutableList<*>>(result)

@@ -15,10 +15,12 @@ class MapResolverTest {
     
     @Test
     fun `MapResolver generates map with correct size`() {
-        val resolver = MapResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig().apply {
+        val config = SomeConfig().apply {
             collectionStrategy = CollectionStrategy(2..4)
-        })
+        }
+        val chain = config.buildChain()
+        val resolver = MapResolver(config.collectionStrategy)
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<Map<String, Int>>(), context, chain)
         assertIs<Map<*, *>>(result)
@@ -28,7 +30,7 @@ class MapResolverTest {
     @Test
     fun `MapResolver generates MutableMap when requested`() {
         val resolver = MapResolver()
-        val context = FixtureContext(Random.Default, emptyList(), SomeConfig())
+        val context = FixtureContext(Random.Default, emptyList())
         
         val result = resolver.resolve(typeOf<MutableMap<String, Int>>(), context, chain)
         assertIs<MutableMap<*, *>>(result)
