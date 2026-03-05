@@ -34,7 +34,7 @@ import kotlin.random.Random
 
 data class SomeConfig(
     var nullableStrategy: NullableStrategy = NullableStrategy.Random(),
-    var stringStrategy: StringStrategy = StringStrategy.Random,
+    var stringStrategy: StringStrategy = StringStrategy.Random(),
     var collectionStrategy: CollectionStrategy = CollectionStrategy(),
     var seed: Long? = null,
     val factories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf(),

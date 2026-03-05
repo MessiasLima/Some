@@ -217,7 +217,7 @@ class IntegrationTests {
         
         // Override multiple strategies at once
         val overriddenResult: ComplexData = baseSome {
-            stringStrategy = StringStrategy.Random
+            stringStrategy = StringStrategy.Random()
             collectionStrategy = CollectionStrategy(10..15)
             nullableStrategy = NullableStrategy.AlwaysNull
         }
