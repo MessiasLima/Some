@@ -41,3 +41,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### OpenCode ###
+.opencode/issues
+.opencode/plans
