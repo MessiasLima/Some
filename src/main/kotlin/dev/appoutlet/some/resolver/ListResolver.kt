@@ -6,7 +6,9 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.isSubtypeOf
 
 class ListResolver(
     private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
@@ -26,7 +28,7 @@ class ListResolver(
             collectionStrategy.sizeRange.last + 1
         )
         
-        val isMutable = type.toString().startsWith("kotlin.collections.MutableList")
+        val isMutable = type.isSubtypeOf(typeOf<MutableList<*>>())
         
         return if (isMutable) {
             MutableList(size) { chain.resolve(elementType) }

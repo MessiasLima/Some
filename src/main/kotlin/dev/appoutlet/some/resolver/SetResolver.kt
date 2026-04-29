@@ -6,7 +6,9 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.isSubtypeOf
 
 class SetResolver(
     private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
@@ -26,7 +28,7 @@ class SetResolver(
             collectionStrategy.sizeRange.last + 1
         )
 
-        val isMutable = type.toString().startsWith("kotlin.collections.MutableSet")
+        val isMutable = type.isSubtypeOf(typeOf<MutableSet<*>>())
         
         val elements = (1..size).map { chain.resolve(elementType) }
         
