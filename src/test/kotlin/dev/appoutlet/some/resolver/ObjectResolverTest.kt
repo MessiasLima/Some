@@ -8,7 +8,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 object TestSingletonObject {
-    val value = 42
+    const val value = 42
 }
 
 class ObjectResolverTest {
