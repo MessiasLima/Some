@@ -21,8 +21,8 @@ class JavaInstantResolverTest {
     @Test
     fun `JavaInstantResolver generates instants within valid range`() {
         val resolver = JavaInstantResolver(Random.Default)
-        val epochStart = Instant.ofEpochSecond(0)
-        val year2100 = Instant.ofEpochSecond(4102444800)
+        val epochStart = Instant.ofEpochSecond(Instant.MIN.epochSecond)
+        val year2100 = Instant.ofEpochSecond(Instant.MAX.epochSecond)
 
         repeat(100) {
             val result = resolver.resolve(typeOf<Instant>(), defaultTestChain) as Instant
