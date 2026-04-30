@@ -31,6 +31,6 @@ class StringResolver(
     }
 
     private fun generateReadableString(): String {
-        return "string-${random.nextInt(10000)}"
+        return "string-${random.nextInt()}"
     }
 }
