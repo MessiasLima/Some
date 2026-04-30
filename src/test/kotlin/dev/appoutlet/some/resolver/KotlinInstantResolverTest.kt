@@ -21,13 +21,11 @@ class KotlinInstantResolverTest {
     @Test
     fun `KotlinInstantResolver generates instants within valid range`() {
         val resolver = KotlinInstantResolver(Random.Default)
-        val epochStart = Instant.fromEpochSeconds(0)
-        val year2100 = Instant.fromEpochSeconds(4102444800)
 
         repeat(100) {
             val result = resolver.resolve(typeOf<Instant>(), defaultTestChain) as Instant
-            assertTrue(result >= epochStart, "Instant should be after or at epoch")
-            assertTrue(result < year2100, "Instant should be before year 2100")
+            assertTrue(result >= Instant.DISTANT_PAST, "Instant should be after or at distant past")
+            assertTrue(result < Instant.DISTANT_FUTURE, "Instant should be before distant future")
         }
     }
 

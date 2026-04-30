@@ -13,7 +13,7 @@ class KotlinInstantResolver(val random: Random) : TypeResolver {
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
-        val epochSecond = random.nextLong(0, 4102444800) // 2100-01-01
+        val epochSecond = random.nextLong(Instant.DISTANT_PAST.epochSeconds, Instant.DISTANT_FUTURE.epochSeconds)
         return Instant.fromEpochSeconds(epochSecond)
     }
 }

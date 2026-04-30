@@ -8,6 +8,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 
 class KotlinDurationResolverTest {
     @Test
@@ -25,7 +26,7 @@ class KotlinDurationResolverTest {
         repeat(100) {
             val result = resolver.resolve(typeOf<Duration>(), defaultTestChain) as Duration
             assertTrue(result.inWholeSeconds >= 0, "Duration should be non-negative")
-            assertTrue(result.inWholeSeconds < 86400, "Duration should be less than 1 day (86400 seconds)")
+            assertTrue(result.inWholeSeconds < 1.days.inWholeSeconds, "Duration should be less than 1 day")
         }
     }
 

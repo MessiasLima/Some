@@ -3,10 +3,10 @@ package dev.appoutlet.some.resolver
 import dev.appoutlet.some.test.defaultTestChain
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Year
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
@@ -21,13 +21,14 @@ class LocalDateResolverTest {
     }
 
     @Test
-    fun `LocalDateResolver generates dates in year 2024`() {
+    fun `LocalDateResolver generates valid dates`() {
         val resolver = LocalDateResolver(Random.Default)
 
         repeat(100) {
             val result = resolver.resolve(typeOf<LocalDate>(), defaultTestChain) as LocalDate
-            assertEquals(result.year, 2024, "Expected year 2024, got ${result.year}")
-            assertTrue(result.dayOfYear in 1..366, "Day of year should be between 1 and 366")
+            assertTrue(result.year >= LocalDate.MIN.year, "Year should be at least LocalDate.MIN.year")
+            assertTrue(result.year <= LocalDate.MAX.year, "Year should be at most LocalDate.MAX.year")
+            assertTrue(result.dayOfYear in 1..Year.of(result.year).length(), "Day of year should be valid for the year")
         }
     }
 

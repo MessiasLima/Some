@@ -3,6 +3,7 @@ package dev.appoutlet.some.resolver
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
 import java.time.LocalDate
+import java.time.Year
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
@@ -13,7 +14,8 @@ class LocalDateResolver(val random: Random) : TypeResolver {
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
-        val dayOfYear = random.nextInt(1, 366)
-        return LocalDate.ofYearDay(2024, dayOfYear)
+        val year = random.nextInt(LocalDate.MIN.year, LocalDate.MAX.year)
+        val dayOfYear = random.nextInt(1, Year.of(year).length())
+        return LocalDate.ofYearDay(year, dayOfYear)
     }
 }

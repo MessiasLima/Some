@@ -11,6 +11,7 @@ class Some(
     val random: Random,
     val config: SomeConfig
 ) {
+    @Suppress("MemberNameEqualsClassName")
     inline fun <reified T> some(): T {
         val session = ResolverChain(resolvers)
         return session.resolve(typeOf<T>()) as T

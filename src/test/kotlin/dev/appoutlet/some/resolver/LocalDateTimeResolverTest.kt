@@ -3,6 +3,7 @@ package dev.appoutlet.some.resolver
 import dev.appoutlet.some.test.defaultTestChain
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Year
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -20,15 +21,25 @@ class LocalDateTimeResolverTest {
     }
 
     @Test
-    fun `LocalDateTimeResolver generates valid dates and times in year 2024`() {
+    fun `LocalDateTimeResolver generates valid dates and times`() {
         val resolver = LocalDateTimeResolver(Random.Default)
 
         repeat(100) {
             val result = resolver.resolve(typeOf<LocalDateTime>(), defaultTestChain) as LocalDateTime
-            assertTrue(result.year in 1970..3000, "Year should be between 1970..3000")
-            assertTrue(result.toLocalDate().dayOfYear in 1..366, "Day of year should be between 1 and 366")
-            assertTrue(result.hour in 0..23, "Hour should be between 0 and 23")
-            assertTrue(result.minute in 0..59, "Minute should be between 0 and 59")
+            assertTrue(result.year >= LocalDate.MIN.year, "Year should be at least LocalDate.MIN.year")
+            assertTrue(result.year <= LocalDate.MAX.year, "Year should be at most LocalDate.MAX.year")
+            assertTrue(
+                result.toLocalDate().dayOfYear in 1..Year.of(result.year).length(),
+                "Day of year should be valid for the year"
+            )
+            assertTrue(
+                result.hour < 24,
+                "Hour should be between 0 and 23"
+            )
+            assertTrue(
+                result.minute < 60,
+                "Minute should be between 0 and 59"
+            )
         }
     }
 

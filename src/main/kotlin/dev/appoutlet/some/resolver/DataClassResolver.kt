@@ -12,16 +12,23 @@ class DataClassResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
 
-        if (kClass.primaryConstructor == null) return false
-        if (kClass.isSubclassOf(List::class) || kClass.isSubclassOf(Set::class) || kClass.isSubclassOf(Map::class)) {
-            return false
-        }
-        if (kClass.isSubclassOf(String::class)) return false
-        if (kClass.isSubclassOf(Number::class)) return false
-        if (kClass.isSubclassOf(Boolean::class)) return false
-        if (kClass.isSubclassOf(Char::class)) return false
+        return when {
+            kClass.primaryConstructor == null -> false
 
-        return true
+            kClass.isSubclassOf(List::class) || kClass.isSubclassOf(Set::class) || kClass.isSubclassOf(Map::class) -> {
+                false
+            }
+
+            kClass.isSubclassOf(String::class) -> false
+
+            kClass.isSubclassOf(Number::class) -> false
+
+            kClass.isSubclassOf(Boolean::class) -> false
+
+            kClass.isSubclassOf(Char::class) -> false
+
+            else -> true
+        }
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
