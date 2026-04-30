@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.3.0"
+    alias(libs.plugins.kotlin.jvm)
 }
 
 group = "dev.appoutlet"
@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("reflect"))
-    testImplementation(kotlin("test"))
+    implementation(libs.kotlin.reflect)
+    testImplementation(libs.kotlin.test)
 }
 
 kotlin {
