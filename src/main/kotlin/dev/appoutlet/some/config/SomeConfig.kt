@@ -32,8 +32,8 @@ import dev.appoutlet.some.resolver.SetResolver
 import dev.appoutlet.some.resolver.ShortResolver
 import dev.appoutlet.some.resolver.StringResolver
 import dev.appoutlet.some.resolver.ValueClassResolver
-import kotlin.reflect.KClass
 import kotlin.random.Random
+import kotlin.reflect.KClass
 
 data class SomeConfig(
     var nullableStrategy: NullableStrategy = NullableStrategy.Random(),

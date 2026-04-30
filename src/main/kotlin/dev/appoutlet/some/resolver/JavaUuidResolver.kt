@@ -1,10 +1,10 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.TypeResolver
+import java.util.UUID
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
-import java.util.UUID
 
 class JavaUuidResolver : TypeResolver {
     override fun canResolve(type: KType): Boolean {

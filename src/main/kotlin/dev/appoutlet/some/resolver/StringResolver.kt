@@ -1,8 +1,8 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.StringStrategy
-import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf

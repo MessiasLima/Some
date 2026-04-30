@@ -4,11 +4,11 @@ import dev.appoutlet.some.test.defaultTestChain
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
-import kotlin.uuid.Uuid
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 class KotlinUuidResolverTest {
@@ -61,7 +61,7 @@ class KotlinUuidResolverTest {
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<Long>()))
     }
-    
+
     @Test
     fun `KotlinUuidResolver rejects Java UUID type`() {
         val resolver = KotlinUuidResolver()

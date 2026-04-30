@@ -1,11 +1,11 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.TypeResolver
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
-import kotlin.uuid.Uuid
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 class KotlinUuidResolver : TypeResolver {

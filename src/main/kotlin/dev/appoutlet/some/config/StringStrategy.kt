@@ -26,12 +26,12 @@ sealed interface StringStrategy {
             require(length > 0) { "Length must be greater than 0" }
         }
     }
-    
+
     /**
      * Generates UUID strings.
      */
     data object Uuid : StringStrategy
-    
+
     /**
      * Generates human-readable strings like "string-1234".
      */
