@@ -1,3 +1,5 @@
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.detekt)
@@ -42,7 +44,9 @@ kover {
     reports {
         verify {
             rule {
-                minBound(90)
+                minBound(90, CoverageUnit.INSTRUCTION)
+                minBound(90, CoverageUnit.LINE)
+                minBound(67, CoverageUnit.BRANCH)
             }
         }
     }
