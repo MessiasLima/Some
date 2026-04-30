@@ -2,6 +2,7 @@
 kotlin = "2.3.0"
 detekt = "1.23.8"
 gitHooksPlugin = "1.1.1"
+kover = "0.9.8"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -12,3 +13,4 @@ detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 gitHooks = { id = "eu.bambooapps.gradle.plugin.githook", version.ref = "gitHooksPlugin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }

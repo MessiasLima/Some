@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.detekt)
     alias(libs.plugins.gitHooks)
+    alias(libs.plugins.kover)
 }
 
 group = "dev.appoutlet"
@@ -35,4 +36,14 @@ tasks.named("prepareKotlinBuildScriptModel") {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+kover {
+    reports {
+        verify {
+            rule {
+                minBound(90)
+            }
+        }
+    }
 }
