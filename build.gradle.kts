@@ -1,7 +1,10 @@
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.detekt)
     alias(libs.plugins.gitHooks)
+    alias(libs.plugins.kover)
 }
 
 group = "dev.appoutlet"
@@ -35,4 +38,16 @@ tasks.named("prepareKotlinBuildScriptModel") {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+kover {
+    reports {
+        verify {
+            rule {
+                minBound(90, CoverageUnit.INSTRUCTION)
+                minBound(90, CoverageUnit.LINE)
+                minBound(67, CoverageUnit.BRANCH)
+            }
+        }
+    }
 }
