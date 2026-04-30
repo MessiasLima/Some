@@ -74,4 +74,3 @@ sealed interface NullableStrategy {
      */
     data class Random(val probability: Double = 0.5) : NullableStrategy
 }
-

@@ -22,28 +22,28 @@ class DataClassIntegrationTest {
     fun `simple data class with primitives`() {
         data class Address(val street: String, val city: String)
         data class Person(val name: String, val age: Int, val address: Address)
-        
+
         val person: Person = some<Person>()
         assertTrue(person.name.isNotEmpty())
         assertTrue(person.address.street.isNotEmpty())
     }
-    
+
     @Test
     fun `deeply nested data classes`() {
         data class Level3(val value: String)
         data class Level2(val level3: Level3)
         data class Level1(val level2: Level2)
-        
+
         val result: Level1 = some<Level1>()
         assertTrue(result.level2.level3.value.isNotEmpty())
     }
-    
+
     @Test
     fun `sealed class hierarchy`() {
         val result = some<TestSealed>()
         assertIs<TestSealed>(result)
     }
-    
+
     @Test
     fun `sealed interface hierarchy`() {
         val result = some<TestSealedInterface>()

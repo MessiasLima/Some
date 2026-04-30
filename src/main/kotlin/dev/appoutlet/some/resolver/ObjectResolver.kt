@@ -1,7 +1,7 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.TypeResolver
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 

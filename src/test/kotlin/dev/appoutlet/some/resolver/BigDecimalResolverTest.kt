@@ -5,8 +5,8 @@ import java.math.BigDecimal
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
-import kotlin.test.assertIs
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class BigDecimalResolverTest {
@@ -20,13 +20,12 @@ class BigDecimalResolverTest {
         assertIs<BigDecimal>(doubled)
     }
 
-    
     @Test
     fun `BigDecimalResolver canResolve detects BigDecimal type`() {
         val resolver = BigDecimalResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<BigDecimal>()))
     }
-    
+
     @Test
     fun `BigDecimalResolver rejects non-BigDecimal types`() {
         val resolver = BigDecimalResolver(Random.Default)

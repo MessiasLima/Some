@@ -36,13 +36,12 @@ class SealedClassResolverTest {
         assertTrue(result is UiState)
     }
 
-
     @Test
     fun `SealedClassResolver canResolve detects sealed types`() {
         val resolver = SealedClassResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<TestPaymentMethod>()))
     }
-    
+
     @Test
     fun `SealedClassResolver rejects non-sealed types`() {
         val resolver = SealedClassResolver(Random.Default)

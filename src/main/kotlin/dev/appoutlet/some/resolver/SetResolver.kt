@@ -1,14 +1,14 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
-import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
-import kotlin.reflect.typeOf
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSubtypeOf
+import kotlin.reflect.typeOf
 
 class SetResolver(
     private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
@@ -22,16 +22,16 @@ class SetResolver(
     override fun resolve(type: KType, chain: ResolverChain): Any {
         val elementType = type.arguments.firstOrNull()?.type
             ?: error("Star projection not supported in Set")
-        
+
         val size = random.nextInt(
             collectionStrategy.sizeRange.first,
             collectionStrategy.sizeRange.last + 1
         )
 
         val isMutable = type.isSubtypeOf(typeOf<MutableSet<*>>())
-        
+
         val elements = (1..size).map { chain.resolve(elementType) }
-        
+
         return if (isMutable) {
             mutableSetOf<Any?>().apply { addAll(elements) }
         } else {

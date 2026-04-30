@@ -14,94 +14,94 @@ class SetupIntegrationTest {
     @Test
     fun `seeded random produces identical output across runs`() {
         data class SimpleData(val id: Int, val name: String)
-        
+
         val some1 = someSetup { seed = 12345L }
         val some2 = someSetup { seed = 12345L }
-        
+
         val result1: SimpleData = some1<SimpleData>()
         val result2: SimpleData = some2<SimpleData>()
-        
+
         assertEquals(result1.id, result2.id)
         assertEquals(result1.name, result2.name)
     }
-    
+
     @Test
     fun `nullable strategy NeverNull produces no nulls in 1000 runs`() {
         data class WithNullable(val required: String, val optional: String?)
-        
+
         val someWithConfig = someSetup {
             nullableStrategy = NullableStrategy.NeverNull
         }
-        
+
         repeat(1000) {
             val result: WithNullable = someWithConfig<WithNullable>()
             assertTrue(result.required.isNotEmpty())
             assertTrue(result.optional != null)
         }
     }
-    
+
     @Test
     fun `nullable strategy AlwaysNull produces all nulls`() {
         data class WithNullable(val optional: String?)
-        
+
         val someWithConfig = someSetup {
             nullableStrategy = NullableStrategy.AlwaysNull
         }
-        
+
         repeat(100) {
             val result: WithNullable = someWithConfig<WithNullable>()
             assertEquals(result.optional, null)
         }
     }
-    
+
     @Test
     fun `collection strategy size range is respected`() {
         val someWithConfig = someSetup {
             collectionStrategy = CollectionStrategy(5..10)
         }
-        
+
         val listResult: List<String> = someWithConfig<List<String>>()
         assertTrue(listResult.size in 5..10)
-        
+
         val mapResult: Map<String, String> = someWithConfig<Map<String, String>>()
         assertTrue(mapResult.size in 5..10)
     }
-    
+
     @Test
     fun `string strategy Uuid produces valid UUIDs`() {
         val someWithConfig = someSetup {
             stringStrategy = StringStrategy.Uuid
         }
-        
+
         repeat(10) {
             val result: String = someWithConfig<String>()
             assertTrue(result.matches(Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")))
         }
     }
-    
+
     @Test
     fun `different runs produce different values`() {
         val result1: Int = some<Int>()
         val result2: Int = some<Int>()
         assertNotEquals(result1, result2)
     }
-    
+
     @Test
     fun `aggregated configs does not override base config`() {
         data class TestData(val name: String, val optional: String?)
-        
+
         // Base config: seed for reproducibility, NeverNull strategy
         val baseSome = someSetup {
             seed = 42L
             nullableStrategy = NullableStrategy.NeverNull
         }
-        
+
         // First call with base config - should have non-null optional
         repeat(100) {
             val result1: TestData = baseSome()
             assertTrue(result1.optional != null, "Base config should produce non-null optional")
         }
-        
+
         // Second call with aggregated config - override to AlwaysNull
         // This should NOT mutate the base config
         repeat(100) {
@@ -110,13 +110,13 @@ class SetupIntegrationTest {
             }
             assertEquals(null, result2.optional, "Aggregated config should override to null")
         }
-        
+
         // Third call with base config - should still use original base config (NeverNull)
         repeat(100) {
             val result3: TestData = baseSome()
             assertTrue(result3.optional != null, "Base config should NOT be mutated by aggregation")
         }
-        
+
         // Test that we can aggregate again with custom probability
         repeat(100) {
             val result4: TestData = baseSome {
@@ -125,7 +125,7 @@ class SetupIntegrationTest {
             assertTrue(result4.optional != null, "Aggregated config with 0.0 probability should never produce null")
         }
     }
-    
+
     @Test
     fun `aggregated configs can override multiple strategies`() {
         data class ComplexData(
@@ -133,26 +133,26 @@ class SetupIntegrationTest {
             val items: List<Int>,
             val optional: String?
         )
-        
+
         // Base config with specific strategies
         val baseSome = someSetup {
             stringStrategy = StringStrategy.Uuid
             collectionStrategy = CollectionStrategy(1..3)
             nullableStrategy = NullableStrategy.NeverNull
         }
-        
+
         val baseResult: ComplexData = baseSome()
         assertTrue(baseResult.id.matches(Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")))
         assertTrue(baseResult.items.size in 1..3)
         assertTrue(baseResult.optional != null)
-        
+
         // Override multiple strategies at once
         val overriddenResult: ComplexData = baseSome {
             stringStrategy = StringStrategy.Random()
             collectionStrategy = CollectionStrategy(10..15)
             nullableStrategy = NullableStrategy.AlwaysNull
         }
-        
+
         // String should not be UUID anymore (very unlikely to match UUID pattern with Random)
         assertTrue(overriddenResult.items.size in 10..15)
         assertEquals(null, overriddenResult.optional)
