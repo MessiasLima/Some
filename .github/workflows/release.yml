@@ -42,7 +42,7 @@ jobs:
         run: |
           git fetch
           git checkout main
-          sed -i '' -E 's/version = "[0-9]+\.[0-9]+\.[0-9]+"/version = "${{ github.ref_name }}"/g' build.gradle.kts
+          sed -i -E 's/version = "[0-9]+\.[0-9]+\.[0-9]+"/version = "${{ github.ref_name }}"/g' build.gradle.kts
 
       - name: Publish to Maven Central
         run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
