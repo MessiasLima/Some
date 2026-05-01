@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.gitHooks)
     alias(libs.plugins.kover)
+    alias(libs.plugins.mavenPublish)
 }
 
 group = "dev.appoutlet"
@@ -48,6 +49,46 @@ kover {
                 minBound(90, CoverageUnit.LINE)
                 minBound(67, CoverageUnit.BRANCH)
             }
+        }
+    }
+}
+
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
+
+    coordinates(
+        groupId = project.group.toString(),
+        artifactId = "some",
+        version = project.version.toString()
+    )
+
+    pom {
+        name.set("Some")
+        description.set("A Kotlin test data generation library that creates random instances of data classes, sealed classes/interfaces, collections, and primitive types.")
+        inceptionYear.set("2026")
+        url.set("https://github.com/MessiasLima/Some")
+
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("MessiasLima")
+                name.set("Messias Lima")
+                url.set("https://github.com/MessiasLima")
+            }
+        }
+
+        scm {
+            url.set("https://github.com/MessiasLima/Some/")
+            connection.set("scm:git:git://github.com/MessiasLima/Some.git")
+            developerConnection.set("scm:git:ssh://git@github.com/MessiasLima/Some.git")
         }
     }
 }
