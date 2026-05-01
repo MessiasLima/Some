@@ -1,14 +1,14 @@
 name: Release
+run-name: Verify and Publish ${{ github.ref_name }}
 
 on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
-  workflow_dispatch:
 
 jobs:
   release:
-    name: Quality & Publish
+    name: Verify and Publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,15 +19,30 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: false
 
       - name: Run detekt
         run: ./gradlew detekt
 
       - name: Run tests with coverage verification
         run: ./gradlew koverVerify
+
+      - name: Configure Git Credentials
+        run: |
+          git config --global user.name 'Messias Junior'
+          git config --global user.email 'messiaslima@users.noreply.github.com'
+
+      - name: Update version in build files
+        run: |
+          git fetch
+          git checkout main
+          sed -i '' -E 's/version = "[0-9]+\.[0-9]+\.[0-9]+"/version = "${{ github.ref_name }}"/g' build.gradle.kts
 
       - name: Publish to Maven Central
         run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
@@ -37,3 +52,9 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYID }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYPASSWORD }}
+
+      - name: Commit and push changes
+        run: |
+          git add .
+          git commit --no-verify -m "chore: Release version ${{ github.ref_name }}"
+          git push
