@@ -3,6 +3,7 @@ kotlin = "2.3.21"
 detekt = "1.23.8"
 gitHooksPlugin = "1.1.1"
 kover = "0.9.8"
+mavenPublish = "0.36.0"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -14,3 +15,4 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 gitHooks = { id = "eu.bambooapps.gradle.plugin.githook", version.ref = "gitHooksPlugin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
