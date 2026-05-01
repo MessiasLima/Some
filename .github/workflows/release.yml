@@ -32,11 +32,9 @@ jobs:
           cache-read-only: false
 
       - name: Run detekt
-        if: false # Disable while testing
         run: ./gradlew detekt
 
       - name: Run tests with coverage verification
-        if: false # Disable while testing
         run: ./gradlew koverVerify
 
       - name: Configure Git Credentials
@@ -51,7 +49,6 @@ jobs:
           sed -i -E 's/version = "[0-9]+\.[0-9]+\.[0-9]+"/version = "${{ github.ref_name }}"/g' build.gradle.kts
 
       - name: Publish to Maven Central
-        if: false # Disable while testing
         run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME }}
