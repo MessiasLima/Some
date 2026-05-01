@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.0"
+kotlin = "2.3.21"
 detekt = "1.23.8"
 gitHooksPlugin = "1.1.1"
 kover = "0.9.8"
