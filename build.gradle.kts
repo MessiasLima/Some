@@ -57,11 +57,7 @@ mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 
-    coordinates(
-        groupId = project.group.toString(),
-        artifactId = "some",
-        version = project.version.toString()
-    )
+    coordinates(artifactId = "some")
 
     pom {
         name.set("Some")
@@ -73,7 +69,7 @@ mavenPublishing {
             license {
                 name.set("The Apache License, Version 2.0")
                 url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("repo")
             }
         }
 
@@ -86,7 +82,7 @@ mavenPublishing {
         }
 
         scm {
-            url.set("https://github.com/MessiasLima/Some/")
+            url.set("https://github.com/MessiasLima/Some")
             connection.set("scm:git:git://github.com/MessiasLima/Some.git")
             developerConnection.set("scm:git:ssh://git@github.com/MessiasLima/Some.git")
         }
