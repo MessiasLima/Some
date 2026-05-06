@@ -84,7 +84,7 @@ Some is open source and available under the [Apache 2.0 License](https://github.
 
 ---
 
-### A Project by [AppOutlet](https://appoutlet.dev)
+## A Project by [AppOutlet](https://appoutlet.dev)
 
 [![AppOutlet Logo](image/appoutlet.svg){ align=left width=128 }](https://appoutlet.dev)
 

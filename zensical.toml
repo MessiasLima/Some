@@ -26,14 +26,13 @@ favicon = "logo-icon.svg"
 features = [
   "navigation.instant",
   "navigation.instant.progress",
-  "navigation.tabs",
-  "navigation.tabs.sticky",
   "navigation.top",
   "navigation.tracking",
   "search.highlight",
   "toc.follow",
   "toc.integrate"
 ]
+custom_dir = "docs/overrides"
 
 # Palette toggle for automatic mode
 [[project.theme.palette]]
@@ -63,3 +62,7 @@ toggle.name = "Switch to system preference"
 
 [project.theme.icon]
 repo = "fontawesome/brands/github"
+
+[project.extra.analytics]
+provider = "custom"
+property = "5992afc8-9605-42dd-9b15-46eeba57c2aa"
