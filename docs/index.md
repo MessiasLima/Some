@@ -72,6 +72,12 @@ val user: User = some<User>()
 
 See the [Getting Started guide](getting-started.md) for installation, configuration, and advanced usage.
 
+## Roadmap
+
+Some is under constant development. Releases are managed and tracked in the public **[GitHub Project](https://github.com/users/MessiasLima/projects/9)**, which is the canonical source for what is planned, in progress, and shipped.
+
+Consult the project board to see what is actively being worked on, what is planned for upcoming releases, and what has been released.
+
 ## License
 
 Some is open source and available under the [Apache 2.0 License](https://github.com/MessiasLima/Some/blob/main/LICENSE).
