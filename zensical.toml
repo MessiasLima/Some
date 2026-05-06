@@ -7,16 +7,16 @@ copyright = "© 2026 AppOutlet, Lda"
 repo_url = "https://github.com/MessiasLima/Some"
 
 nav = [
-  { "Overview" = "index.md" },
-  { "Getting Started" = "getting-started.md" },
+  "index.md",
+  "getting-started.md",
   { "Configuration" = [
-    "configuration/overview.md" ,
-    { "Nullable Strategy" = "configuration/nullable-strategy.md" },
-    { "String Strategy" = "configuration/string-strategy.md" },
-    { "Collection Strategy" = "configuration/collection-strategy.md" },
-  ] },
-  { "Supported Types" = "supported-types.md" },
-  { "Custom Factories" = "custom-factories.md" },
+      "configuration/index.md" ,
+      "configuration/nullable-strategy.md",
+      "configuration/string-strategy.md",
+      "configuration/collection-strategy.md,
+    ] },
+  "supported-types.md",
+  "custom-factories.md" ,
   { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }
 ]
 
