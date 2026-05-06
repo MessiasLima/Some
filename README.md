@@ -4,116 +4,51 @@
 
 # Some
 
-> [!WARNING]
-> **Early Development Stage:** This project is in its early stages and is not yet ready for production use. APIs are subject to change, and it has not been officially released.
-
 A Kotlin JVM library that generates populated instances of any Kotlin class for testing purposes, with zero configuration required.
 
-## Usage
+## The Problem
 
-### Zero Configuration
-
-The simplest way to use Some is with the top-level `some<T>()` function:
+Writing tests means creating test data — lots of it. Constructing data classes, populating fields with dummy values, and keeping dependencies consistent is tedious and error-prone. As your model grows, so does the boilerplate.
 
 ```kotlin
-import dev.appoutlet.some.some
+// Without Some
+val user = User(
+    name = "John", age = 30,
+    email = "john@example.com",
+    address = Address(street = "123 Main St", city = "Springfield", zipCode = "12345"),
+    orders = listOf(Order(id = "ord-1", amount = 99.99), Order(id = "ord-2", amount = 49.50))
+)
 
-data class User(val name: String, val age: Int)
-data class Address(val street: String, val city: String)
-data class Person(val name: String, val address: Address)
-
-// Generate a simple data class
-val user: User = some<User>()
-
-// Generate a nested data class  
-val person: Person = some<Person>()
-
-// Generate a list of data classes
-val users: List<User> = some<List<User>>()
-
-// Generate a sealed class (picks random subclass)
-sealed class PaymentMethod {
-    data class Card(val last4: String) : PaymentMethod()
-    data class BankTransfer(val iban: String) : PaymentMethod()
-    object Cash : PaymentMethod()
-}
-val payment: PaymentMethod = some<PaymentMethod>()
+// With Some
+val user = some<User>()
 ```
 
-### Configuration
+**Some** eliminates boilerplate by generating fully populated instances of any Kotlin class with a single function call.
 
-For more control, use the `some {}` builder function:
+## Features
 
-```kotlin
-import dev.appoutlet.some.some
-import dev.appoutlet.some.config.*
+- **Zero configuration** — `some<T>()` generates a complete instance right out of the box. No builders, no factories, no setup.
+- **Universal type support** — Works with data classes, sealed classes/interfaces, object singletons, value classes, generics, and all standard collections. If Kotlin can represent it, Some can generate it.
+- **Nested and recursive structures** — Handles deeply nested data classes, circular references, and recursive sealed class hierarchies without infinite loops.
+- **Fine-grained control** — Override how specific fields are generated: control nullable probability, string format, collection sizes, or register custom factories for types.
+- **Deterministic by choice** — Set a seed for reproducible test data across runs, or default to random for variation.
 
-// Configure nullable strategy
-val someWithNulls = some {
-    nullableStrategy = NullableStrategy.AlwaysNull  // or NeverNull, Random, RandomWeighted
-}
-val nullableResult = someWithNulls.some<String?>()  // will always be null
+## Documentation
 
-// Configure string generation
-val someWithUuid = some {
-    stringStrategy = StringStrategy.Uuid  // or Random, Readable
-}
-val uuid: String = someWithUuid.some<String>()  // will be UUID
+📖 Read the full documentation at **[some.appoutlet.dev](https://some.appoutlet.dev)** for installation, configuration, and advanced usage.
 
-// Configure collection sizes
-val someWithLargeLists = some {
-    collectionStrategy = CollectionStrategy(10..20)
-}
-val list: List<String> = someWithLargeLists.some<List<String>>()  // size 10-20
+## License
 
-// Set a seed for reproducible results
-val deterministic = some {
-    seed = 12345L
-}
-val result1 = deterministic.some<User>()
-val result2 = deterministic.some<User>()
-// result1 and result2 are identical
-```
+Some is open source and available under the [Apache 2.0 License](LICENSE).
 
-### Custom Factories
+---
 
-Register custom factory functions for specific types:
+<div>
+    <a href="https://appoutlet.dev">
+        <img src="docs/image/appoutlet.svg" width="128" align="left" />
+    </a>
+</div>
 
-```kotlin
-val custom = some {
-    register(String::class) { "custom-value-${random.nextInt(100)}" }
-    register(Int::class) { 42 }
-}
-val result: MyDataClass = custom.some<MyDataClass>()
-```
+### A Project by [AppOutlet](https://appoutlet.dev)
 
-## Supported Types
-
-### Primitives
-- `String`, `Int`, `Long`, `Double`, `Float`, `Boolean`, `Char`, `Byte`, `Short`
-
-### Standard Library
-- `UUID` (Kotlin & Java)
-- `BigDecimal`, `BigInteger`
-- `LocalDate`, `LocalDateTime`
-- `Instant` (Kotlin & Java)
-- `Duration` (Kotlin & Java)
-
-### Collections
-- `List`, `MutableList`, `Set`, `MutableSet`
-- `Map`, `MutableMap`
-- Arrays (`Array<T>`, `IntArray`, etc.)
-
-### Other
-- Enums (random value)
-- Sealed classes (random subclass)
-- Object singletons
-- Value classes
-- Data classes with primary constructors
-- Generic classes (e.g., `Wrapper<String>`, `Pair<Int, String>`)
-
-## Requirements
-
-- Kotlin 2.3.0+
-- JVM 21+
-- kotlin-reflect (included as transitive dependency)
+`Some` is developed and maintained by **AppOutlet**. You can explore our other projects on [our website](https://appoutlet.dev).
