@@ -17,7 +17,7 @@ nav = [
     ] },
   "supported-types.md",
   "custom-factories.md" ,
-  { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }
+  { ":lucide-file-braces: API Reference" = "https://some.appoutlet.dev/reference/latest/" }
 ]
 
 [project.theme]
@@ -27,7 +27,6 @@ features = [
   "navigation.instant",
   "navigation.instant.prefetch",
   "navigation.instant.progress",
-  "navigation.expand",
   "navigation.path",
   "navigation.top",
   "navigation.indexes",
