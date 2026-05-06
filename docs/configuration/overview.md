@@ -44,6 +44,25 @@ val user = some<User> {
 
 The inline form creates a copy of the default configuration, applies your overrides, and generates a single instance — without affecting the global defaults.
 
+### Aggregated configuration
+
+You can override configuration on a per-call basis without mutating the base instance:
+
+```kotlin
+val baseSome = someSetup {
+    seed = 42L
+    nullableStrategy = NullableStrategy.NeverNull
+}
+
+// Override for a single call — base config is NOT mutated
+val result: Person = baseSome {
+    nullableStrategy = NullableStrategy.AlwaysNull
+}
+
+// baseSome still uses NeverNull
+val stillNeverNull: Person = baseSome()
+```
+
 ### Copying configurations
 
 `SomeConfig.copy()` creates a deep copy, including a fresh copy of the `factories` map. This prevents shared mutable state between config instances:
