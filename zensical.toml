@@ -7,7 +7,7 @@ copyright = "© 2026 AppOutlet, Lda"
 repo_url = "https://github.com/MessiasLima/Some"
 
 nav = [
-  { "Home" = "index.md" },
+  { "Some" = "index.md" },
   { "Getting Started" = "getting-started.md" },
   { "Configuration" = [
     { "Overview" = "configuration/overview.md" },
@@ -26,12 +26,8 @@ favicon = "logo-icon.svg"
 features = [
   "navigation.instant",
   "navigation.instant.progress",
-  "navigation.top",
-  "navigation.tracking",
-  "navigation.tabs",
   "search.highlight",
   "toc.follow",
-  "toc.integrate"
 ]
 custom_dir = "docs/overrides"
 
