@@ -28,6 +28,7 @@ features = [
   "navigation.instant.progress",
   "navigation.top",
   "navigation.tracking",
+  "navigation.tabs",
   "search.highlight",
   "toc.follow",
   "toc.integrate"
