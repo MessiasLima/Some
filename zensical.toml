@@ -17,7 +17,7 @@ nav = [
     ] },
   "supported-types.md",
   "custom-factories.md" ,
-  { ":lucide-file-braces: API Reference" = "https://some.appoutlet.dev/reference/latest/" }
+  { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }
 ]
 
 [project.theme]
