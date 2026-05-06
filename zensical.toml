@@ -13,7 +13,7 @@ nav = [
       "configuration/index.md" ,
       "configuration/nullable-strategy.md",
       "configuration/string-strategy.md",
-      "configuration/collection-strategy.md,
+      "configuration/collection-strategy.md"
     ] },
   "supported-types.md",
   "custom-factories.md" ,
