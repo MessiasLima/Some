@@ -66,4 +66,4 @@ repo = "fontawesome/brands/github"
 
 [project.extra.analytics]
 provider = "custom"
-property = "foobar"
+property = "5992afc8-9605-42dd-9b15-46eeba57c2aa"
