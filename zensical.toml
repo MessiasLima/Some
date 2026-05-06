@@ -9,7 +9,12 @@ repo_url = "https://github.com/MessiasLima/Some"
 nav = [
   { "Home" = "index.md" },
   { "Getting Started" = "getting-started.md" },
-  { "Configuration" = "configuration.md" },
+  { "Configuration" = [
+    { "Overview" = "configuration/overview.md" },
+    { "Nullable Strategy" = "configuration/nullable-strategy.md" },
+    { "String Strategy" = "configuration/string-strategy.md" },
+    { "Collection Strategy" = "configuration/collection-strategy.md" },
+  ] },
   { "Custom Factories" = "custom-factories.md" },
   { "Supported Types" = "supported-types.md" },
   { "API Reference" = "https://some.appoutlet.dev/reference/latest/" },
