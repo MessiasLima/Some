@@ -1,3 +1,6 @@
+---
+icon: lucide/file-type
+---
 # Supported Types
 
 Some resolves common Kotlin and Java types with zero configuration. Nullable variants (`T?`) are supported everywhere — [NullableStrategy](configuration/nullable-strategy.md) controls whether `null` is emitted.

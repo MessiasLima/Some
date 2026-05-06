@@ -1,3 +1,6 @@
+---
+icon: lucide/graduation-cap
+---
 # Getting Started
 
 ## Installation

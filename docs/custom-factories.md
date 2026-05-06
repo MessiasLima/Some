@@ -1,3 +1,6 @@
+---
+icon: lucide/factory
+---
 # Custom Factories
 
 Register custom factory functions to override how specific types are generated. Factories let you pin certain types to known values, random ranges, or format rules — useful for test scenarios where you need deterministic or domain-specific data.

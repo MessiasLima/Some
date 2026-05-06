@@ -1,3 +1,7 @@
+---
+icon: lucide/package-open
+---
+
 <img src="logo-icon.svg" alt="Some logo" width="128" align="center" />
 
 # Some

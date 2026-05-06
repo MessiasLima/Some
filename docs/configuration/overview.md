@@ -1,3 +1,6 @@
+---
+icon: lucide/settings
+---
 # Configuration
 
 All configuration is done through `SomeConfig`. Every option has sensible defaults so you can start using `some()` immediately without any setup.
