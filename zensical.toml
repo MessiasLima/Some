@@ -21,6 +21,8 @@ nav = [
 ]
 
 [project.theme]
+palette.primary = "deep purple"
+palette.accent = "purple"
 logo = "logo-icon.svg"
 favicon = "logo-icon.svg"
 features = [
@@ -34,10 +36,6 @@ features = [
   "toc.follow",
   "toc.integrate"
 ]
-
-[project.theme]
-palette.primary = "deep purple"
-palette.accent = "purple"
 
 # Palette toggle for automatic mode
 [[project.theme.palette]]
