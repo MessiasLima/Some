@@ -115,12 +115,14 @@ dokka {
 }
 
 tasks.register("generateDokkaRedirect") {
+    val version = project.version
+    val targetDir = project.file("docs/reference/latest")
+
     doLast {
-        val targetDir = project.file("docs/reference/latest")
         targetDir.mkdirs() // Creates the dir if it doesn't exist, does nothing if it does
 
         File(targetDir, "index.html").writeText(
-            """<meta http-equiv="refresh" content="0; url=./${project.version}/">"""
+            """<meta http-equiv="refresh" content="0; url=../version/$version/">"""
         )
     }
 }
