@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo-icon.svg" alt="Some logo" width="128" />
+</p>
+
 # Some
 
 > [!WARNING]

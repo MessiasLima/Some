@@ -3,6 +3,7 @@ import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.dokka)
     alias(libs.plugins.gitHooks)
     alias(libs.plugins.kover)
     alias(libs.plugins.mavenPublish)
@@ -16,13 +17,21 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.kotlin.reflect)
-    testImplementation(libs.kotlin.test)
     detektPlugins(libs.detekt.formatting)
+
+    dokkaHtmlPlugin(libs.dokka.versioning)
+
+    implementation(libs.kotlin.reflect)
+
+    testImplementation(libs.kotlin.test)
 }
 
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 detekt {
@@ -35,10 +44,6 @@ detekt {
 
 tasks.named("prepareKotlinBuildScriptModel") {
     dependsOn(":installGitHooks")
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 kover {
@@ -87,4 +92,39 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://git@github.com/MessiasLima/Some.git")
         }
     }
+}
+
+dokka {
+    dokkaPublications {
+        html {
+            outputDirectory.set(layout.projectDirectory.dir("docs/reference/version/${project.version}"))
+            includes.from("$projectDir/docs/module.md")
+        }
+    }
+
+    pluginsConfiguration {
+        html {
+            customAssets.from("$projectDir/docs/logo-icon.svg")
+            footerMessage.set("© AppOutlet, Lda")
+        }
+
+        versioning {
+            olderVersionsDir.set(layout.projectDirectory.dir("docs/reference/version"))
+        }
+    }
+}
+
+tasks.register("generateDokkaRedirect") {
+    doLast {
+        val targetDir = project.file("docs/reference/latest")
+        targetDir.mkdirs() // Creates the dir if it doesn't exist, does nothing if it does
+
+        File(targetDir, "index.html").writeText(
+            """<meta http-equiv="refresh" content="0; url=./${project.version}/">"""
+        )
+    }
+}
+
+tasks.named("dokkaGenerate") {
+    finalizedBy("generateDokkaRedirect")
 }
