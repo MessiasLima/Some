@@ -25,7 +25,11 @@ logo = "logo-icon.svg"
 favicon = "logo-icon.svg"
 features = [
   "navigation.instant",
+  "navigation.instant.prefetch",
   "navigation.instant.progress",
+  "navigation.expand",
+  "navigation.path",
+  "navigation.top",
   "search.highlight",
   "toc.follow",
 ]
