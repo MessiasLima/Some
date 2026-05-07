@@ -1,12 +1,12 @@
 package dev.appoutlet.some.integration
 
-import dev.appoutlet.some.some
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.exception.SomeCircularReferenceException
+import dev.appoutlet.some.some
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNull
-import kotlin.test.assertFailsWith
 
 class CircularReferenceIntegrationTest {
     data class Node(val next: Node?)
