@@ -1,8 +1,10 @@
 package dev.appoutlet.some.core
 
+import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeUnresolvableTypeException
 import kotlin.reflect.KType
+import kotlin.reflect.full.createType
 
 /**
  * Resolution session that manages the type resolution chain and tracks circular dependencies.
@@ -11,7 +13,8 @@ import kotlin.reflect.KType
  * Each call to `some()` creates a new instance of this session to ensure thread safety.
  */
 class ResolverChain(
-    val resolvers: List<TypeResolver>
+    val resolvers: List<TypeResolver>,
+    private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference
 ) {
     private val resolutionStack = mutableListOf<KType>()
 
@@ -27,6 +30,12 @@ class ResolverChain(
             throw SomeCircularReferenceException(type, resolutionStack.toList())
         }
 
+        if (nullableStrategy is NullableStrategy.NullOnCircularReference && type.isMarkedNullable) {
+            if (isCircularIgnoringNullability(type)) {
+                return null
+            }
+        }
+
         resolutionStack.add(type)
 
         try {
@@ -39,6 +48,14 @@ class ResolverChain(
             throw SomeUnresolvableTypeException(type)
         } finally {
             resolutionStack.removeAt(resolutionStack.lastIndex)
+        }
+    }
+
+    private fun isCircularIgnoringNullability(type: KType): Boolean {
+        val nonNullableType = type.classifier?.createType(type.arguments, false) ?: type
+        return resolutionStack.any {
+            val otherNonNullable = it.classifier?.createType(it.arguments, false) ?: it
+            otherNonNullable == nonNullableType
         }
     }
 }

@@ -13,7 +13,7 @@ class Some(
 ) {
     @Suppress("MemberNameEqualsClassName")
     inline fun <reified T> some(): T {
-        val session = ResolverChain(resolvers)
+        val session = ResolverChain(resolvers, config.nullableStrategy)
         return session.resolve(typeOf<T>()) as T
     }
 
@@ -31,10 +31,11 @@ fun someSetup(config: SomeConfig.() -> Unit = {}): Some {
     return Some(someConfig.buildResolvers(random), random, someConfig)
 }
 
-val defaultResolvers: List<TypeResolver> by lazy { SomeConfig().buildResolvers() }
+val defaultConfig: SomeConfig by lazy { SomeConfig() }
+val defaultResolvers: List<TypeResolver> by lazy { defaultConfig.buildResolvers() }
 
 inline fun <reified T> some(): T {
-    val session = ResolverChain(defaultResolvers)
+    val session = ResolverChain(defaultResolvers, defaultConfig.nullableStrategy)
     return session.resolve(typeOf<T>()) as T
 }
 

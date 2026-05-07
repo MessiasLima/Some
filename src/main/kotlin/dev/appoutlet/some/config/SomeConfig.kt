@@ -36,7 +36,7 @@ import kotlin.random.Random
 import kotlin.reflect.KClass
 
 data class SomeConfig(
-    var nullableStrategy: NullableStrategy = NullableStrategy.Random(),
+    var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
     var stringStrategy: StringStrategy = StringStrategy.Random(),
     var collectionStrategy: CollectionStrategy = CollectionStrategy(),
     var seed: Long? = null,
