@@ -14,12 +14,9 @@ where each TypeResolver handles specific types.
 
 ---
 
-## Build Commands
+## Useful Commands
 
 ```bash
-# Build the project
-./gradlew build
-
 # Run all tests
 ./gradlew test
 
@@ -34,12 +31,6 @@ where each TypeResolver handles specific types.
 
 # Run tests with fresh execution (ignore cache)
 ./gradlew test --rerun-tasks
-
-# Clean and rebuild
-./gradlew clean build
-
-# Check compilation without running tests
-./gradlew compileKotlin compileTestKotlin
 ```
 
 ---

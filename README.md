@@ -37,6 +37,10 @@ val user = some<User>()
 
 📖 Read the full documentation at **[some.appoutlet.dev](https://some.appoutlet.dev)** for installation, configuration, and advanced usage.
 
+## Contributing
+
+Interested in helping improve Some? Contributions are welcome. Please read the [contributing guide](CONTRIBUTING.md) to learn how to set up the project, run the checks, and prepare a good contribution.
+
 ## License
 
 Some is open source and available under the [Apache 2.0 License](LICENSE).
@@ -51,4 +55,6 @@ Some is open source and available under the [Apache 2.0 License](LICENSE).
 
 ### A Project by [AppOutlet](https://appoutlet.dev)
 
-`Some` is developed and maintained by **AppOutlet**. You can explore our other projects on [our website](https://appoutlet.dev).
+`Some` is developed and maintained by **AppOutlet**. 
+
+You can explore our other projects on [our website](https://appoutlet.dev).
