@@ -21,6 +21,49 @@ class CircularReferenceIntegrationTest {
     }
 
     @Test
+    fun `nullable top-level circular type returns instance with null circular field by default`() {
+        val node: Node? = some<Node?>()
+
+        val result = assertIs<Node>(node)
+        assertNull(result.next)
+    }
+
+    @Test
+    fun `nullable top-level circular type returns instance with null circular field under NullOnCircularReference`() {
+        val node: Node? = some<Node?> {
+            nullableStrategy = NullableStrategy.NullOnCircularReference
+        }
+
+        val result = assertIs<Node>(node)
+        assertNull(result.next)
+    }
+
+    @Test
+    fun `nullable top-level circular type throws under NeverNull strategy`() {
+        assertFailsWith<SomeCircularReferenceException> {
+            some<Node?> {
+                nullableStrategy = NullableStrategy.NeverNull
+            }
+        }
+    }
+
+    @Test
+    fun `nullable top-level indirect circular type returns instance with null circular field by default`() {
+        val a: IndirectA? = some<IndirectA?>()
+
+        val result = assertIs<IndirectA>(a)
+        val b = assertIs<IndirectB>(result.b)
+        assertNull(b.a)
+    }
+
+    @Test
+    fun `nullable top-level strict circular type still throws by default`() {
+        assertFailsWith<SomeCircularReferenceException> {
+            some<StrictNode?>()
+        }
+    }
+
+    @Test
     fun `circular non-nullable field still throws SomeCircularReferenceException`() {
         assertFailsWith<SomeCircularReferenceException> {
             some<StrictNode>()

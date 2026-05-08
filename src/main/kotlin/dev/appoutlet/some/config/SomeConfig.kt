@@ -41,7 +41,8 @@ import kotlin.reflect.KClass
  * Controls strategies for nullable types, strings, collections, random seeding,
  * and custom factory registrations.
  *
- * @param nullableStrategy Strategy for handling nullable type resolution. Defaults to [NullableStrategy.NullOnCircularReference].
+ * @param nullableStrategy Strategy for handling nullable type resolution.
+ *  Defaults to [NullableStrategy.NullOnCircularReference].
  * @param stringStrategy Strategy for generating string values. Defaults to [StringStrategy.Random].
  * @param collectionStrategy Strategy for generating collection sizes. Defaults to [CollectionStrategy].
  * @param seed Seed for reproducible random generation. If null, uses [Random.Default].

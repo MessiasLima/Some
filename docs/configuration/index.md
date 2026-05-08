@@ -9,7 +9,7 @@ All configuration is done through `SomeConfig`. Every option has sensible defaul
 
 ```kotlin
 data class SomeConfig(
-    var nullableStrategy: NullableStrategy = NullableStrategy.Random(),
+    var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
     var stringStrategy: StringStrategy = StringStrategy.Random(),
     var collectionStrategy: CollectionStrategy = CollectionStrategy(),
     var seed: Long? = null,
@@ -68,7 +68,7 @@ val stillNeverNull: Person = baseSome()
 
 ### Copying configurations
 
-`SomeConfig.copy()` creates a deep copy, including a fresh copy of the `factories` map. This prevents shared mutable state between config instances:
+`SomeConfig.copy()` creates a new configuration with a fresh copy of the `factories` map. This prevents shared mutable factory registrations between config instances:
 
 ```kotlin
 val base = SomeConfig().apply { stringStrategy = StringStrategy.Uuid }
@@ -79,7 +79,7 @@ val custom = base.copy(seed = 999L)
 
 | Property | Default | Description | Docs                                         |
 |----------|---------|-------------|----------------------------------------------|
-| `nullableStrategy` | `NullableStrategy.Random()` | 50% chance of `null` for nullable types | [NullableStrategy](nullable-strategy.md)     |
+| `nullableStrategy` | `NullableStrategy.NullOnCircularReference` | `null` for nullable circular references | [NullableStrategy](nullable-strategy.md)     |
 | `stringStrategy` | `StringStrategy.Random()` | Random lowercase alphabetic, 8 characters | [StringStrategy](string-strategy.md)         |
 | `collectionStrategy` | `CollectionStrategy()` | Collections of 1 to 5 elements | [CollectionStrategy](collection-strategy.md) |
 | `seed` | `null` | Uses non-deterministic `Random.Default` | —                                            |
