@@ -10,18 +10,32 @@ import kotlin.reflect.full.createType
 /**
  * Resolves nullable Kotlin types according to the configured [NullableStrategy].
  *
+ * - **NullOnCircularReference** – delegates to the chain to resolve normally (might be null if a cycle is detected).
  * - **AlwaysNull** – always returns `null`.
- * - **NeverNull** – always resolves a non‑null value.
+ * - **NeverNull** – always resolves a non-null value.
  * - **Random** – returns `null` based on the strategy's probability.
+ *
+ * @param nullableStrategy Strategy used to decide whether nullable types should resolve to `null`.
+ * @param random Random source used by [NullableStrategy.Random].
  */
 class NullableResolver(
-    private val nullableStrategy: NullableStrategy = NullableStrategy.Random(),
+    private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
     private val random: Random
 ) : TypeResolver {
     override fun canResolve(type: KType): Boolean = type.isMarkedNullable
 
+    /**
+     * Resolves [type] according to [nullableStrategy].
+     *
+     * Strategies that choose a concrete value resolve the non-null version of [type] through [chain].
+     *
+     * @param type Nullable type to resolve.
+     * @param chain Resolver chain used to create non-null values when needed.
+     * @return `null` or a generated non-null value for [type].
+     */
     override fun resolve(type: KType, chain: ResolverChain): Any? {
         return when (nullableStrategy) {
+            is NullableStrategy.NullOnCircularReference -> createNonNullInstance(type, chain)
             is NullableStrategy.AlwaysNull -> null
             is NullableStrategy.NeverNull -> createNonNullInstance(type, chain)
             is NullableStrategy.Random -> {
@@ -35,6 +49,12 @@ class NullableResolver(
         }
     }
 
+    /**
+     * Resolves the non-null version of [type] through [chain].
+     *
+     * Circular references are still detected by [ResolverChain], which decides whether the current strategy allows
+     * the circular value to be represented as `null`.
+     */
     private fun createNonNullInstance(
         type: KType,
         chain: ResolverChain
@@ -43,6 +63,9 @@ class NullableResolver(
         return chain.resolve(nonNullType)
     }
 
+    /**
+     * Creates a copy of [type] with the nullable marker removed.
+     */
     private fun createNonNullType(type: KType): KType {
         return type.classifier?.createType(type.arguments, false) ?: type
     }

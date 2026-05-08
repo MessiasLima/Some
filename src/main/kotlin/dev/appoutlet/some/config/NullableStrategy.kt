@@ -7,6 +7,7 @@ package dev.appoutlet.some.config
  *
  * ## Available Strategies
  *
+ * - [NullOnCircularReference] – (Default) Returns `null` when a circular reference is detected for a nullable type
  * - [AlwaysNull] – Always produces `null` for nullable types
  * - [NeverNull] – Always produces non-null values for nullable types
  * - [Random] – Produces `null` based on a configurable probability
@@ -14,6 +15,9 @@ package dev.appoutlet.some.config
  * ## Example Usage
  *
  * ```kotlin
+ * // Default strategy
+ * some { nullableStrategy = NullableStrategy.NullOnCircularReference }
+ *
  * // Always generate null values
  * some { nullableStrategy = NullableStrategy.AlwaysNull }
  *
@@ -31,6 +35,15 @@ package dev.appoutlet.some.config
  * ```
  */
 sealed interface NullableStrategy {
+    /**
+     * Returns `null` when a circular reference is detected for a nullable type.
+     *
+     * This is the default strategy. It allows generating recursive data structures
+     * by resolving the recursive field to `null` when it's nullable.
+     * Non-nullable circular references still throw an exception.
+     */
+    object NullOnCircularReference : NullableStrategy
+
     /**
      * Always returns `null` for nullable types.
      *

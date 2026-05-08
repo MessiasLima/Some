@@ -71,9 +71,7 @@ class StringResolverTest {
 
     @Test
     fun `StringStrategy Random with custom length integrates with SomeConfig`() {
-        val config = SomeConfig().apply {
-            stringStrategy = StringStrategy.Random(length = 20)
-        }
+        val config = SomeConfig(stringStrategy = StringStrategy.Random(length = 20))
         val resolvers = config.buildResolvers()
         val chain = ResolverChain(resolvers)
 

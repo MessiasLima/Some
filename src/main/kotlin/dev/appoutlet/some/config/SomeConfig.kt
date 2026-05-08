@@ -35,38 +35,51 @@ import dev.appoutlet.some.resolver.ValueClassResolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
 
+/**
+ * Immutable configuration for customizing the behavior of [some][dev.appoutlet.some.some] fixture generation.
+ *
+ * Controls strategies for nullable types, strings, collections, random seeding,
+ * and custom factory registrations.
+ *
+ * Use [SomeConfigBuilder] to create instances via the DSL-style configuration lambdas,
+ * or construct directly. Use [toBuilder] to derive a new configuration from an existing one.
+ *
+ * @param nullableStrategy Strategy for handling nullable type resolution.
+ *  Defaults to [NullableStrategy.NullOnCircularReference].
+ * @param stringStrategy Strategy for generating string values. Defaults to [StringStrategy.Random].
+ * @param collectionStrategy Strategy for generating collection sizes. Defaults to [CollectionStrategy].
+ * @param seed Seed for reproducible random generation. If null, uses [Random.Default].
+ * @param factories Map of custom factory functions registered for specific types.
+ */
 data class SomeConfig(
-    var nullableStrategy: NullableStrategy = NullableStrategy.Random(),
-    var stringStrategy: StringStrategy = StringStrategy.Random(),
-    var collectionStrategy: CollectionStrategy = CollectionStrategy(),
-    var seed: Long? = null,
-    val factories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf(),
+    val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
+    val stringStrategy: StringStrategy = StringStrategy.Random(),
+    val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    val seed: Long? = null,
+    val factories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
 ) {
-    fun <T : Any> register(kClass: KClass<T>, factory: FixtureContext.() -> T) {
-        factories[kClass] = factory
-    }
-
     /**
-     * Creates a deep copy of this configuration, including a copy of the factories map
-     * to prevent shared mutable state between config instances.
+     * Creates a [SomeConfigBuilder] pre-populated with this configuration's values.
+     *
+     * Useful for deriving new configurations from an existing one without mutation.
+     *
+     * @return A [SomeConfigBuilder] containing this configuration's current state.
      */
-    fun copy(
-        nullableStrategy: NullableStrategy = this.nullableStrategy,
-        stringStrategy: StringStrategy = this.stringStrategy,
-        collectionStrategy: CollectionStrategy = this.collectionStrategy,
-        seed: Long? = this.seed,
-    ): SomeConfig {
-        return SomeConfig(
-            nullableStrategy = nullableStrategy,
-            stringStrategy = stringStrategy,
-            collectionStrategy = collectionStrategy,
-            seed = seed,
-            factories = this.factories.toMutableMap()
-        )
+    fun toBuilder(): SomeConfigBuilder = SomeConfigBuilder().apply {
+        nullableStrategy = this@SomeConfig.nullableStrategy
+        stringStrategy = this@SomeConfig.stringStrategy
+        collectionStrategy = this@SomeConfig.collectionStrategy
+        seed = this@SomeConfig.seed
+        populateFactories(this@SomeConfig.factories)
     }
 
     /**
-     * Builds the list of resolvers configured with this config's strategies and random instance.
+     * Creates the resolver chain used to generate fixture values.
+     *
+     * Resolver order defines precedence: the first resolver that supports a type is used.
+     *
+     * @param random Random source shared by resolvers that generate randomized values.
+     * @return The ordered [TypeResolver] list for this configuration.
      */
     fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
         return listOf(
@@ -103,5 +116,10 @@ data class SomeConfig(
         )
     }
 
+    /**
+     * Creates a [Random] instance for this configuration.
+     *
+     * @return [Random] seeded with [seed] if set, or [Random.Default] otherwise.
+     */
     internal fun buildRandom(): Random = seed?.let { Random(it) } ?: Random.Default
 }
