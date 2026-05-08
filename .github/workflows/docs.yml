@@ -6,6 +6,8 @@ on:
     paths:
       - zensical.toml
       - docs/**
+  workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
