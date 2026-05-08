@@ -26,7 +26,7 @@ class ResolverChain(
         get() = resolutionStack.toList()
 
     fun resolve(type: KType): Any? {
-        if (type in resolutionStack) {
+        if (resolutionStack.any { it.classifier == type.classifier }) {
             return handleCircularReference(type)
         }
 
@@ -46,7 +46,10 @@ class ResolverChain(
     }
 
     private fun handleCircularReference(type: KType): Nothing? {
-        if (type.isMarkedNullable && nullableStrategy is NullableStrategy.NullOnCircularReference) {
+        val strategyAllowsNull =  nullableStrategy is NullableStrategy.AlwaysNull ||
+                nullableStrategy is NullableStrategy.NullOnCircularReference
+
+        if (type.isMarkedNullable && strategyAllowsNull) {
             return null
         }
 

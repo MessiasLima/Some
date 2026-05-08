@@ -49,6 +49,7 @@ class CircularReferenceIntegrationTest {
         val node: Node = some<Node> {
             nullableStrategy = NullableStrategy.AlwaysNull
         }
+
         assertNull(node.next)
     }
 
