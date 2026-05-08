@@ -4,6 +4,8 @@
 
 # Some
 
+![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some?style=for-the-badge)
+
 A Kotlin JVM library that generates populated instances of any Kotlin class for testing purposes, with zero configuration required.
 
 ## The Problem

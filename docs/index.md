@@ -6,6 +6,8 @@ icon: lucide/package-open
 
 # Some
 
+![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some?style=for-the-badge)
+
 A Kotlin JVM library that generates populated instances of any Kotlin class for testing. Zero configuration required.
 
 ## The Problem
@@ -88,8 +90,11 @@ Some is open source and available under the [Apache 2.0 License](https://github.
 
 ---
 
-## A Project by [AppOutlet](https://appoutlet.dev)
 
 [![AppOutlet Logo](image/appoutlet.svg){ align=left width=128 }](https://appoutlet.dev)
 
-`Some` is developed and maintained by **AppOutlet**. You can explore our other projects on [our website](https://appoutlet.dev).
+## A Project by [AppOutlet](https://appoutlet.dev)
+
+`Some` is developed and maintained by **AppOutlet**. 
+
+You can explore our other projects on [our website](https://appoutlet.dev).
