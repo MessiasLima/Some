@@ -27,13 +27,7 @@ class ResolverChain(
 
     fun resolve(type: KType): Any? {
         if (type in resolutionStack) {
-            throw SomeCircularReferenceException(type, resolutionStack.toList())
-        }
-
-        if (nullableStrategy is NullableStrategy.NullOnCircularReference && type.isMarkedNullable) {
-            if (isCircularIgnoringNullability(type)) {
-                return null
-            }
+            return handleCircularReference(type)
         }
 
         resolutionStack.add(type)
@@ -51,11 +45,11 @@ class ResolverChain(
         }
     }
 
-    private fun isCircularIgnoringNullability(type: KType): Boolean {
-        val nonNullableType = type.classifier?.createType(type.arguments, false) ?: type
-        return resolutionStack.any {
-            val otherNonNullable = it.classifier?.createType(it.arguments, false) ?: it
-            otherNonNullable == nonNullableType
+    private fun handleCircularReference(type: KType): Nothing? {
+        if (type.isMarkedNullable && nullableStrategy is NullableStrategy.NullOnCircularReference) {
+            return null
         }
+
+        throw SomeCircularReferenceException(type, resolutionStack.toList())
     }
 }
