@@ -36,10 +36,13 @@ import kotlin.random.Random
 import kotlin.reflect.KClass
 
 /**
- * Configuration for customizing the behavior of [some] fixture generation.
+ * Immutable configuration for customizing the behavior of [some][dev.appoutlet.some.some] fixture generation.
  *
  * Controls strategies for nullable types, strings, collections, random seeding,
  * and custom factory registrations.
+ *
+ * Use [SomeConfigBuilder] to create instances via the DSL-style configuration lambdas,
+ * or construct directly. Use [toBuilder] to derive a new configuration from an existing one.
  *
  * @param nullableStrategy Strategy for handling nullable type resolution.
  *  Defaults to [NullableStrategy.NullOnCircularReference].
@@ -49,40 +52,25 @@ import kotlin.reflect.KClass
  * @param factories Map of custom factory functions registered for specific types.
  */
 data class SomeConfig(
-    var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
-    var stringStrategy: StringStrategy = StringStrategy.Random(),
-    var collectionStrategy: CollectionStrategy = CollectionStrategy(),
-    var seed: Long? = null,
-    val factories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf(),
+    val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
+    val stringStrategy: StringStrategy = StringStrategy.Random(),
+    val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    val seed: Long? = null,
+    val factories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
 ) {
-    fun <T : Any> register(kClass: KClass<T>, factory: FixtureContext.() -> T) {
-        factories[kClass] = factory
-    }
-
     /**
-     * Returns a copy of this configuration with an independent factories map.
+     * Creates a [SomeConfigBuilder] pre-populated with this configuration's values.
      *
-     * The strategy values are reused unless replacement values are provided.
+     * Useful for deriving new configurations from an existing one without mutation.
      *
-     * @param nullableStrategy Nullable strategy for the copied configuration.
-     * @param stringStrategy String strategy for the copied configuration.
-     * @param collectionStrategy Collection strategy for the copied configuration.
-     * @param seed Random seed for the copied configuration.
-     * @return A new [SomeConfig] containing the provided values and copied factory registrations.
+     * @return A [SomeConfigBuilder] containing this configuration's current state.
      */
-    fun copy(
-        nullableStrategy: NullableStrategy = this.nullableStrategy,
-        stringStrategy: StringStrategy = this.stringStrategy,
-        collectionStrategy: CollectionStrategy = this.collectionStrategy,
-        seed: Long? = this.seed,
-    ): SomeConfig {
-        return SomeConfig(
-            nullableStrategy = nullableStrategy,
-            stringStrategy = stringStrategy,
-            collectionStrategy = collectionStrategy,
-            seed = seed,
-            factories = this.factories.toMutableMap()
-        )
+    fun toBuilder(): SomeConfigBuilder = SomeConfigBuilder().apply {
+        nullableStrategy = this@SomeConfig.nullableStrategy
+        stringStrategy = this@SomeConfig.stringStrategy
+        collectionStrategy = this@SomeConfig.collectionStrategy
+        seed = this@SomeConfig.seed
+        populateFactories(this@SomeConfig.factories)
     }
 
     /**
@@ -128,5 +116,10 @@ data class SomeConfig(
         )
     }
 
+    /**
+     * Creates a [Random] instance for this configuration.
+     *
+     * @return [Random] seeded with [seed] if set, or [Random.Default] otherwise.
+     */
     internal fun buildRandom(): Random = seed?.let { Random(it) } ?: Random.Default
 }

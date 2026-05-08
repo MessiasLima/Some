@@ -26,9 +26,7 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with NeverNull strategy generates non-null values`() {
-        val config = SomeConfig().apply {
-            nullableStrategy = NullableStrategy.NeverNull
-        }
+        val config = SomeConfig(nullableStrategy = NullableStrategy.NeverNull)
         val resolvers = config.buildResolvers()
 
         repeat(1000) {
@@ -40,9 +38,7 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy can return null or value`() {
-        val config = SomeConfig().apply {
-            nullableStrategy = NullableStrategy.Random()
-        }
+        val config = SomeConfig(nullableStrategy = NullableStrategy.Random())
         val resolvers = config.buildResolvers()
 
         val results = (1..100).map { ResolverChain(resolvers).resolve(typeOf<String?>()) }
@@ -53,9 +49,7 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy and probability 0_0 always returns non-null`() {
-        val config = SomeConfig().apply {
-            nullableStrategy = NullableStrategy.Random(probability = 0.0)
-        }
+        val config = SomeConfig(nullableStrategy = NullableStrategy.Random(probability = 0.0))
         val resolvers = config.buildResolvers()
 
         repeat(1000) {
@@ -67,9 +61,7 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy and probability 1_0 always returns null`() {
-        val config = SomeConfig().apply {
-            nullableStrategy = NullableStrategy.Random(probability = 1.0)
-        }
+        val config = SomeConfig(nullableStrategy = NullableStrategy.Random(probability = 1.0))
         val resolvers = config.buildResolvers()
 
         repeat(1000) {

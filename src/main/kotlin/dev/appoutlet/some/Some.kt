@@ -1,6 +1,7 @@
 package dev.appoutlet.some
 
 import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.config.SomeConfigBuilder
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
@@ -51,8 +52,8 @@ class Some(
      * @param config Configuration overrides for this call.
      * @return Generated value of type [T].
      */
-    inline operator fun <reified T> invoke(noinline config: SomeConfig.() -> Unit = {}): T {
-        val aggregatedConfig = this.config.copy().apply(config)
+    inline operator fun <reified T> invoke(noinline config: SomeConfigBuilder.() -> Unit = {}): T {
+        val aggregatedConfig = this.config.toBuilder().apply(config).build()
         return Some(aggregatedConfig.buildResolvers(random), random, aggregatedConfig).some()
     }
 }
@@ -65,8 +66,8 @@ class Some(
  * @param config Configuration applied to the created generator.
  * @return A configured [Some] instance.
  */
-fun someSetup(config: SomeConfig.() -> Unit = {}): Some {
-    val someConfig = SomeConfig().apply(config)
+fun someSetup(config: SomeConfigBuilder.() -> Unit = {}): Some {
+    val someConfig = SomeConfigBuilder().apply(config).build()
     val random = someConfig.buildRandom()
     return Some(someConfig.buildResolvers(random), random, someConfig)
 }
@@ -99,7 +100,7 @@ inline fun <reified T> some(): T {
  * @param config Configuration applied only to this generation call.
  * @return Generated value of type [T].
  */
-inline fun <reified T> some(noinline config: SomeConfig.() -> Unit = {}): T {
+inline fun <reified T> some(noinline config: SomeConfigBuilder.() -> Unit = {}): T {
     val someSetup = someSetup(config)
     return someSetup.some<T>()
 }

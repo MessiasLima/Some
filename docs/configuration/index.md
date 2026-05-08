@@ -3,17 +3,33 @@ icon: lucide/settings
 ---
 # Configuration
 
-All configuration is done through `SomeConfig`. Every option has sensible defaults so you can start using `some()` immediately without any setup.
+All configuration is done through `SomeConfigBuilder`. Every option has sensible defaults so you can start using `some()` immediately without any setup.
 
-## The SomeConfig class
+## The SomeConfigBuilder class
+
+Configuration lambdas (`someSetup {}`, `some {}`) receive a `SomeConfigBuilder` receiver with mutable properties. Calling `build()` produces an immutable `SomeConfig`.
+
+```kotlin
+class SomeConfigBuilder {
+    var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference
+    var stringStrategy: StringStrategy = StringStrategy.Random()
+    var collectionStrategy: CollectionStrategy = CollectionStrategy()
+    var seed: Long? = null
+
+    fun <T : Any> register(kClass: KClass<T>, factory: FixtureContext.() -> T)
+    fun build(): SomeConfig
+}
+```
+
+The resulting `SomeConfig` is immutable:
 
 ```kotlin
 data class SomeConfig(
-    var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
-    var stringStrategy: StringStrategy = StringStrategy.Random(),
-    var collectionStrategy: CollectionStrategy = CollectionStrategy(),
-    var seed: Long? = null,
-    val factories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf(),
+    val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
+    val stringStrategy: StringStrategy = StringStrategy.Random(),
+    val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    val seed: Long? = null,
+    val factories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
 )
 ```
 
@@ -45,7 +61,7 @@ val user = some<User> {
 }
 ```
 
-The inline form creates a copy of the default configuration, applies your overrides, and generates a single instance — without affecting the global defaults.
+The inline form creates a new builder from the default configuration, applies your overrides, and generates a single instance — without affecting the global defaults.
 
 ### Aggregated configuration
 
@@ -64,15 +80,6 @@ val result: Person = baseSome {
 
 // baseSome still uses NeverNull
 val stillNeverNull: Person = baseSome()
-```
-
-### Copying configurations
-
-`SomeConfig.copy()` creates a new configuration with a fresh copy of the `factories` map. This prevents shared mutable factory registrations between config instances:
-
-```kotlin
-val base = SomeConfig().apply { stringStrategy = StringStrategy.Uuid }
-val custom = base.copy(seed = 999L)
 ```
 
 ## Default configuration
@@ -101,7 +108,7 @@ Internally, `SomeConfig.buildRandom()` creates a seeded `kotlin.random.Random` i
 
 ## Custom factories
 
-`SomeConfig` holds a `factories` map where you can register custom factory functions for specific types:
+`SomeConfigBuilder` provides a `register` function to add custom factory functions for specific types:
 
 ```kotlin
 val some = someSetup {

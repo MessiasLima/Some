@@ -14,9 +14,7 @@ import kotlin.test.assertTrue
 class MapResolverTest {
     @Test
     fun `MapResolver generates map with correct size`() {
-        val config = SomeConfig().apply {
-            collectionStrategy = CollectionStrategy(2..4)
-        }
+        val config = SomeConfig(collectionStrategy = CollectionStrategy(2..4))
         val resolvers = config.buildResolvers()
         val resolver = MapResolver(CollectionStrategy(2..4), Random.Default)
 

@@ -15,9 +15,7 @@ import kotlin.test.assertTrue
 class ArrayResolverTest {
     @Test
     fun `ArrayResolver generates array with correct size`() {
-        val config = SomeConfig().apply {
-            collectionStrategy = CollectionStrategy(3..5)
-        }
+        val config = SomeConfig(collectionStrategy = CollectionStrategy(3..5))
         val resolvers = config.buildResolvers()
         val resolver = ArrayResolver(CollectionStrategy(3..5), Random.Default)
 
