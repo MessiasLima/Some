@@ -35,6 +35,18 @@ import dev.appoutlet.some.resolver.ValueClassResolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
 
+/**
+ * Configuration for customizing the behavior of [some] fixture generation.
+ *
+ * Controls strategies for nullable types, strings, collections, random seeding,
+ * and custom factory registrations.
+ *
+ * @param nullableStrategy Strategy for handling nullable type resolution. Defaults to [NullableStrategy.NullOnCircularReference].
+ * @param stringStrategy Strategy for generating string values. Defaults to [StringStrategy.Random].
+ * @param collectionStrategy Strategy for generating collection sizes. Defaults to [CollectionStrategy].
+ * @param seed Seed for reproducible random generation. If null, uses [Random.Default].
+ * @param factories Map of custom factory functions registered for specific types.
+ */
 data class SomeConfig(
     var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
     var stringStrategy: StringStrategy = StringStrategy.Random(),
@@ -47,8 +59,15 @@ data class SomeConfig(
     }
 
     /**
-     * Creates a deep copy of this configuration, including a copy of the factories map
-     * to prevent shared mutable state between config instances.
+     * Returns a copy of this configuration with an independent factories map.
+     *
+     * The strategy values are reused unless replacement values are provided.
+     *
+     * @param nullableStrategy Nullable strategy for the copied configuration.
+     * @param stringStrategy String strategy for the copied configuration.
+     * @param collectionStrategy Collection strategy for the copied configuration.
+     * @param seed Random seed for the copied configuration.
+     * @return A new [SomeConfig] containing the provided values and copied factory registrations.
      */
     fun copy(
         nullableStrategy: NullableStrategy = this.nullableStrategy,
@@ -66,7 +85,12 @@ data class SomeConfig(
     }
 
     /**
-     * Builds the list of resolvers configured with this config's strategies and random instance.
+     * Creates the resolver chain used to generate fixture values.
+     *
+     * Resolver order defines precedence: the first resolver that supports a type is used.
+     *
+     * @param random Random source shared by resolvers that generate randomized values.
+     * @return The ordered [TypeResolver] list for this configuration.
      */
     fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
         return listOf(
