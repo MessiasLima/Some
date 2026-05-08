@@ -26,7 +26,7 @@ class ResolverChain(
         get() = resolutionStack.toList()
 
     fun resolve(type: KType): Any? {
-        if (resolutionStack.any { it.classifier == type.classifier }) {
+        if (detectCircularReference(type)) {
             return handleCircularReference(type)
         }
 
@@ -42,6 +42,17 @@ class ResolverChain(
             throw SomeUnresolvableTypeException(type)
         } finally {
             resolutionStack.removeAt(resolutionStack.lastIndex)
+        }
+    }
+
+    private fun detectCircularReference(type: KType): Boolean {
+        val sameClassifierDetected = resolutionStack.any { it.classifier == type.classifier }
+
+        return when {
+            sameClassifierDetected.not() -> false
+            type.isMarkedNullable -> true
+            resolutionStack.last().isMarkedNullable -> false
+            else -> true
         }
     }
 
