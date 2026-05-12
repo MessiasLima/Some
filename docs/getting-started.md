@@ -5,7 +5,7 @@ icon: lucide/graduation-cap
 
 ## Installation
 
-Add the `some` library to your build file. It is available on Maven Central.
+Add the `some` library to your test dependencies. It is available on Maven Central.
 
 ![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some?style=for-the-badge)
 
@@ -14,13 +14,13 @@ Replace `{version}` with the latest release shown in the badge above.
 === "Gradle (Kotlin DSL)"
 
     ```kotlin
-    implementation("dev.appoutlet:some:{version}")
+    testImplementation("dev.appoutlet:some:{version}")
     ```
 
 === "Gradle (Groovy)"
 
     ```groovy
-    implementation 'dev.appoutlet:some:{version}'
+    testImplementation 'dev.appoutlet:some:{version}'
     ```
 
 === "Maven"
@@ -30,6 +30,7 @@ Replace `{version}` with the latest release shown in the badge above.
       <groupId>dev.appoutlet</groupId>
       <artifactId>some</artifactId>
       <version>{version}</version>
+      <scope>test</scope>
     </dependency>
     ```
 

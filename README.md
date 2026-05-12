@@ -35,6 +35,14 @@ val user = some<User>()
 - **Fine-grained control** — Override how specific fields are generated: control nullable probability, string format, collection sizes, or register custom factories for types.
 - **Deterministic by choice** — Set a seed for reproducible test data across runs, or default to random for variation.
 
+## Installation
+
+Add Some to your Gradle dependencies:
+
+```kotlin
+testImplementation("dev.appoutlet:some:<latest-version>")
+```
+
 ## Documentation
 
 📖 Read the full documentation at **[some.appoutlet.dev](https://some.appoutlet.dev)** for installation, configuration, and advanced usage.
