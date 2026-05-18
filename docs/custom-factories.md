@@ -1,18 +1,25 @@
 ---
 icon: lucide/factory
 ---
-# Custom Factories
+# Type and Property Factories
 
-Register custom factory functions to override how specific types are generated. Factories let you pin certain types to known values, random ranges, or format rules — useful for test scenarios where you need deterministic or domain-specific data.
+Factories let you override generated values when the built-in resolvers are too broad for a test or too generic for your domain. Some supports two levels of overrides: **type factories** and **property factories**.
 
-## Basic registration
+Use a **type factory** when every occurrence of a type should be generated in a custom way. Use a **property factory** when only one constructor property should be overridden and every other property should keep using normal generation.
 
-Use `register` inside a `some {}` block to override how a type is generated for a single call.
+| Factory | API | Scope | Typical use |
+|---------|-----|-------|-------------|
+| Type factory | `register(MyType::class) { ... }` | Every generated value of `MyType` | Value objects, primitives in a scenario, third-party types |
+| Property factory | `property(User::email) { ... }` | One constructor property on one class | Stable IDs, readable names, one field in a large object |
+
+## Type factories
+
+Use `register` inside a `some {}` or `someSetup {}` block to override how a type is generated.
 
 ```kotlin
 data class Product(val name: String, val price: Int)
 
-val someProduct = some<Product> {
+val product = some<Product> {
     register(String::class) { "custom-value" }
     register(Int::class) { 42 }
 }
@@ -20,40 +27,17 @@ val someProduct = some<Product> {
 // Product(name=custom-value, price=42)
 ```
 
-Custom factories take priority over built-in resolvers. When a type has a registered factory, the resolver chain is bypassed entirely for that type.
+Type factories take priority over built-in resolvers. When a type has a registered type factory, Some invokes that factory directly instead of continuing through the resolver chain.
 
-## Using FixtureContext
+This means a type factory is intentionally broad. In the example above, every `String` needed while generating `Product` becomes `"custom-value"`, not only `Product.name`.
 
-The factory lambda receives a `FixtureContext` receiver that exposes the current configuration. This lets your factory adapt to settings like string strategy, nullable behavior, and collection sizes without hardcoding them.
+## Domain type factories
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `random` | `Random` | Random instance (respects `seed`) |
-| `nullableStrategy` | `NullableStrategy` | Current nullable strategy |
-| `stringStrategy` | `StringStrategy` | Current string strategy |
-| `collectionStrategy` | `CollectionStrategy` | Current collection strategy |
-
-```kotlin
-val someWithFixture = someSetup {
-    
-    register(String::class) {
-        when (stringStrategy) {
-            is StringStrategy.Random -> "val-${random.nextInt(1000)}"
-            is StringStrategy.Uuid -> "custom-${random.nextLong()}"
-            is StringStrategy.Readable -> "cfg-${random.nextInt(9000) + 1000}"
-        }
-    }
-    
-    register(Int::class) { random.nextInt(1, 100) }
-}
-```
-
-## Custom factories for your types
-
-Beyond primitives, you can register factories for your own domain types. This is useful for types that need specific construction rules, like value objects with validation constraints.
+Type factories are useful for domain types that need validation, formatting, or construction rules that Some cannot infer from the constructor alone.
 
 ```kotlin
 data class Email(val value: String)
+data class Account(val email: Email, val name: String)
 
 val someWithEmail = someSetup {
     register(Email::class) {
@@ -61,37 +45,106 @@ val someWithEmail = someSetup {
     }
 }
 
-data class Account(val email: Email, val name: String)
 val account = someWithEmail<Account>()
 // Account(email=Email(user42@example.com), name=asdkjfh)
 ```
 
-When `Account` is generated, `Email` is resolved by the custom factory while `name` (a plain `String`) falls through to the built-in string resolver.
+When `Account` is generated, `Email` is resolved by the type factory while `name` falls through to the built-in `String` resolver.
 
-## Aggregated config preserves base factories
+## Property factories
 
-When you call an existing `someSetup` with additional overrides, the original configuration is **snapshot** — subsequent calls to the base instance are unaffected. This lets you create a shared base config and layer overrides per test without side effects.
+Use `property` when you only want to override one property. The rest of the object is still generated normally.
 
 ```kotlin
-val baseSome = someSetup {
-    register(String::class) { "base-string" }
+data class User(
+    val id: Int,
+    val name: String,
+    val role: String,
+    val age: Int = 25
+)
+
+val user = some<User> {
+    property(User::name) { "Alice" }
+    property(User::role) { "Admin" }
 }
 
-// Override String factory just for this call
-val overridden: Product = baseSome {
-    register(String::class) { "overridden" }
-}
-// overridden.name == "overridden"
-// overridden.price is generated normally (Int resolves via built-in resolver)
-
-// Base config is unchanged — subsequent calls still use "base-string"
-val stillBase: Product = baseSome()
-// stillBase.name == "base-string"
-
-// Even the overridden call's scope is isolated from others
-val anotherOverride: Product = baseSome {
-    register(Int::class) { 99 }
-}
-// anotherOverride.price == 99
-// anotherOverride.name == "base-string"
+// User(id=834920, name=Alice, role=Admin, age=25)
 ```
+
+Property factories are matched by the owning class and property name. They are applied while Some calls the primary constructor, so optional constructor parameters that are not overridden can still use their Kotlin default values.
+
+## Type factory vs property factory
+
+If both a type factory and property factory could affect the same generated class, the type factory wins. This happens because type factories are resolved before Some reaches data-class constructor generation.
+
+```kotlin
+data class User(val name: String, val role: String)
+
+val user = some<User> {
+    register(User::class) {
+        User(name = "TypeFactory", role = "TypeFactory role")
+    }
+
+    property(User::name) { "PropertyFactory" }
+}
+
+// user.name == "TypeFactory"
+```
+
+The `User` type factory builds the whole `User`, so the `User::name` property factory is never used for that generation.
+
+## Using FixtureContext
+
+Both type factories and property factories receive a `FixtureContext` receiver. Use it to respect the current configuration instead of hardcoding every detail.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `random` | `Random` | Random instance, including the configured `seed` |
+| `resolutionStack` | `List<KType>` | Types currently being resolved |
+| `nullableStrategy` | `NullableStrategy` | Current nullable strategy |
+| `stringStrategy` | `StringStrategy` | Current string strategy |
+| `collectionStrategy` | `CollectionStrategy` | Current collection sizing strategy |
+
+```kotlin
+data class Customer(val id: String, val age: Int)
+
+val customer = some<Customer> {
+    property(Customer::id) {
+        when (stringStrategy) {
+            is StringStrategy.Random -> "customer-${random.nextInt(1000)}"
+            is StringStrategy.Uuid -> "customer-${random.nextLong()}"
+            is StringStrategy.Readable -> "customer-${random.nextInt(9000) + 1000}"
+        }
+    }
+
+    register(Int::class) { random.nextInt(18, 100) }
+}
+```
+
+## Reusable setup
+
+Use `someSetup` when the same factories should be shared across multiple generated values.
+
+```kotlin
+val someWithDefaults = someSetup {
+    register(String::class) { "base-string" }
+    property(User::role) { "Member" }
+}
+
+val user = someWithDefaults<User>()
+val product = someWithDefaults<Product>()
+```
+
+You can still override a reusable setup for one call. The base configuration is copied before the inline overrides are applied, so later calls to the base instance are unchanged.
+
+```kotlin
+val overriddenUser = someWithDefaults<User> {
+    property(User::name) { "Bob" }
+}
+
+val stillBase = someWithDefaults<User>()
+```
+
+## Choosing the right override
+
+Prefer property factories for test readability when only one field matters. Prefer type factories when a type has domain rules, validation constraints, or a value format that should be consistent wherever that type appears.

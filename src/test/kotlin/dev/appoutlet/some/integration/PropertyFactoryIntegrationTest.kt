@@ -78,7 +78,7 @@ class PropertyFactoryIntegrationTest {
     @Test
     fun `should silently ignore property factory for non-existent property`() {
         // This is tricky to test with KProperty1 since it's type-safe.
-        // However, we can simulate what happens if a factory is registered for another class
+        // However, we can simulate what happens if a property factory is registered for another class
         // but somehow ends up in the map for this class, or just ensure it doesn't crash.
 
         val user = some<User> {

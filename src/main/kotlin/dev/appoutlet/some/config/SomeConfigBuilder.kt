@@ -37,24 +37,24 @@ class SomeConfigBuilder {
      */
     var seed: Long? = null
 
-    private val _factories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf()
+    private val _typeFactories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf()
     private val _propertyFactories: MutableMap<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = mutableMapOf()
 
     /**
-     * Registers a custom factory function for type [T].
+     * Registers a custom type factory function for type [T].
      *
-     * Custom factories take priority over built-in resolvers.
+     * Custom type factories take priority over built-in resolvers.
      *
-     * @param T The type this factory produces.
+     * @param T The type this type factory produces.
      * @param kClass The [KClass] of the type to override.
-     * @param factory Lambda receiving a [FixtureContext] and returning a value of type [T].
+     * @param typeFactory Lambda receiving a [FixtureContext] and returning a value of type [T].
      */
-    fun <T : Any> register(kClass: KClass<T>, factory: FixtureContext.() -> T) {
-        _factories[kClass] = factory
+    fun <T : Any> register(kClass: KClass<T>, typeFactory: FixtureContext.() -> T) {
+        _typeFactories[kClass] = typeFactory
     }
 
     /**
-     * Registers a custom factory function for a specific property of class [T].
+     * Registers a custom property factory function for a specific property of class [T].
      *
      * @param T The class containing the property.
      * @param V The type of the property.
@@ -68,14 +68,14 @@ class SomeConfigBuilder {
     }
 
     /**
-     * Populates the builder's factory map with entries from an existing map.
+     * Populates the builder's type factory map with entries from an existing map.
      *
-     * Used internally by [SomeConfig.toBuilder] to transfer factory registrations.
+     * Used internally by [SomeConfig.toBuilder] to transfer type factory registrations.
      *
-     * @param factories Map of factory registrations to copy into this builder.
+     * @param typeFactories Map of type factory registrations to copy into this builder.
      */
-    internal fun populateFactories(factories: Map<KClass<*>, FixtureContext.() -> Any?>) {
-        _factories.putAll(factories)
+    internal fun populateTypeFactories(typeFactories: Map<KClass<*>, FixtureContext.() -> Any?>) {
+        _typeFactories.putAll(typeFactories)
     }
 
     /**
@@ -101,7 +101,7 @@ class SomeConfigBuilder {
         stringStrategy = stringStrategy,
         collectionStrategy = collectionStrategy,
         seed = seed,
-        factories = _factories.toMap(),
+        typeFactories = _typeFactories.toMap(),
         propertyFactories = _propertyFactories.toMap()
     )
 }

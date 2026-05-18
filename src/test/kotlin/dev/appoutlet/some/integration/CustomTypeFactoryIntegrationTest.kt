@@ -5,9 +5,9 @@ import dev.appoutlet.some.someSetup
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class CustomFactoryIntegrationTest {
+class CustomTypeFactoryIntegrationTest {
     @Test
-    fun `custom factory overrides built-in resolver`() {
+    fun `custom type factory overrides built-in resolver`() {
         val customSome = someSetup {
             register(String::class) { "custom-value" }
         }
@@ -18,10 +18,10 @@ class CustomFactoryIntegrationTest {
     }
 
     @Test
-    fun `aggregated configs work with custom factories`() {
+    fun `aggregated configs work with custom type factories`() {
         data class Product(val name: String, val price: Double)
 
-        // Base config with custom factory
+        // Base config with custom type factory
         val baseSome = someSetup {
             register(String::class) { "base-string" }
         }
@@ -29,14 +29,14 @@ class CustomFactoryIntegrationTest {
         val result1: Product = baseSome()
         assertEquals("base-string", result1.name)
 
-        // Aggregate with another custom factory - should override in the aggregated config
+        // Aggregate with another custom type factory - should override in the aggregated config
         // This should NOT mutate the base config
         val result2: Product = baseSome {
             register(String::class) { "overridden-string" }
         }
         assertEquals("overridden-string", result2.name)
 
-        // Base config should NOT be mutated, so it will still use the original factory
+        // Base config should NOT be mutated, so it will still use the original type factory
         val result3: Product = baseSome()
         assertEquals("base-string", result3.name)
     }

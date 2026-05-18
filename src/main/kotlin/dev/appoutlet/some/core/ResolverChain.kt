@@ -22,7 +22,7 @@ class ResolverChain(
 
     /**
      * Returns an immutable snapshot of the current resolution stack.
-     * Used by CustomFactoryResolver to provide context to user factories.
+     * Used by CustomTypeFactoryResolver to provide context to user type factories.
      */
     val stack: List<KType>
         get() = resolutionStack.toList()

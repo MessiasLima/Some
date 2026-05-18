@@ -3,41 +3,35 @@ icon: lucide/settings
 ---
 # Configuration
 
-All configuration is done through `SomeConfigBuilder`. Every option has sensible defaults so you can start using `some()` immediately without any setup.
+Some works with no configuration, but each generation call can be customized when a test needs deterministic output, different null behavior, readable strings, fixed collection sizes, or custom factories.
 
-## The SomeConfigBuilder class
-
-Configuration lambdas (`someSetup {}`, `some {}`) receive a `SomeConfigBuilder` receiver with mutable properties. Calling `build()` produces an immutable `SomeConfig`.
+Configuration is written inside `some {}` or `someSetup {}` blocks. Set options directly in the block:
 
 ```kotlin
-class SomeConfigBuilder {
-    var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference
-    var stringStrategy: StringStrategy = StringStrategy.Random()
-    var collectionStrategy: CollectionStrategy = CollectionStrategy()
-    var seed: Long? = null
-
-    fun <T : Any> register(kClass: KClass<T>, factory: FixtureContext.() -> T)
-    fun build(): SomeConfig
+val user = some<User> {
+    seed = 12345L
+    stringStrategy = StringStrategy.Readable
+    nullableStrategy = NullableStrategy.NeverNull
+    collectionStrategy = CollectionStrategy(3..7)
 }
 ```
 
-The resulting `SomeConfig` is immutable:
+## One-Off Configuration
+
+Use `some<T> { ... }` when a configuration only applies to one generated value.
 
 ```kotlin
-data class SomeConfig(
-    val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
-    val stringStrategy: StringStrategy = StringStrategy.Random(),
-    val collectionStrategy: CollectionStrategy = CollectionStrategy(),
-    val seed: Long? = null,
-    val factories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
-)
+val user = some<User> {
+    nullableStrategy = NullableStrategy.AlwaysNull
+    stringStrategy = StringStrategy.Readable
+}
 ```
 
-## Creating configuration objects
+Inline configuration does not change the defaults used by later `some<T>()` calls.
 
-### Global configuration with `someSetup`
+## Reusable Configuration
 
-Use `someSetup {}` to create a reusable `Some` instance with a shared configuration:
+Use `someSetup { ... }` when many generated values should share the same configuration.
 
 ```kotlin
 val some = someSetup {
@@ -50,50 +44,38 @@ val user = some<User>()
 val order = some<Order>()
 ```
 
-### Inline configuration with `some {}`
+This is useful in test suites where several fixtures should follow the same rules.
 
-Pass a configuration lambda directly to `some()` for one-off overrides:
+## Per-Call Overrides
 
-```kotlin
-val user = some<User> {
-    nullableStrategy = NullableStrategy.AlwaysNull
-    stringStrategy = StringStrategy.Readable
-}
-```
-
-The inline form creates a new builder from the default configuration, applies your overrides, and generates a single instance — without affecting the global defaults.
-
-### Aggregated configuration
-
-You can override configuration on a per-call basis without mutating the base instance:
+Reusable configurations can be overridden for a single call. The base instance is copied before the override is applied, so later calls still use the original setup.
 
 ```kotlin
 val baseSome = someSetup {
-    seed = 42L
     nullableStrategy = NullableStrategy.NeverNull
+    stringStrategy = StringStrategy.Readable
 }
 
-// Override for a single call — base config is NOT mutated
 val result: Person = baseSome {
     nullableStrategy = NullableStrategy.AlwaysNull
 }
 
-// baseSome still uses NeverNull
+// baseSome still uses NeverNull and Readable strings
 val stillNeverNull: Person = baseSome()
 ```
 
-## Default configuration
+## Defaults
 
-| Property | Default | Description | Docs                                         |
-|----------|---------|-------------|----------------------------------------------|
-| `nullableStrategy` | `NullableStrategy.NullOnCircularReference` | `null` for nullable circular references | [NullableStrategy](nullable-strategy.md)     |
-| `stringStrategy` | `StringStrategy.Random()` | Random lowercase alphabetic, 8 characters | [StringStrategy](string-strategy.md)         |
-| `collectionStrategy` | `CollectionStrategy()` | Collections of 1 to 5 elements | [CollectionStrategy](collection-strategy.md) |
-| `seed` | `null` | Uses non-deterministic `Random.Default` | —                                            |
+| Option | Default | Description | More |
+|--------|---------|-------------|------|
+| `nullableStrategy` | `NullableStrategy.NullOnCircularReference` | Emits `null` for nullable circular references | [NullableStrategy](nullable-strategy.md) |
+| `stringStrategy` | `StringStrategy.Random()` | Random lowercase alphabetic strings | [StringStrategy](string-strategy.md) |
+| `collectionStrategy` | `CollectionStrategy()` | Collections with 1 to 5 elements | [CollectionStrategy](collection-strategy.md) |
+| `seed` | `null` | Uses non-deterministic `Random.Default` | — |
 
-## Seed
+## Reproducible Data
 
-Setting `seed` produces deterministic output — the same seed always generates the same values:
+Set `seed` when a test should produce the same values every run.
 
 ```kotlin
 val some1 = someSetup { seed = 12345L }
@@ -102,19 +84,43 @@ val some2 = someSetup { seed = 12345L }
 some1<User>() == some2<User>()  // true
 ```
 
-Without a seed, `Random.Default` is used, meaning each generation produces different random values.
+Without a seed, values can vary between runs.
 
-Internally, `SomeConfig.buildRandom()` creates a seeded `kotlin.random.Random` if `seed` is set, or falls back to `Random.Default`.
+## Common Recipes
 
-## Custom factories
-
-`SomeConfigBuilder` provides a `register` function to add custom factory functions for specific types:
+### No Null Values
 
 ```kotlin
-val some = someSetup {
-    register(Email::class) { Email("${some<String>()}@example.com") }
-    register(CustomerId::class) { CustomerId(some<UUID>().toString()) }
+val user = some<User> {
+    nullableStrategy = NullableStrategy.NeverNull
 }
 ```
 
-See [Custom Factories](../custom-factories.md) for detailed documentation.
+### Readable Strings
+
+```kotlin
+val user = some<User> {
+    stringStrategy = StringStrategy.Readable
+}
+```
+
+### Fixed Collection Sizes
+
+```kotlin
+val order = some<Order> {
+    collectionStrategy = CollectionStrategy(2..2)
+}
+```
+
+### Custom Factories
+
+Use `register` to customize a whole type, and `property` to customize one constructor property.
+
+```kotlin
+val some = someSetup {
+    register(Email::class) { Email("user${random.nextInt(1000)}@example.com") }
+    property(User::role) { "Admin" }
+}
+```
+
+See [Type and Property Factories](../custom-factories.md) for detailed documentation.

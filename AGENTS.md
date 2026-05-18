@@ -108,7 +108,7 @@ class MyTypeResolverTest {
 
 ### Resolver Registration Order (in SomeConfig)
 Order matters - first match wins:
-1. CustomFactoryResolver (user overrides)
+1. CustomTypeFactoryResolver (user overrides)
 2. NullableResolver
 3. ObjectResolver, EnumResolver, SealedClassResolver, ValueClassResolver
 4. Primitive resolvers (String, Int, Long, etc.)
@@ -116,4 +116,3 @@ Order matters - first match wins:
 6. **Java types SECOND** (JavaUuidResolver, JavaInstantResolver, JavaDurationResolver)
 7. Collection resolvers (List, Set, Map, Array)
 8. DataClassResolver (fallback for data classes)
-

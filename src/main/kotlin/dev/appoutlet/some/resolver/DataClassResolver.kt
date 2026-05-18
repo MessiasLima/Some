@@ -79,8 +79,8 @@ class DataClassResolver(
      *
      * Property factories take precedence over generated values and receive a [FixtureContext] containing the current
      * random source, resolution stack, and configured generation strategies. Required parameters without custom
-     * factories are delegated back to [chain], while optional parameters are left out of the argument map so their
-     * Kotlin default values are preserved.
+     * property factories are delegated back to [chain], while optional parameters are left out of the argument map so
+     * their Kotlin default values are preserved.
      *
      * @param type Class type to instantiate.
      * @param chain Resolver chain used to generate required constructor parameter values.
