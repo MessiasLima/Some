@@ -32,7 +32,7 @@ val user = some<User>()
 - **Zero configuration** — `some<T>()` generates a complete instance right out of the box. No builders, no factories, no setup.
 - **Universal type support** — Works with data classes, sealed classes/interfaces, object singletons, value classes, generics, and all standard collections. If Kotlin can represent it, Some can generate it.
 - **Nested and recursive structures** — Handles deeply nested data classes, circular references, and recursive sealed class hierarchies without infinite loops.
-- **Fine-grained control** — Override how specific fields are generated: control nullable probability, string format, collection sizes, or register custom factories for types.
+- **Fine-grained control** — Override how specific fields are generated: control nullable probability, string format, collection sizes, register custom type factories for types, or use property factories for individual fields.
 - **Deterministic by choice** — Set a seed for reproducible test data across runs, or default to random for variation.
 
 ## Installation

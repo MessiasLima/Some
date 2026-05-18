@@ -50,7 +50,7 @@ For types not listed here, register a [custom factory](custom-factories.md).
 
 ## Custom types
 
-Classes that don't have a primary constructor, require special construction logic, or are third-party types need a custom factory:
+Classes that don't have a primary constructor, require special construction logic, or are third-party types need a custom type factory:
 
 ```kotlin
 data class Email(val value: String)
@@ -60,4 +60,4 @@ someSetup {
 }
 ```
 
-See [Custom Factories](custom-factories.md) for more.
+See [Type and Property Factories](custom-factories.md) for more.
