@@ -1,14 +1,25 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.config.CollectionStrategy
+import dev.appoutlet.some.config.NullableStrategy
+import dev.appoutlet.some.config.StringStrategy
+import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
+import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 
-class DataClassResolver : TypeResolver {
+class DataClassResolver(
+    private val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
+    private val random: Random = Random.Default,
+    private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
+    private val stringStrategy: StringStrategy = StringStrategy.Random(),
+    private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+) : TypeResolver {
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
 
@@ -39,12 +50,25 @@ class DataClassResolver : TypeResolver {
         val typeArgMap = buildTypeArgMap(kClass, type)
 
         val args = constructor.parameters
-            .filter { !it.isOptional }
-            .associateWith { param ->
-                val paramType = param.type
-                val resolvedType = typeArgMap[paramType.toString()] ?: paramType
-                chain.resolve(resolvedType)
-            }
+            .mapNotNull { param ->
+                val propertyFactory = propertyFactories[kClass to param.name]
+                if (propertyFactory != null) {
+                    val context = FixtureContext(
+                        random = random,
+                        resolutionStack = chain.stack,
+                        nullableStrategy = nullableStrategy,
+                        stringStrategy = stringStrategy,
+                        collectionStrategy = collectionStrategy
+                    )
+                    param to propertyFactory.invoke(context)
+                } else if (!param.isOptional) {
+                    val paramType = param.type
+                    val resolvedType = typeArgMap[paramType.toString()] ?: paramType
+                    param to chain.resolve(resolvedType)
+                } else {
+                    null
+                }
+            }.toMap()
 
         return constructor.callBy(args)
     }

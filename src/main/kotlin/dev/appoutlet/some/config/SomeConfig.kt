@@ -57,6 +57,7 @@ data class SomeConfig(
     val collectionStrategy: CollectionStrategy = CollectionStrategy(),
     val seed: Long? = null,
     val factories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
+    val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
 ) {
     /**
      * Creates a [SomeConfigBuilder] pre-populated with this configuration's values.
@@ -71,6 +72,7 @@ data class SomeConfig(
         collectionStrategy = this@SomeConfig.collectionStrategy
         seed = this@SomeConfig.seed
         populateFactories(this@SomeConfig.factories)
+        populatePropertyFactories(this@SomeConfig.propertyFactories)
     }
 
     /**
@@ -112,7 +114,13 @@ data class SomeConfig(
             SetResolver(collectionStrategy, random),
             MapResolver(collectionStrategy, random),
             ArrayResolver(collectionStrategy, random),
-            DataClassResolver()
+            DataClassResolver(
+                propertyFactories = propertyFactories,
+                random = random,
+                nullableStrategy = nullableStrategy,
+                stringStrategy = stringStrategy,
+                collectionStrategy = collectionStrategy
+            )
         )
     }
 
