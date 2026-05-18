@@ -49,18 +49,19 @@ class DataClassResolver(
 
         val typeArgMap = buildTypeArgMap(kClass, type)
 
+        val context = FixtureContext(
+            random = random,
+            resolutionStack = chain.stack,
+            nullableStrategy = nullableStrategy,
+            stringStrategy = stringStrategy,
+            collectionStrategy = collectionStrategy
+        )
+
         val args = constructor.parameters
             .mapNotNull { param ->
                 val propertyFactory = propertyFactories[kClass to param.name]
                 if (propertyFactory != null) {
-                    val context = FixtureContext(
-                        random = random,
-                        resolutionStack = chain.stack,
-                        nullableStrategy = nullableStrategy,
-                        stringStrategy = stringStrategy,
-                        collectionStrategy = collectionStrategy
-                    )
-                    param to propertyFactory.invoke(context)
+                    param to propertyFactory(context)
                 } else if (!param.isOptional) {
                     val paramType = param.type
                     val resolvedType = typeArgMap[paramType.toString()] ?: paramType

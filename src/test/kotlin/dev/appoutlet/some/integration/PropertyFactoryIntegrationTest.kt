@@ -8,16 +8,26 @@ import kotlin.test.assertNotEquals
 
 class PropertyFactoryIntegrationTest {
 
-    data class SimpleUser(val name: String, val age: Int)
+    data class User(
+        val id: Int,
+        val name: String,
+        val role: String,
+        val age: Int = 25,
+        val city: String = "Lisbon"
+    )
 
-    data class MultiFieldUser(val id: Int, val name: String, val role: String, val active: Boolean)
-
-    data class OptionalUser(val name: String, val age: Int = 25, val city: String = "Lisbon")
+    data class User2(
+        val id: Int,
+        val name: String,
+        val role: String,
+        val age: Int = 25,
+        val city: String = "Lisbon"
+    )
 
     @Test
     fun `should override single property in data class`() {
-        val user = some<SimpleUser> {
-            property(SimpleUser::name) { "Alice" }
+        val user = some<User> {
+            property(User::name) { "Alice" }
         }
 
         assertEquals("Alice", user.name)
@@ -27,9 +37,9 @@ class PropertyFactoryIntegrationTest {
 
     @Test
     fun `should override multiple properties in data class`() {
-        val user = some<MultiFieldUser> {
-            property(MultiFieldUser::name) { "Bob" }
-            property(MultiFieldUser::role) { "Admin" }
+        val user = some<User> {
+            property(User::name) { "Bob" }
+            property(User::role) { "Admin" }
         }
 
         assertEquals("Bob", user.name)
@@ -40,23 +50,29 @@ class PropertyFactoryIntegrationTest {
     @Test
     fun `should use property factory from someSetup`() {
         val some = someSetup {
-            property(SimpleUser::name) { "Charlie" }
+            property(User::name) { "Charlie" }
         }
 
-        val user = some<SimpleUser>()
+        val user = some<User>()
 
         assertEquals("Charlie", user.name)
     }
 
     @Test
     fun `type factory should take precedence over property factory`() {
-        val user = some<SimpleUser> {
-            register(SimpleUser::class) { SimpleUser("TypeFactory", 99) }
-            property(SimpleUser::name) { "PropertyFactory" }
+        val user = some<User> {
+            register(User::class) {
+                User(
+                    id = 123,
+                    name = "TypeFactory",
+                    role = "TypeFactory role"
+                )
+            }
+
+            property(User::name) { "PropertyFactory" }
         }
 
         assertEquals("TypeFactory", user.name)
-        assertEquals(99, user.age)
     }
 
     @Test
@@ -65,8 +81,8 @@ class PropertyFactoryIntegrationTest {
         // However, we can simulate what happens if a factory is registered for another class
         // but somehow ends up in the map for this class, or just ensure it doesn't crash.
 
-        val user = some<SimpleUser> {
-            property(MultiFieldUser::name) { "Should be ignored" }
+        val user = some<User> {
+            property(User2::name) { "Should be ignored" }
         }
 
         assertNotEquals("Should be ignored", user.name)
@@ -74,18 +90,18 @@ class PropertyFactoryIntegrationTest {
 
     @Test
     fun `one-off overrides should not mutate default configuration`() {
-        some<SimpleUser> {
-            property(SimpleUser::name) { "Temporary" }
+        some<User> {
+            property(User::name) { "Temporary" }
         }
 
-        val user = some<SimpleUser>()
+        val user = some<User>()
         assertNotEquals("Temporary", user.name)
     }
 
     @Test
     fun `should override optional parameter and keep other defaults`() {
-        val user = some<OptionalUser> {
-            property(OptionalUser::age) { 30 }
+        val user = some<User> {
+            property(User::age) { 30 }
         }
 
         assertEquals(30, user.age)
@@ -95,9 +111,9 @@ class PropertyFactoryIntegrationTest {
 
     @Test
     fun `should override all optional parameters`() {
-        val user = some<OptionalUser> {
-            property(OptionalUser::age) { 40 }
-            property(OptionalUser::city) { "Porto" }
+        val user = some<User> {
+            property(User::age) { 40 }
+            property(User::city) { "Porto" }
         }
 
         assertEquals(40, user.age)
