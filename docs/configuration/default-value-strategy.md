@@ -20,7 +20,7 @@ val user = some<User> {
 user.role // "guest"
 ```
 
-This is the default strategy and ensures backward compatibility.
+This is the default strategy.
 
 ### `Generate`
 
