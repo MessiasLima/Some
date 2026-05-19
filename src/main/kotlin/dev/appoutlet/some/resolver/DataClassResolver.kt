@@ -1,6 +1,7 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
+import dev.appoutlet.some.config.DefaultValueStrategy
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.FixtureContext
@@ -34,6 +35,7 @@ import kotlin.reflect.full.primaryConstructor
  * @param nullableStrategy Nullable handling strategy exposed to property factories through [FixtureContext].
  * @param stringStrategy String generation strategy exposed to property factories through [FixtureContext].
  * @param collectionStrategy Collection sizing strategy exposed to property factories through [FixtureContext].
+ * @param defaultValueStrategy Strategy for handling constructor defaults.
  */
 class DataClassResolver(
     private val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
@@ -41,6 +43,7 @@ class DataClassResolver(
     private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
     private val stringStrategy: StringStrategy = StringStrategy.Random(),
     private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    private val defaultValueStrategy: DefaultValueStrategy = DefaultValueStrategy.UseDefault,
 ) : TypeResolver {
     /**
      * Returns whether [type] can be instantiated by this resolver.
@@ -99,15 +102,18 @@ class DataClassResolver(
             resolutionStack = chain.stack,
             nullableStrategy = nullableStrategy,
             stringStrategy = stringStrategy,
-            collectionStrategy = collectionStrategy
+            collectionStrategy = collectionStrategy,
+            defaultValueStrategy = defaultValueStrategy,
         )
 
         val args = constructor.parameters
             .mapNotNull { param ->
                 val propertyFactory = propertyFactories[kClass to param.name]
+                val shouldGenerate = !param.isOptional || defaultValueStrategy == DefaultValueStrategy.Generate
+
                 if (propertyFactory != null) {
                     param to propertyFactory(context)
-                } else if (!param.isOptional) {
+                } else if (shouldGenerate) {
                     val paramType = param.type
                     val resolvedType = typeArgMap[paramType.toString()] ?: paramType
                     param to chain.resolve(resolvedType)

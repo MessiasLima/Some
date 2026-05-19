@@ -71,6 +71,7 @@ val stillNeverNull: Person = baseSome()
 | `nullableStrategy` | `NullableStrategy.NullOnCircularReference` | Emits `null` for nullable circular references | [NullableStrategy](nullable-strategy.md) |
 | `stringStrategy` | `StringStrategy.Random()` | Random lowercase alphabetic strings | [StringStrategy](string-strategy.md) |
 | `collectionStrategy` | `CollectionStrategy()` | Collections with 1 to 5 elements | [CollectionStrategy](collection-strategy.md) |
+| `defaultValueStrategy` | `DefaultValueStrategy.UseDefault` | Uses Kotlin defaults for optional parameters | [DefaultValueStrategy](default-value-strategy.md) |
 | `seed` | `null` | Uses non-deterministic `Random.Default` | — |
 
 ## Reproducible Data
@@ -109,6 +110,14 @@ val user = some<User> {
 ```kotlin
 val order = some<Order> {
     collectionStrategy = CollectionStrategy(2..2)
+}
+```
+
+### Generate All Optional Values
+
+```kotlin
+val user = some<User> {
+    defaultValueStrategy = DefaultValueStrategy.Generate
 }
 ```
 

@@ -1,6 +1,7 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
+import dev.appoutlet.some.config.DefaultValueStrategy
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.FixtureContext
@@ -25,13 +26,15 @@ import kotlin.reflect.KType
  * @param nullableStrategy Nullable handling strategy exposed to type factories through [FixtureContext].
  * @param stringStrategy String generation strategy exposed to type factories through [FixtureContext].
  * @param collectionStrategy Collection sizing strategy exposed to type factories through [FixtureContext].
+ * @param defaultValueStrategy Default value strategy exposed to type factories through [FixtureContext].
  */
 class CustomTypeFactoryResolver(
     private val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?>,
     private val random: Random,
     private val nullableStrategy: NullableStrategy,
     private val stringStrategy: StringStrategy,
-    private val collectionStrategy: CollectionStrategy
+    private val collectionStrategy: CollectionStrategy,
+    private val defaultValueStrategy: DefaultValueStrategy
 ) : TypeResolver {
     /**
      * Returns whether [type] has a registered type factory.
@@ -68,7 +71,8 @@ class CustomTypeFactoryResolver(
             resolutionStack = chain.stack, // This returns an immutable snapshot
             nullableStrategy = nullableStrategy,
             stringStrategy = stringStrategy,
-            collectionStrategy = collectionStrategy
+            collectionStrategy = collectionStrategy,
+            defaultValueStrategy = defaultValueStrategy
         )
 
         return typeFactory.invoke(context)
