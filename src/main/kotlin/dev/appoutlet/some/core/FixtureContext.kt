@@ -30,5 +30,5 @@ data class FixtureContext(
     val nullableStrategy: NullableStrategy,
     val stringStrategy: StringStrategy,
     val collectionStrategy: CollectionStrategy,
-    val defaultValueStrategy: DefaultValueStrategy
+    val defaultValueStrategy: DefaultValueStrategy,
 )

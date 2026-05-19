@@ -101,7 +101,7 @@ data class SomeConfig(
                 nullableStrategy = nullableStrategy,
                 stringStrategy = stringStrategy,
                 collectionStrategy = collectionStrategy,
-                defaultValueStrategy = defaultValueStrategy
+                defaultValueStrategy = defaultValueStrategy,
             ),
             NullableResolver(nullableStrategy, random),
             ObjectResolver(),

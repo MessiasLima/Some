@@ -34,7 +34,7 @@ class CustomTypeFactoryResolver(
     private val nullableStrategy: NullableStrategy,
     private val stringStrategy: StringStrategy,
     private val collectionStrategy: CollectionStrategy,
-    private val defaultValueStrategy: DefaultValueStrategy
+    private val defaultValueStrategy: DefaultValueStrategy,
 ) : TypeResolver {
     /**
      * Returns whether [type] has a registered type factory.
@@ -72,7 +72,7 @@ class CustomTypeFactoryResolver(
             nullableStrategy = nullableStrategy,
             stringStrategy = stringStrategy,
             collectionStrategy = collectionStrategy,
-            defaultValueStrategy = defaultValueStrategy
+            defaultValueStrategy = defaultValueStrategy,
         )
 
         return typeFactory.invoke(context)
