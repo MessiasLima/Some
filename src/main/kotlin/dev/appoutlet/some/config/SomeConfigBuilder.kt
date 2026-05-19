@@ -32,6 +32,12 @@ class SomeConfigBuilder {
     var collectionStrategy: CollectionStrategy = CollectionStrategy()
 
     /**
+     * Strategy for handling data class constructor defaults.
+     * Defaults to [DefaultValueStrategy.UseDefault].
+     */
+    var defaultValueStrategy: DefaultValueStrategy = DefaultValueStrategy.UseDefault
+
+    /**
      * Seed for reproducible random generation.
      * If null, uses [kotlin.random.Random.Default].
      */
@@ -100,6 +106,7 @@ class SomeConfigBuilder {
         nullableStrategy = nullableStrategy,
         stringStrategy = stringStrategy,
         collectionStrategy = collectionStrategy,
+        defaultValueStrategy = defaultValueStrategy,
         seed = seed,
         typeFactories = _typeFactories.toMap(),
         propertyFactories = _propertyFactories.toMap()

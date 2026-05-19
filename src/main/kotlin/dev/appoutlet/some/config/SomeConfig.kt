@@ -52,6 +52,7 @@ import kotlin.reflect.KClass
  * @param seed Seed for reproducible random generation. When `null`, [Random.Default] is used.
  * @param typeFactories Custom type factories keyed by the exact class they override. These are resolved before all
  * built-in resolvers.
+ * @param defaultValueStrategy Strategy for handling data class constructor defaults.
  * @param propertyFactories Custom property factories keyed by owning class and constructor parameter name. These are
  * applied by [DataClassResolver] while constructing model objects.
  */
@@ -59,6 +60,7 @@ data class SomeConfig(
     val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
     val stringStrategy: StringStrategy = StringStrategy.Random(),
     val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    val defaultValueStrategy: DefaultValueStrategy = DefaultValueStrategy.UseDefault,
     val seed: Long? = null,
     val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
@@ -75,6 +77,7 @@ data class SomeConfig(
         nullableStrategy = this@SomeConfig.nullableStrategy
         stringStrategy = this@SomeConfig.stringStrategy
         collectionStrategy = this@SomeConfig.collectionStrategy
+        defaultValueStrategy = this@SomeConfig.defaultValueStrategy
         seed = this@SomeConfig.seed
         populateTypeFactories(this@SomeConfig.typeFactories)
         populatePropertyFactories(this@SomeConfig.propertyFactories)
@@ -92,7 +95,14 @@ data class SomeConfig(
      */
     fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
         return listOf(
-            CustomTypeFactoryResolver(typeFactories, random, nullableStrategy, stringStrategy, collectionStrategy),
+            CustomTypeFactoryResolver(
+                typeFactories = typeFactories,
+                random = random,
+                nullableStrategy = nullableStrategy,
+                stringStrategy = stringStrategy,
+                collectionStrategy = collectionStrategy,
+                defaultValueStrategy = defaultValueStrategy,
+            ),
             NullableResolver(nullableStrategy, random),
             ObjectResolver(),
             EnumResolver(random),
@@ -126,7 +136,8 @@ data class SomeConfig(
                 random = random,
                 nullableStrategy = nullableStrategy,
                 stringStrategy = stringStrategy,
-                collectionStrategy = collectionStrategy
+                collectionStrategy = collectionStrategy,
+                defaultValueStrategy = defaultValueStrategy,
             )
         )
     }

@@ -1,6 +1,7 @@
 package dev.appoutlet.some.core
 
 import dev.appoutlet.some.config.CollectionStrategy
+import dev.appoutlet.some.config.DefaultValueStrategy
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.StringStrategy
 import kotlin.random.Random
@@ -21,11 +22,13 @@ import kotlin.reflect.KType
  * @property nullableStrategy Strategy currently used for nullable type handling.
  * @property stringStrategy Strategy currently used for generated string values.
  * @property collectionStrategy Strategy currently used for generated collection sizes.
+ * @property defaultValueStrategy Strategy currently used for handling constructor defaults.
  */
 data class FixtureContext(
     val random: Random,
     val resolutionStack: List<KType>,
     val nullableStrategy: NullableStrategy,
     val stringStrategy: StringStrategy,
-    val collectionStrategy: CollectionStrategy
+    val collectionStrategy: CollectionStrategy,
+    val defaultValueStrategy: DefaultValueStrategy,
 )
