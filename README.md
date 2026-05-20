@@ -3,7 +3,7 @@
 </p>
 
 # Some
-
+![Kotlin JVM](https://img.shields.io/badge/jvm-kotlin?style=for-the-badge&label=kotlin)
 ![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some?style=for-the-badge)
 
 A Kotlin JVM library that generates populated instances of any Kotlin class for testing purposes, with zero configuration required.
