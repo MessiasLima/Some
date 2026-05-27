@@ -8,7 +8,7 @@ Contributions of all sizes are welcome. Whether you are fixing a bug, improving 
 
 Some is a Kotlin JVM library for generating test data. The project uses the following tools and technologies:
 
-- **Language**: [Kotlin](https://kotlinlang.org/) (JVM), targeting Java 21
+- **Language**: [Kotlin](https://kotlinlang.org/) (JVM), targeting Java 17
 - **Build tool**: [Gradle](https://gradle.org/) with Kotlin DSL
 - **Testing**: [JUnit 5](https://junit.org/junit5/) through [kotlin-test](https://kotlinlang.org/api/latest/kotlin.test/)
 - **Static analysis**: [Detekt](https://detekt.dev/) with auto-correction
@@ -22,7 +22,7 @@ Some is a Kotlin JVM library for generating test data. The project uses the foll
 
 Before working on the project, make sure you have the following tools available:
 
-- **JDK 21**: the project uses JVM toolchain 21
+- **JDK 17**: the project uses JVM toolchain 17
 - **Git**: used for version control
 - **Gradle wrapper**: included in the repository as `./gradlew`, so you do not need to install Gradle separately
 

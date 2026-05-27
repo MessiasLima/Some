@@ -16,7 +16,7 @@ class BigDecimalResolverTest {
         val result = resolver.resolve(typeOf<BigDecimal>(), defaultTestChain)
         assertIs<BigDecimal>(result)
         // Verify it's a valid BigDecimal by performing an operation
-        val doubled = result.multiply(BigDecimal.TWO)
+        val doubled = result.multiply(BigDecimal(2))
         assertIs<BigDecimal>(doubled)
     }
 
