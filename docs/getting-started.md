@@ -115,4 +115,4 @@ For more configuration use cases and details, see the [Configuration overview](c
 ## Requirements
 
 - **Kotlin 2.3.0+** — required for `typeOf<T>()` and other type introspection APIs
-- **JVM 21+** — Some is JVM-only; Android and Kotlin/Native are not currently supported
+- **JVM 17+** — Some is JVM-only; Android and Kotlin/Native are not currently supported
