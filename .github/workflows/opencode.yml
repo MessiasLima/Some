@@ -1,4 +1,5 @@
-name: opencode
+name: Opencode
+run-name: "Opencode: ${{ github.ref_name }}"
 
 on:
   issue_comment:
