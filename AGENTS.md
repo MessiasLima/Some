@@ -115,4 +115,4 @@ Order matters - first match wins:
 5. **Kotlin native types FIRST** (KotlinUuidResolver, KotlinInstantResolver, KotlinDurationResolver)
 6. **Java types SECOND** (JavaUuidResolver, JavaInstantResolver, JavaDurationResolver)
 7. Collection resolvers (List, Set, Map, Array)
-8. DataClassResolver (fallback for data classes)
+8. ClassResolver (fallback for classes with constructors)

@@ -7,20 +7,29 @@ import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.exception.SomeCircularReferenceException
+import dev.appoutlet.some.exception.SomeInstantiationException
 import kotlin.random.Random
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
+import java.lang.reflect.Modifier
 
 /**
- * Resolves constructable Kotlin classes by calling their primary constructor with generated arguments.
+ * Resolves constructable Kotlin classes by calling their constructors with generated arguments.
  *
  * This resolver is the fallback for user-defined model types. A type is supported when its classifier is a
- * [KClass] with a primary constructor and is not one of the built-in scalar or collection types handled by earlier
- * resolvers in the chain. Although the name refers to data classes, any class with a primary constructor can be
- * resolved when it reaches this resolver.
+ * [KClass] with at least one constructor (primary or secondary), is not abstract, and is not one of the
+ * built-in scalar or collection types handled by earlier resolvers in the chain.
+ *
+ * Constructors are tried in declaration order. The first constructor whose arguments can be fully resolved
+ * wins. If all constructors fail, a [SomeInstantiationException] is thrown summarizing each failure.
+ *
+ * [SomeCircularReferenceException] is never caught by this resolver; it always propagates so callers receive
+ * accurate circular-reference diagnostics.
  *
  * Constructor parameters are resolved as follows:
  * - If a property-specific factory exists for the parameter name, the factory value is used.
@@ -37,7 +46,7 @@ import kotlin.reflect.full.primaryConstructor
  * @param collectionStrategy Collection sizing strategy exposed to property factories through [FixtureContext].
  * @param defaultValueStrategy Strategy for handling constructor defaults.
  */
-class DataClassResolver(
+class ClassResolver(
     private val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
     private val random: Random = Random.Default,
     private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
@@ -48,9 +57,9 @@ class DataClassResolver(
     /**
      * Returns whether [type] can be instantiated by this resolver.
      *
-     * The resolver requires a [KClass] classifier with a primary constructor. It deliberately rejects collection,
-     * string, numeric, boolean, and character types because those are handled by more specific resolvers with
-     * generation rules tailored to each type.
+     * The resolver requires a [KClass] classifier with at least one constructor that is not abstract.
+     * It deliberately rejects collection, string, numeric, boolean, and character types because those are
+     * handled by more specific resolvers with generation rules tailored to each type.
      *
      * @param type Type being checked by the resolver chain.
      * @return `true` when [type] is a constructable class that should be handled as a model object.
@@ -59,7 +68,9 @@ class DataClassResolver(
         val kClass = type.classifier as? KClass<*> ?: return false
 
         return when {
-            kClass.primaryConstructor == null -> false
+            kClass.constructors.isEmpty() -> false
+
+            Modifier.isAbstract(kClass.java.modifiers) -> false
 
             kClass.isSubclassOf(List::class) || kClass.isSubclassOf(Set::class) || kClass.isSubclassOf(Map::class) -> {
                 false
@@ -78,23 +89,50 @@ class DataClassResolver(
     }
 
     /**
-     * Creates an instance of [type] by resolving values for its primary constructor parameters.
+     * Creates an instance of [type] by trying each constructor in order.
      *
      * Property factories take precedence over generated values and receive a [FixtureContext] containing the current
      * random source, resolution stack, and configured generation strategies. Required parameters without custom
      * property factories are delegated back to [chain], while optional parameters are left out of the argument map so
      * their Kotlin default values are preserved.
      *
+     * If a constructor succeeds, its result is returned immediately. If all constructors fail, a
+     * [SomeInstantiationException] is thrown with details about each failure.
+     *
+     * [SomeCircularReferenceException] is re-thrown immediately and is never absorbed into the failure summary,
+     * ensuring that circular-reference diagnostics propagate to the caller.
+     *
      * @param type Class type to instantiate.
      * @param chain Resolver chain used to generate required constructor parameter values.
      * @return A new instance of [type].
-     * @throws IllegalStateException when [type] does not expose a primary constructor.
+     * @throws SomeInstantiationException when all constructors fail to instantiate [type].
      */
     override fun resolve(type: KType, chain: ResolverChain): Any {
         val kClass = type.classifier as KClass<*>
-        val constructor = kClass.primaryConstructor
-            ?: error("No primary constructor found for ${kClass.simpleName}")
+        val failures = mutableListOf<String>()
 
+        for (constructor in kClass.constructors) {
+            try {
+                constructor.isAccessible = true
+                val result = tryConstructor(constructor, kClass, type, chain)
+                    ?: throw IllegalArgumentException("Constructor returned null")
+                return result
+            } catch (e: SomeCircularReferenceException) {
+                throw e
+            } catch (e: Exception) {
+                failures.add("Constructor ${constructor.parameters.map { it.name }}: ${e.message ?: e::class.simpleName}")
+            }
+        }
+
+        throw SomeInstantiationException(kClass, failures)
+    }
+
+    private fun tryConstructor(
+        constructor: KFunction<*>,
+        kClass: KClass<*>,
+        type: KType,
+        chain: ResolverChain,
+    ): Any? {
         val typeArgMap = buildTypeArgMap(kClass, type)
 
         val context = FixtureContext(
