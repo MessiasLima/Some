@@ -19,15 +19,28 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/configure-pages@v5
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - name: Configure GitHub pages
+        uses: actions/configure-pages@v5
+
+      - name: Checkount main branch
+        uses: actions/checkout@v6
+
+      - name: Setup Python 3.x
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
-      - run: pip install zensical
-      - run: zensical build --clean
-      - uses: actions/upload-pages-artifact@v4
+
+      - name: Install Zensical dependency
+        run: pip install zensical
+
+      - name: Build documentation website
+        run: zensical build --clean
+
+      - name: Upload website artifacts
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site
-      - uses: actions/deploy-pages@v4
+
+      - name: Deploy website
+        uses: actions/deploy-pages@v4
         id: deployment
