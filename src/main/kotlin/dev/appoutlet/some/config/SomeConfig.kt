@@ -8,8 +8,8 @@ import dev.appoutlet.some.resolver.BigIntegerResolver
 import dev.appoutlet.some.resolver.BooleanResolver
 import dev.appoutlet.some.resolver.ByteResolver
 import dev.appoutlet.some.resolver.CharResolver
+import dev.appoutlet.some.resolver.ClassResolver
 import dev.appoutlet.some.resolver.CustomTypeFactoryResolver
-import dev.appoutlet.some.resolver.DataClassResolver
 import dev.appoutlet.some.resolver.DoubleResolver
 import dev.appoutlet.some.resolver.EnumResolver
 import dev.appoutlet.some.resolver.FloatResolver
@@ -54,7 +54,7 @@ import kotlin.reflect.KClass
  * built-in resolvers.
  * @param defaultValueStrategy Strategy for handling data class constructor defaults.
  * @param propertyFactories Custom property factories keyed by owning class and constructor parameter name. These are
- * applied by [DataClassResolver] while constructing model objects.
+ * applied by [ClassResolver] while constructing model objects.
  */
 data class SomeConfig(
     val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
@@ -87,7 +87,7 @@ data class SomeConfig(
      * Creates the resolver chain used to generate fixture values.
      *
      * Resolver order defines precedence: the first resolver that supports a type is used. Type factories are first so
-     * explicit type-level user configuration overrides built-in behavior. [DataClassResolver] is last because it is the
+     * explicit type-level user configuration overrides built-in behavior. [ClassResolver] is last because it is the
      * fallback for constructable model classes and is also where property factories are applied.
      *
      * @param random Random source shared by resolvers that generate randomized values.
@@ -131,7 +131,7 @@ data class SomeConfig(
             SetResolver(collectionStrategy, random),
             MapResolver(collectionStrategy, random),
             ArrayResolver(collectionStrategy, random),
-            DataClassResolver(
+            ClassResolver(
                 propertyFactories = propertyFactories,
                 random = random,
                 nullableStrategy = nullableStrategy,
