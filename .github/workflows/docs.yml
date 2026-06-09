@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure GitHub pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Checkount main branch
         uses: actions/checkout@v6
@@ -42,5 +42,5 @@ jobs:
           path: site
 
       - name: Deploy website
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         id: deployment
