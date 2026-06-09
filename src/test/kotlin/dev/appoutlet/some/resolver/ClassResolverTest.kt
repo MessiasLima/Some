@@ -8,25 +8,72 @@ import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-abstract class UnresolvableBase
+abstract class AbstractClass
 
-class ConcreteUnresolvableBase : UnresolvableBase()
+class ConcreteClass : AbstractClass()
+
+data class SimpleDataClass(val name: String)
+
+data class Wrapper<T>(val value: T)
+
+data class SimpleDataClassWithGenerics(val names: Wrapper<String>)
+
+class SecondaryOnlyClass private constructor(val value: String) {
+    constructor(chars: List<Char>) : this(chars.joinToString(""))
+}
+
+class FallbackClass private constructor(val name: String, val extra: AbstractClass) {
+    constructor(name: String) : this(name, ConcreteClass())
+}
+
+class EmptyConstructorClass {
+    val greeting: String = "hello"
+}
+
+class UnresolvableParamClass(val param: AbstractClass)
+
+class PrivateConstructorClass private constructor(val secret: String)
+
+sealed class TestSealed {
+    data class Sub(val x: Int) : TestSealed()
+}
 
 class ClassResolverTest {
     private val resolver = ClassResolver(random = Random.Default)
 
     @Test
     fun `ClassResolver resolves data class with primary constructor`() {
-        val result = resolver.resolve(typeOf<SimpleData>(), defaultTestChain)
-        assertTrue(result is SimpleData)
+        val result = resolver.resolve(typeOf<SimpleDataClass>(), defaultTestChain)
+        assertTrue(result is SimpleDataClass)
+    }
+
+    @Test
+    fun `ClassResolver resolves data class with primary constructor with generics`() {
+        val result = resolver.resolve(typeOf<SimpleDataClassWithGenerics>(), defaultTestChain)
+        assertTrue(result is SimpleDataClassWithGenerics)
     }
 
     @Test
     fun `ClassResolver resolves class with secondary constructor only`() {
         val result = resolver.resolve(typeOf<SecondaryOnlyClass>(), defaultTestChain)
         assertTrue(result is SecondaryOnlyClass)
+    }
+
+    @Test
+    fun `ClassResolver resolves external kotlin class`() {
+        val result = resolver.resolve(typeOf<Pair<SimpleDataClass, FallbackClass>>(), defaultTestChain)
+        val castedResult = result as Pair<SimpleDataClass, FallbackClass>
+        assertTrue(castedResult.first is SimpleDataClass)
+        assertTrue(castedResult.second is FallbackClass)
+    }
+
+    @Test
+    fun `ClassResolver resolves external java class`() {
+        val date = resolver.resolve(typeOf<java.util.Date>(), defaultTestChain)
+        assertNotNull(date)
     }
 
     @Test
@@ -50,7 +97,7 @@ class ClassResolverTest {
 
     @Test
     fun `ClassResolver canResolve accepts class with constructor`() {
-        assertTrue(resolver.canResolve(typeOf<SimpleData>()))
+        assertTrue(resolver.canResolve(typeOf<SimpleDataClass>()))
     }
 
     @Test
@@ -64,44 +111,14 @@ class ClassResolverTest {
     }
 
     @Test
-    fun `ClassResolver canResolve rejects String type`() {
+    fun `ClassResolver canResolve rejects well known types`() {
         assertFalse(resolver.canResolve(typeOf<String>()))
-    }
-
-    @Test
-    fun `ClassResolver canResolve rejects Int type`() {
         assertFalse(resolver.canResolve(typeOf<Int>()))
-    }
-
-    @Test
-    fun `ClassResolver canResolve rejects List type`() {
         assertFalse(resolver.canResolve(typeOf<List<String>>()))
-    }
-
-    @Test
-    fun `ClassResolver canResolve rejects Set type`() {
         assertFalse(resolver.canResolve(typeOf<Set<String>>()))
-    }
-
-    @Test
-    fun `ClassResolver canResolve rejects Map type`() {
         assertFalse(resolver.canResolve(typeOf<Map<String, Int>>()))
-    }
-
-    @Test
-    fun `ClassResolver canResolve rejects abstract class`() {
-        assertFalse(resolver.canResolve(typeOf<UnresolvableBase>()))
-    }
-
-    @Test
-    fun `ClassResolver canResolve rejects sealed class`() {
+        assertFalse(resolver.canResolve(typeOf<AbstractClass>()))
         assertFalse(resolver.canResolve(typeOf<TestSealed>()))
-    }
-
-    @Test
-    fun `ClassResolver preserves primary constructor success path for data classes`() {
-        val result = some<SimpleData>()
-        assertTrue(result.name.isNotEmpty())
     }
 
     @Test
@@ -109,26 +126,4 @@ class ClassResolverTest {
         val result = resolver.resolve(typeOf<PrivateConstructorClass>(), defaultTestChain)
         assertTrue(result is PrivateConstructorClass)
     }
-}
-
-data class SimpleData(val name: String)
-
-class SecondaryOnlyClass private constructor(val value: String) {
-    constructor(chars: List<Char>) : this(chars.joinToString(""))
-}
-
-class FallbackClass private constructor(val name: String, val extra: UnresolvableBase) {
-    constructor(name: String) : this(name, ConcreteUnresolvableBase())
-}
-
-class EmptyConstructorClass {
-    val greeting: String = "hello"
-}
-
-class UnresolvableParamClass(val param: UnresolvableBase)
-
-class PrivateConstructorClass private constructor(val secret: String)
-
-sealed class TestSealed {
-    data class Sub(val x: Int) : TestSealed()
 }

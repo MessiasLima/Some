@@ -13,6 +13,7 @@ import java.lang.reflect.Modifier
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
@@ -72,7 +73,9 @@ class ClassResolver(
 
             Modifier.isAbstract(kClass.java.modifiers) -> false
 
-            kClass.isSubclassOf(List::class) || kClass.isSubclassOf(Set::class) || kClass.isSubclassOf(Map::class) -> {
+            kClass.isSubclassOf(List::class) || kClass.isSubclassOf(Set::class) || kClass.isSubclassOf(
+                Map::class
+            ) -> {
                 false
             }
 
@@ -116,8 +119,7 @@ class ClassResolver(
             try {
                 constructor.isAccessible = true
                 val result = tryConstructor(constructor, kClass, type, chain)
-                    ?: throw IllegalArgumentException("Constructor returned null")
-                return result
+                return requireNotNull(result) { "Constructor returned null" }
             } catch (e: SomeCircularReferenceException) {
                 throw e
             } catch (e: Exception) {
@@ -136,8 +138,38 @@ class ClassResolver(
         type: KType,
         chain: ResolverChain,
     ): Any? {
-        val typeArgMap = buildTypeArgMap(kClass, type)
+        val args = constructor.parameters.mapNotNull { param ->
+            val propertyFactory = propertyFactories[kClass to param.name]
+            val shouldGenerate = !param.isOptional ||
+                defaultValueStrategy == DefaultValueStrategy.Generate
 
+            when {
+                propertyFactory != null -> resolveByPropertyFactory(chain, param, propertyFactory)
+                shouldGenerate -> resolveByResolvers(kClass, type, param, chain)
+                else -> null
+            }
+        }.toMap()
+
+        return constructor.callBy(args)
+    }
+
+    private fun resolveByResolvers(
+        kClass: KClass<*>,
+        type: KType,
+        param: KParameter,
+        chain: ResolverChain
+    ): Pair<KParameter, Any?> {
+        val typeArgMap = buildTypeArgMap(kClass, type)
+        val paramType = param.type
+        val resolvedType = typeArgMap[paramType.toString()] ?: paramType
+        return param to chain.resolve(resolvedType)
+    }
+
+    private fun resolveByPropertyFactory(
+        chain: ResolverChain,
+        param: KParameter,
+        propertyFactory: FixtureContext.() -> Any?
+    ): Pair<KParameter, Any?> {
         val context = FixtureContext(
             random = random,
             resolutionStack = chain.stack,
@@ -147,23 +179,7 @@ class ClassResolver(
             defaultValueStrategy = defaultValueStrategy,
         )
 
-        val args = constructor.parameters
-            .mapNotNull { param ->
-                val propertyFactory = propertyFactories[kClass to param.name]
-                val shouldGenerate = !param.isOptional || defaultValueStrategy == DefaultValueStrategy.Generate
-
-                if (propertyFactory != null) {
-                    param to propertyFactory(context)
-                } else if (shouldGenerate) {
-                    val paramType = param.type
-                    val resolvedType = typeArgMap[paramType.toString()] ?: paramType
-                    param to chain.resolve(resolvedType)
-                } else {
-                    null
-                }
-            }.toMap()
-
-        return constructor.callBy(args)
+        return param to propertyFactory(context)
     }
 
     /**
