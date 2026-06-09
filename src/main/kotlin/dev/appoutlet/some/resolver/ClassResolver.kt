@@ -9,6 +9,7 @@ import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeInstantiationException
+import java.lang.reflect.Modifier
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -16,7 +17,6 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
-import java.lang.reflect.Modifier
 
 /**
  * Resolves constructable Kotlin classes by calling their constructors with generated arguments.
@@ -107,6 +107,7 @@ class ClassResolver(
      * @return A new instance of [type].
      * @throws SomeInstantiationException when all constructors fail to instantiate [type].
      */
+    @Suppress("TooGenericExceptionCaught")
     override fun resolve(type: KType, chain: ResolverChain): Any {
         val kClass = type.classifier as KClass<*>
         val failures = mutableListOf<String>()
@@ -120,7 +121,9 @@ class ClassResolver(
             } catch (e: SomeCircularReferenceException) {
                 throw e
             } catch (e: Exception) {
-                failures.add("Constructor ${constructor.parameters.map { it.name }}: ${e.message ?: e::class.simpleName}")
+                failures.add(
+                    "Constructor ${constructor.parameters.map { it.name }}: ${e.message ?: e::class.simpleName}"
+                )
             }
         }
 

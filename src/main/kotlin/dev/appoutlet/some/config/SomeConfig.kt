@@ -8,8 +8,8 @@ import dev.appoutlet.some.resolver.BigIntegerResolver
 import dev.appoutlet.some.resolver.BooleanResolver
 import dev.appoutlet.some.resolver.ByteResolver
 import dev.appoutlet.some.resolver.CharResolver
-import dev.appoutlet.some.resolver.CustomTypeFactoryResolver
 import dev.appoutlet.some.resolver.ClassResolver
+import dev.appoutlet.some.resolver.CustomTypeFactoryResolver
 import dev.appoutlet.some.resolver.DoubleResolver
 import dev.appoutlet.some.resolver.EnumResolver
 import dev.appoutlet.some.resolver.FloatResolver

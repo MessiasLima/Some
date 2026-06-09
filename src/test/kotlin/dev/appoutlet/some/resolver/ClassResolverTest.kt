@@ -8,7 +8,6 @@ import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
-import kotlin.test.assertIsNot
 import kotlin.test.assertTrue
 
 abstract class UnresolvableBase
