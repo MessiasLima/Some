@@ -37,7 +37,7 @@ jobs:
         run: zensical build --clean
 
       - name: Upload website artifacts
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
