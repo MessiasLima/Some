@@ -61,7 +61,7 @@ class PropertyFactoryIntegrationTest {
     @Test
     fun `type factory should take precedence over property factory`() {
         val user = some<User> {
-            register(User::class) {
+            factory(User::class) {
                 User(
                     id = 123,
                     name = "TypeFactory",

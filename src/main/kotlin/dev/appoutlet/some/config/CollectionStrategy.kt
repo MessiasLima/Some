@@ -6,7 +6,7 @@ private val defaultSizeRange = DEFAULT_SIZE_RANGE_START..DEFAULT_SIZE_RANGE_END
 
 data class CollectionStrategy(
     val sizeRange: IntRange = defaultSizeRange
-) {
+) : Strategy {
     init {
         require(sizeRange.first > -1) { "sizeRange.start must be positive" }
         require(sizeRange.last > sizeRange.first) { "sizeRange.end must be greater than or equal to sizeRange.start" }

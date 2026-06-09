@@ -20,7 +20,7 @@ package dev.appoutlet.some.config
  * some { defaultValueStrategy = DefaultValueStrategy.Generate }
  * ```
  */
-sealed interface DefaultValueStrategy {
+sealed interface DefaultValueStrategy : Strategy {
     /**
      * Uses the Kotlin default constructor value for optional parameters.
      *

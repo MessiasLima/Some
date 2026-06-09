@@ -1,6 +1,7 @@
 package dev.appoutlet.some.integration
 
 import dev.appoutlet.some.config.CollectionStrategy
+import dev.appoutlet.some.config.DefaultValueStrategy
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.some
@@ -30,7 +31,7 @@ class SetupIntegrationTest {
         data class WithNullable(val required: String, val optional: String?)
 
         val someWithConfig = someSetup {
-            nullableStrategy = NullableStrategy.NeverNull
+            strategy(NullableStrategy.NeverNull)
         }
 
         repeat(1000) {
@@ -45,7 +46,7 @@ class SetupIntegrationTest {
         data class WithNullable(val optional: String?)
 
         val someWithConfig = someSetup {
-            nullableStrategy = NullableStrategy.AlwaysNull
+            strategy(NullableStrategy.AlwaysNull)
         }
 
         repeat(100) {
@@ -57,7 +58,7 @@ class SetupIntegrationTest {
     @Test
     fun `collection strategy size range is respected`() {
         val someWithConfig = someSetup {
-            collectionStrategy = CollectionStrategy(5..10)
+            strategy(CollectionStrategy(5..10))
         }
 
         val listResult: List<String> = someWithConfig<List<String>>()
@@ -70,7 +71,7 @@ class SetupIntegrationTest {
     @Test
     fun `string strategy Uuid produces valid UUIDs`() {
         val someWithConfig = someSetup {
-            stringStrategy = StringStrategy.Uuid
+            strategy(StringStrategy.Uuid)
         }
 
         repeat(10) {
@@ -93,7 +94,7 @@ class SetupIntegrationTest {
         // Base config: seed for reproducibility, NeverNull strategy
         val baseSome = someSetup {
             seed = 42L
-            nullableStrategy = NullableStrategy.NeverNull
+            strategy(NullableStrategy.NeverNull)
         }
 
         // First call with base config - should have non-null optional
@@ -106,7 +107,7 @@ class SetupIntegrationTest {
         // This should NOT mutate the base config
         repeat(100) {
             val result2: TestData = baseSome {
-                nullableStrategy = NullableStrategy.AlwaysNull
+                strategy(NullableStrategy.AlwaysNull)
             }
             assertEquals(null, result2.optional, "Aggregated config should override to null")
         }
@@ -120,7 +121,7 @@ class SetupIntegrationTest {
         // Test that we can aggregate again with custom probability
         repeat(100) {
             val result4: TestData = baseSome {
-                nullableStrategy = NullableStrategy.Random(probability = 0.0)
+                strategy(NullableStrategy.Random(probability = 0.0))
             }
             assertTrue(result4.optional != null, "Aggregated config with 0.0 probability should never produce null")
         }
@@ -136,9 +137,9 @@ class SetupIntegrationTest {
 
         // Base config with specific strategies
         val baseSome = someSetup {
-            stringStrategy = StringStrategy.Uuid
-            collectionStrategy = CollectionStrategy(1..3)
-            nullableStrategy = NullableStrategy.NeverNull
+            strategy(StringStrategy.Uuid)
+            strategy(CollectionStrategy(1..3))
+            strategy(NullableStrategy.NeverNull)
         }
 
         val baseResult: ComplexData = baseSome()
@@ -148,13 +149,25 @@ class SetupIntegrationTest {
 
         // Override multiple strategies at once
         val overriddenResult: ComplexData = baseSome {
-            stringStrategy = StringStrategy.Random()
-            collectionStrategy = CollectionStrategy(10..15)
-            nullableStrategy = NullableStrategy.AlwaysNull
+            strategy(StringStrategy.Random())
+            strategy(CollectionStrategy(10..15))
+            strategy(NullableStrategy.AlwaysNull)
         }
 
         // String should not be UUID anymore (very unlikely to match UUID pattern with Random)
         assertTrue(overriddenResult.items.size in 10..15)
         assertEquals(null, overriddenResult.optional)
+    }
+
+    @Test
+    fun `defaultValue strategy Generate populates all fields`() {
+        data class WithDefault(val required: String, val optional: String = "default")
+
+        val result: WithDefault = some {
+            strategy(DefaultValueStrategy.Generate)
+        }
+
+        assertNotEquals("default", result.optional)
+        assertNotEquals("", result.required)
     }
 }

@@ -31,7 +31,7 @@ class CircularReferenceIntegrationTest {
     @Test
     fun `nullable top-level circular type returns instance with null circular field under NullOnCircularReference`() {
         val node: Node? = some<Node?> {
-            nullableStrategy = NullableStrategy.NullOnCircularReference
+            strategy(NullableStrategy.NullOnCircularReference)
         }
 
         val result = assertIs<Node>(node)
@@ -42,7 +42,7 @@ class CircularReferenceIntegrationTest {
     fun `nullable top-level circular type throws under NeverNull strategy`() {
         assertFailsWith<SomeCircularReferenceException> {
             some<Node?> {
-                nullableStrategy = NullableStrategy.NeverNull
+                strategy(NullableStrategy.NeverNull)
             }
         }
     }
@@ -81,7 +81,7 @@ class CircularReferenceIntegrationTest {
     fun `NeverNull strategy still throws on circular reference even if nullable`() {
         assertFailsWith<SomeCircularReferenceException> {
             some<Node> {
-                nullableStrategy = NullableStrategy.NeverNull
+                strategy(NullableStrategy.NeverNull)
             }
         }
     }
@@ -90,7 +90,7 @@ class CircularReferenceIntegrationTest {
     fun `AlwaysNull strategy handles circular reference by returning null`() {
         // In this case NullableResolver will return null even before ResolverChain detects a cycle
         val node: Node = some<Node> {
-            nullableStrategy = NullableStrategy.AlwaysNull
+            strategy(NullableStrategy.AlwaysNull)
         }
 
         assertNull(node.next)
@@ -101,7 +101,7 @@ class CircularReferenceIntegrationTest {
         // With probability 0, it's like NeverNull
         assertFailsWith<SomeCircularReferenceException> {
             some<Node> {
-                nullableStrategy = NullableStrategy.Random(probability = 0.0)
+                strategy(NullableStrategy.Random(probability = 0.0))
             }
         }
     }

@@ -1,5 +1,6 @@
 package dev.appoutlet.some
 
+import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.config.SomeConfigBuilder
 import dev.appoutlet.some.core.ResolverChain
@@ -29,7 +30,8 @@ class Some(
      */
     @Suppress("MemberNameEqualsClassName")
     inline fun <reified T> some(): T {
-        val session = ResolverChain(resolvers, config.nullableStrategy)
+        val nullableStrategy = config[NullableStrategy::class]
+        val session = ResolverChain(resolvers, nullableStrategy)
         return session.resolve(typeOf<T>()) as T
     }
 
@@ -89,7 +91,8 @@ val defaultResolvers: List<TypeResolver> by lazy { defaultConfig.buildResolvers(
  * @return Generated value of type [T].
  */
 inline fun <reified T> some(): T {
-    val session = ResolverChain(defaultResolvers, defaultConfig.nullableStrategy)
+    val nullableStrategy = defaultConfig[NullableStrategy::class]
+    val session = ResolverChain(defaultResolvers, nullableStrategy)
     return session.resolve(typeOf<T>()) as T
 }
 
