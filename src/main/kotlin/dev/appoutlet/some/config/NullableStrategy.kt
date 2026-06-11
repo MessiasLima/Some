@@ -34,7 +34,7 @@ package dev.appoutlet.some.config
  * some { nullableStrategy = NullableStrategy.Random(probability = 0.0) }
  * ```
  */
-sealed interface NullableStrategy {
+sealed interface NullableStrategy : Strategy {
     /**
      * Returns `null` when a circular reference is detected for a nullable type.
      *

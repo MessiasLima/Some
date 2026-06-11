@@ -15,11 +15,13 @@ import kotlin.test.assertTrue
 class ArrayResolverTest {
     @Test
     fun `ArrayResolver generates array with correct size`() {
-        val config = SomeConfig(collectionStrategy = CollectionStrategy(3..5))
+        val config = SomeConfig().toBuilder().apply {
+            collectionStrategy = CollectionStrategy(3..5)
+        }.build()
         val resolvers = config.buildResolvers()
-        val resolver = ArrayResolver(CollectionStrategy(3..5), Random.Default)
+        val resolver = ArrayResolver(config, Random.Default)
 
-        val result = resolver.resolve(typeOf<Array<String>>(), ResolverChain(resolvers))
+        val result = resolver.resolve(typeOf<Array<String>>(), ResolverChain(resolvers, config))
         assertIs<Array<*>>(result)
         assertTrue(result.size in 3..5)
         assertTrue(result.all { it is String })
@@ -27,7 +29,7 @@ class ArrayResolverTest {
 
     @Test
     fun `ArrayResolver generates array with Int elements`() {
-        val resolver = ArrayResolver(CollectionStrategy(), Random.Default)
+        val resolver = ArrayResolver(SomeConfig(), Random.Default)
 
         val result = resolver.resolve(typeOf<Array<Int>>(), defaultTestChain)
         assertIs<Array<*>>(result)
@@ -38,7 +40,7 @@ class ArrayResolverTest {
     fun `ArrayResolver generates array with Class elements`() {
         data class User(val name: String, val age: Int)
 
-        val resolver = ArrayResolver(CollectionStrategy(), Random.Default)
+        val resolver = ArrayResolver(SomeConfig(), Random.Default)
 
         val result = resolver.resolve(typeOf<Array<User>>(), defaultTestChain)
         assertIs<Array<*>>(result)
@@ -47,14 +49,14 @@ class ArrayResolverTest {
 
     @Test
     fun `ArrayResolver canResolve detects Array types`() {
-        val resolver = ArrayResolver(CollectionStrategy(), Random.Default)
+        val resolver = ArrayResolver(SomeConfig(), Random.Default)
         assertTrue(resolver.canResolve(typeOf<Array<String>>()))
         assertTrue(resolver.canResolve(typeOf<Array<Int>>()))
     }
 
     @Test
     fun `ArrayResolver rejects non-Array types`() {
-        val resolver = ArrayResolver(CollectionStrategy(), Random.Default)
+        val resolver = ArrayResolver(SomeConfig(), Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<List<String>>()))
@@ -62,7 +64,7 @@ class ArrayResolverTest {
 
     @Test
     fun `ArrayResolver throws error on star projection`() {
-        val resolver = ArrayResolver(CollectionStrategy(), Random.Default)
+        val resolver = ArrayResolver(SomeConfig(), Random.Default)
 
         assertFailsWith<IllegalStateException> {
             resolver.resolve(typeOf<Array<*>>(), defaultTestChain)

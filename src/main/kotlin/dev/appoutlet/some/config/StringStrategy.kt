@@ -16,7 +16,7 @@ package dev.appoutlet.some.config
  * val some = someSetup { stringStrategy = StringStrategy.Uuid }
  * ```
  */
-sealed interface StringStrategy {
+sealed interface StringStrategy : Strategy {
     /**
      * Generates random lowercase alphabetic strings.
      * @param length The length of the generated string (default 8)

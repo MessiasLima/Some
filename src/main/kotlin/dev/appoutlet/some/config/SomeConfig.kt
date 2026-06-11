@@ -1,6 +1,7 @@
 package dev.appoutlet.some.config
 
 import dev.appoutlet.some.core.FixtureContext
+import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.resolver.ArrayResolver
 import dev.appoutlet.some.resolver.BigDecimalResolver
@@ -38,17 +39,15 @@ import kotlin.reflect.KClass
 /**
  * Immutable configuration for customizing the behavior of [some][dev.appoutlet.some.some] fixture generation.
  *
- * Controls nullable handling, string generation, collection sizing, random seeding, type factories, and property
- * factories. Each generation call uses a [SomeConfig] to build an ordered resolver list, and that resolver order
- * defines which customization wins when multiple options could apply.
+ * Controls generation strategies, random seeding, type factories, and property factories. Each generation call uses
+ * a [SomeConfig] to build an ordered resolver list, and that resolver order defines which customization wins when
+ * multiple options could apply.
  *
  * Prefer [SomeConfigBuilder] through `some { ... }` or `someSetup { ... }` for user-facing configuration. Direct
  * construction is useful for tests or library integrations that need to assemble configuration values explicitly.
  * Use [toBuilder] to derive a mutable copy without mutating the original configuration.
  *
- * @param nullableStrategy Strategy for handling nullable type resolution.
- * @param stringStrategy Strategy for generating values handled by [StringResolver].
- * @param collectionStrategy Strategy for collection sizes handled by collection resolvers.
+ * @param strategies Map of strategies keyed by their [Strategy] implementation class.
  * @param seed Seed for reproducible random generation. When `null`, [Random.Default] is used.
  * @param typeFactories Custom type factories keyed by the exact class they override. These are resolved before all
  * built-in resolvers.
@@ -57,14 +56,23 @@ import kotlin.reflect.KClass
  * applied by [ClassResolver] while constructing model objects.
  */
 data class SomeConfig(
-    val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
-    val stringStrategy: StringStrategy = StringStrategy.Random(),
-    val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    private val strategies: Map<KClass<out Strategy>, Strategy> = mapOf(
+        NullableStrategy::class to NullableStrategy.NullOnCircularReference,
+        StringStrategy::class to StringStrategy.Random(),
+        CollectionStrategy::class to CollectionStrategy(),
+    ),
     val defaultValueStrategy: DefaultValueStrategy = DefaultValueStrategy.UseDefault,
     val seed: Long? = null,
     val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
-) {
+) : StrategyProvider {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Strategy> get(key: KClass<T>): T {
+        return strategies[key] as? T
+            ?: throw IllegalArgumentException("Strategy ${key.simpleName} not registered")
+    }
+
     /**
      * Creates a [SomeConfigBuilder] pre-populated with this configuration's values.
      *
@@ -74,9 +82,7 @@ data class SomeConfig(
      * @return A [SomeConfigBuilder] containing this configuration's current state.
      */
     fun toBuilder(): SomeConfigBuilder = SomeConfigBuilder().apply {
-        nullableStrategy = this@SomeConfig.nullableStrategy
-        stringStrategy = this@SomeConfig.stringStrategy
-        collectionStrategy = this@SomeConfig.collectionStrategy
+        populateStrategies(this@SomeConfig.strategies)
         defaultValueStrategy = this@SomeConfig.defaultValueStrategy
         seed = this@SomeConfig.seed
         populateTypeFactories(this@SomeConfig.typeFactories)
@@ -98,17 +104,15 @@ data class SomeConfig(
             CustomTypeFactoryResolver(
                 typeFactories = typeFactories,
                 random = random,
-                nullableStrategy = nullableStrategy,
-                stringStrategy = stringStrategy,
-                collectionStrategy = collectionStrategy,
+                strategyProvider = this,
                 defaultValueStrategy = defaultValueStrategy,
             ),
-            NullableResolver(nullableStrategy, random),
+            NullableResolver(this, random),
             ObjectResolver(),
             EnumResolver(random),
             SealedClassResolver(random),
             ValueClassResolver(),
-            StringResolver(stringStrategy, random),
+            StringResolver(this, random),
             IntResolver(random),
             LongResolver(random),
             DoubleResolver(random),
@@ -127,16 +131,14 @@ data class SomeConfig(
             BigIntegerResolver(random),
             LocalDateResolver(random),
             LocalDateTimeResolver(random),
-            ListResolver(collectionStrategy, random),
-            SetResolver(collectionStrategy, random),
-            MapResolver(collectionStrategy, random),
-            ArrayResolver(collectionStrategy, random),
+            ListResolver(this, random),
+            SetResolver(this, random),
+            MapResolver(this, random),
+            ArrayResolver(this, random),
             ClassResolver(
                 propertyFactories = propertyFactories,
                 random = random,
-                nullableStrategy = nullableStrategy,
-                stringStrategy = stringStrategy,
-                collectionStrategy = collectionStrategy,
+                strategyProvider = this,
                 defaultValueStrategy = defaultValueStrategy,
             )
         )

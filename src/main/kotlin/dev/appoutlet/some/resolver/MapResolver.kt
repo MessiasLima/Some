@@ -2,6 +2,7 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -11,7 +12,7 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
 class MapResolver(
-    private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    private val strategyProvider: StrategyProvider,
     val random: Random
 ) : TypeResolver {
     override fun canResolve(type: KType): Boolean {
@@ -20,6 +21,7 @@ class MapResolver(
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
+        val collectionStrategy = strategyProvider[CollectionStrategy::class]
         val keyType = type.arguments.getOrNull(0)?.type
             ?: error("Star projection not supported in Map key")
         val valueType = type.arguments.getOrNull(1)?.type

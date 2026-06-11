@@ -17,19 +17,25 @@ class SomeConfigBuilder {
      * Strategy for handling nullable type resolution.
      * Defaults to [NullableStrategy.NullOnCircularReference].
      */
-    var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference
+    var nullableStrategy: NullableStrategy
+        get() = _strategies[NullableStrategy::class] as NullableStrategy
+        set(value) { _strategies[NullableStrategy::class] = value }
 
     /**
      * Strategy for generating string values.
      * Defaults to [StringStrategy.Random].
      */
-    var stringStrategy: StringStrategy = StringStrategy.Random()
+    var stringStrategy: StringStrategy
+        get() = _strategies[StringStrategy::class] as StringStrategy
+        set(value) { _strategies[StringStrategy::class] = value }
 
     /**
      * Strategy for generating collection sizes.
      * Defaults to [CollectionStrategy] with a range of 1..5.
      */
-    var collectionStrategy: CollectionStrategy = CollectionStrategy()
+    var collectionStrategy: CollectionStrategy
+        get() = _strategies[CollectionStrategy::class] as CollectionStrategy
+        set(value) { _strategies[CollectionStrategy::class] = value }
 
     /**
      * Strategy for handling data class constructor defaults.
@@ -43,8 +49,24 @@ class SomeConfigBuilder {
      */
     var seed: Long? = null
 
+    @PublishedApi
+    internal val _strategies: MutableMap<KClass<out Strategy>, Strategy> = mutableMapOf(
+        NullableStrategy::class to NullableStrategy.NullOnCircularReference,
+        StringStrategy::class to StringStrategy.Random(),
+        CollectionStrategy::class to CollectionStrategy(),
+    )
     private val _typeFactories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf()
     private val _propertyFactories: MutableMap<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = mutableMapOf()
+
+    /**
+     * Registers a strategy instance.
+     *
+     * @param T The strategy type.
+     * @param strategy The strategy instance to register.
+     */
+    inline fun <reified T : Strategy> strategy(strategy: T) {
+        _strategies[T::class] = strategy
+    }
 
     /**
      * Registers a custom type factory function for type [T].
@@ -55,8 +77,16 @@ class SomeConfigBuilder {
      * @param kClass The [KClass] of the type to override.
      * @param typeFactory Lambda receiving a [FixtureContext] and returning a value of type [T].
      */
-    fun <T : Any> register(kClass: KClass<T>, typeFactory: FixtureContext.() -> T) {
+    fun <T : Any> factory(kClass: KClass<T>, typeFactory: FixtureContext.() -> T) {
         _typeFactories[kClass] = typeFactory
+    }
+
+    /**
+     * Deprecated: Use [factory] instead.
+     */
+    @Deprecated("Use factory() instead", ReplaceWith("factory(kClass, typeFactory)"))
+    fun <T : Any> register(kClass: KClass<T>, typeFactory: FixtureContext.() -> T) {
+        factory(kClass, typeFactory)
     }
 
     /**
@@ -71,6 +101,17 @@ class SomeConfigBuilder {
         val kClass = property.instanceParameter?.type?.classifier as? KClass<*>
             ?: error("Could not determine class for property ${property.name}")
         _propertyFactories[kClass to property.name] = factory
+    }
+
+    /**
+     * Populates the builder's strategy map with entries from an existing map.
+     *
+     * Used internally by [SomeConfig.toBuilder] to transfer strategy registrations.
+     *
+     * @param strategies Map of strategy registrations to copy into this builder.
+     */
+    internal fun populateStrategies(strategies: Map<KClass<out Strategy>, Strategy>) {
+        _strategies.putAll(strategies)
     }
 
     /**
@@ -103,9 +144,7 @@ class SomeConfigBuilder {
      * @return A new [SomeConfig] instance with the configured values.
      */
     fun build(): SomeConfig = SomeConfig(
-        nullableStrategy = nullableStrategy,
-        stringStrategy = stringStrategy,
-        collectionStrategy = collectionStrategy,
+        strategies = _strategies.toMap(),
         defaultValueStrategy = defaultValueStrategy,
         seed = seed,
         typeFactories = _typeFactories.toMap(),

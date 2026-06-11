@@ -106,9 +106,24 @@ class MyTypeResolverTest {
 - Use custom exceptions in `dev.appoutlet.some.exception` package
 - Exception classes extend `Exception` with descriptive messages
 
+### Strategy and Factory Registration
+Strategies and type factories are registered through [SomeConfigBuilder]:
+
+```kotlin
+someSetup {
+    // Register a custom strategy
+    strategy(MyCustomStrategy())
+
+    // Register a custom type factory (formerly register())
+    factory(MyType::class) {
+        MyType(name = "Custom")
+    }
+}
+```
+
 ### Resolver Registration Order (in SomeConfig)
 Order matters - first match wins:
-1. CustomTypeFactoryResolver (user overrides)
+1. CustomTypeFactoryResolver (user overrides via factory())
 2. NullableResolver
 3. ObjectResolver, EnumResolver, SealedClassResolver, ValueClassResolver
 4. Primitive resolvers (String, Int, Long, etc.)

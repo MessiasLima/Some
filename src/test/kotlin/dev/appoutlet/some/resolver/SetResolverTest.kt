@@ -15,18 +15,20 @@ import kotlin.test.assertTrue
 class SetResolverTest {
     @Test
     fun `SetResolver generates set with correct size`() {
-        val config = SomeConfig(collectionStrategy = CollectionStrategy(3..5))
+        val config = SomeConfig().toBuilder().apply {
+            collectionStrategy = CollectionStrategy(3..5)
+        }.build()
         val resolvers = config.buildResolvers()
-        val resolver = SetResolver(CollectionStrategy(3..5), Random.Default)
+        val resolver = SetResolver(config, Random.Default)
 
-        val result = resolver.resolve(typeOf<Set<String>>(), ResolverChain(resolvers))
+        val result = resolver.resolve(typeOf<Set<String>>(), ResolverChain(resolvers, config))
         assertIs<Set<*>>(result)
         assertTrue(result.size in 3..5)
     }
 
     @Test
     fun `SetResolver generates set with elements of correct type`() {
-        val resolver = SetResolver(CollectionStrategy(), Random.Default)
+        val resolver = SetResolver(SomeConfig(), Random.Default)
 
         val result = resolver.resolve(typeOf<Set<String>>(), defaultTestChain)
         assertIs<Set<*>>(result)
@@ -35,7 +37,7 @@ class SetResolverTest {
 
     @Test
     fun `SetResolver generates set with Int elements`() {
-        val resolver = SetResolver(CollectionStrategy(), Random.Default)
+        val resolver = SetResolver(SomeConfig(), Random.Default)
 
         val result = resolver.resolve(typeOf<Set<Int>>(), defaultTestChain)
         assertIs<Set<*>>(result)
@@ -45,7 +47,7 @@ class SetResolverTest {
     @Test
     fun `SetResolver generates set of data class`() {
         data class DataClass(val a: Int, val b: String)
-        val resolver = SetResolver(CollectionStrategy(), Random.Default)
+        val resolver = SetResolver(SomeConfig(), Random.Default)
 
         val result = resolver.resolve(typeOf<Set<DataClass>>(), defaultTestChain)
         assertIs<Set<DataClass>>(result)
@@ -53,7 +55,7 @@ class SetResolverTest {
 
     @Test
     fun `SetResolver generates MutableSet when requested`() {
-        val resolver = SetResolver(CollectionStrategy(), Random.Default)
+        val resolver = SetResolver(SomeConfig(), Random.Default)
 
         val result = resolver.resolve(typeOf<MutableSet<String>>(), defaultTestChain)
         assertIs<MutableSet<*>>(result)
@@ -61,7 +63,7 @@ class SetResolverTest {
 
     @Test
     fun `SetResolver canResolve detects Set types`() {
-        val resolver = SetResolver(CollectionStrategy(), Random.Default)
+        val resolver = SetResolver(SomeConfig(), Random.Default)
         assertTrue(resolver.canResolve(typeOf<Set<String>>()))
         assertTrue(resolver.canResolve(typeOf<Set<Int>>()))
         assertTrue(resolver.canResolve(typeOf<MutableSet<String>>()))
@@ -69,7 +71,7 @@ class SetResolverTest {
 
     @Test
     fun `SetResolver rejects non-Set types`() {
-        val resolver = SetResolver(CollectionStrategy(), Random.Default)
+        val resolver = SetResolver(SomeConfig(), Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<List<String>>()))
@@ -77,7 +79,7 @@ class SetResolverTest {
 
     @Test
     fun `SetResolver throws error on star projection`() {
-        val resolver = SetResolver(CollectionStrategy(), Random.Default)
+        val resolver = SetResolver(SomeConfig(), Random.Default)
 
         assertFailsWith<IllegalStateException> {
             resolver.resolve(typeOf<Set<*>>(), defaultTestChain)

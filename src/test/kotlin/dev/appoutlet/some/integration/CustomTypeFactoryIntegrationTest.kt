@@ -9,7 +9,7 @@ class CustomTypeFactoryIntegrationTest {
     @Test
     fun `custom type factory overrides built-in resolver`() {
         val customSome = someSetup {
-            register(String::class) { "custom-value" }
+            factory(String::class) { "custom-value" }
         }
 
         data class Simple(val text: String)
@@ -23,7 +23,7 @@ class CustomTypeFactoryIntegrationTest {
 
         // Base config with custom type factory
         val baseSome = someSetup {
-            register(String::class) { "base-string" }
+            factory(String::class) { "base-string" }
         }
 
         val result1: Product = baseSome()
@@ -32,7 +32,7 @@ class CustomTypeFactoryIntegrationTest {
         // Aggregate with another custom type factory - should override in the aggregated config
         // This should NOT mutate the base config
         val result2: Product = baseSome {
-            register(String::class) { "overridden-string" }
+            factory(String::class) { "overridden-string" }
         }
         assertEquals("overridden-string", result2.name)
 

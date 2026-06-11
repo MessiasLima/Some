@@ -1,5 +1,6 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.exception.SomeInstantiationException
 import dev.appoutlet.some.some
 import dev.appoutlet.some.test.defaultTestChain
@@ -42,7 +43,7 @@ sealed class TestSealed {
 }
 
 class ClassResolverTest {
-    private val resolver = ClassResolver(random = Random.Default)
+    private val resolver = ClassResolver(random = Random.Default, strategyProvider = SomeConfig())
 
     @Test
     fun `ClassResolver resolves data class with primary constructor`() {

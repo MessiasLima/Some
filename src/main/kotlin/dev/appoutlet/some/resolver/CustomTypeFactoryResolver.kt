@@ -1,11 +1,9 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.config.DefaultValueStrategy
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -23,17 +21,13 @@ import kotlin.reflect.KType
  *
  * @param typeFactories Map of classes to user-provided type factory functions.
  * @param random Random source exposed to type factories through [FixtureContext].
- * @param nullableStrategy Nullable handling strategy exposed to type factories through [FixtureContext].
- * @param stringStrategy String generation strategy exposed to type factories through [FixtureContext].
- * @param collectionStrategy Collection sizing strategy exposed to type factories through [FixtureContext].
+ * @param strategyProvider Strategy provider exposed to type factories through [FixtureContext].
  * @param defaultValueStrategy Default value strategy exposed to type factories through [FixtureContext].
  */
 class CustomTypeFactoryResolver(
     private val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?>,
     private val random: Random,
-    private val nullableStrategy: NullableStrategy,
-    private val stringStrategy: StringStrategy,
-    private val collectionStrategy: CollectionStrategy,
+    private val strategyProvider: StrategyProvider,
     private val defaultValueStrategy: DefaultValueStrategy,
 ) : TypeResolver {
     /**
@@ -69,9 +63,7 @@ class CustomTypeFactoryResolver(
         val context = FixtureContext(
             random = random,
             resolutionStack = chain.stack, // This returns an immutable snapshot
-            nullableStrategy = nullableStrategy,
-            stringStrategy = stringStrategy,
-            collectionStrategy = collectionStrategy,
+            strategyProvider = strategyProvider,
             defaultValueStrategy = defaultValueStrategy,
         )
 

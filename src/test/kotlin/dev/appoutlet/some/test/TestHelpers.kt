@@ -8,6 +8,7 @@ import dev.appoutlet.some.core.ResolverChain
  * Creates a chain with default configuration.
  */
 val defaultTestChain: ResolverChain by lazy {
-    val resolvers = SomeConfig().buildResolvers()
-    ResolverChain(resolvers)
+    val config = SomeConfig()
+    val resolvers = config.buildResolvers()
+    ResolverChain(resolvers, config)
 }

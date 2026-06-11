@@ -12,11 +12,11 @@ import kotlin.reflect.KType
  * Each call to `some()` creates a new instance of this session to ensure thread safety.
  *
  * @param resolvers Ordered resolver list. The first resolver that supports a type is used.
- * @param nullableStrategy Strategy used when a circular reference is detected for a nullable type.
+ * @param strategyProvider Provider used to retrieve the [NullableStrategy] when a circular reference is detected.
  */
 class ResolverChain(
     val resolvers: List<TypeResolver>,
-    private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
+    private val strategyProvider: StrategyProvider,
 ) {
     private val resolutionStack = mutableListOf<KType>()
 
@@ -73,7 +73,7 @@ class ResolverChain(
         return when {
             sameClassifierDetected.not() -> false
             type.isMarkedNullable -> true
-            resolutionStack.last().isMarkedNullable -> false
+            resolutionStack.lastOrNull()?.isMarkedNullable == true -> false
             else -> true
         }
     }
@@ -89,6 +89,7 @@ class ResolverChain(
      * @throws SomeCircularReferenceException when the circular reference cannot be resolved as `null`.
      */
     private fun handleCircularReference(type: KType): Nothing? {
+        val nullableStrategy = strategyProvider[NullableStrategy::class]
         val strategyAllowsNull = nullableStrategy is NullableStrategy.AlwaysNull ||
             nullableStrategy is NullableStrategy.NullOnCircularReference
 
