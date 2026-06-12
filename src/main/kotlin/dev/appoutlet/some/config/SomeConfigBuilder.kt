@@ -18,24 +18,24 @@ class SomeConfigBuilder {
      * Defaults to [NullableStrategy.NullOnCircularReference].
      */
     var nullableStrategy: NullableStrategy
-        get() = _strategies[NullableStrategy::class] as NullableStrategy
-        set(value) { _strategies[NullableStrategy::class] = value }
+        get() = strategiesMap[NullableStrategy::class] as NullableStrategy
+        set(value) { strategiesMap[NullableStrategy::class] = value }
 
     /**
      * Strategy for generating string values.
      * Defaults to [StringStrategy.Random].
      */
     var stringStrategy: StringStrategy
-        get() = _strategies[StringStrategy::class] as StringStrategy
-        set(value) { _strategies[StringStrategy::class] = value }
+        get() = strategiesMap[StringStrategy::class] as StringStrategy
+        set(value) { strategiesMap[StringStrategy::class] = value }
 
     /**
      * Strategy for generating collection sizes.
      * Defaults to [CollectionStrategy] with a range of 1..5.
      */
     var collectionStrategy: CollectionStrategy
-        get() = _strategies[CollectionStrategy::class] as CollectionStrategy
-        set(value) { _strategies[CollectionStrategy::class] = value }
+        get() = strategiesMap[CollectionStrategy::class] as CollectionStrategy
+        set(value) { strategiesMap[CollectionStrategy::class] = value }
 
     /**
      * Strategy for handling data class constructor defaults.
@@ -50,7 +50,7 @@ class SomeConfigBuilder {
     var seed: Long? = null
 
     @PublishedApi
-    internal val _strategies: MutableMap<KClass<out Strategy>, Strategy> = mutableMapOf(
+    internal val strategiesMap: MutableMap<KClass<out Strategy>, Strategy> = mutableMapOf(
         NullableStrategy::class to NullableStrategy.NullOnCircularReference,
         StringStrategy::class to StringStrategy.Random(),
         CollectionStrategy::class to CollectionStrategy(),
@@ -65,7 +65,7 @@ class SomeConfigBuilder {
      * @param strategy The strategy instance to register.
      */
     inline fun <reified T : Strategy> strategy(strategy: T) {
-        _strategies[T::class] = strategy
+        strategiesMap[T::class] = strategy
     }
 
     /**
@@ -111,7 +111,7 @@ class SomeConfigBuilder {
      * @param strategies Map of strategy registrations to copy into this builder.
      */
     internal fun populateStrategies(strategies: Map<KClass<out Strategy>, Strategy>) {
-        _strategies.putAll(strategies)
+        strategiesMap.putAll(strategies)
     }
 
     /**
@@ -144,7 +144,7 @@ class SomeConfigBuilder {
      * @return A new [SomeConfig] instance with the configured values.
      */
     fun build(): SomeConfig = SomeConfig(
-        strategies = _strategies.toMap(),
+        strategies = strategiesMap.toMap(),
         defaultValueStrategy = defaultValueStrategy,
         seed = seed,
         typeFactories = _typeFactories.toMap(),
