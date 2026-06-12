@@ -32,5 +32,5 @@ interface StrategyProvider {
      * @return The registered strategy instance.
      * @throws NoSuchElementException when no strategy is registered for [key].
      */
-    operator fun <T : Strategy> get(key: KClass<T>): T
+    operator fun <T : Strategy> get(key: KClass<T>): T?
 }
