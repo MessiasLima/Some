@@ -56,7 +56,7 @@ Classes that don't have a primary constructor, require special construction logi
 data class Email(val value: String)
 
 someSetup {
-    register(Email::class) { Email("user${random.nextInt(1000)}@example.com") }
+    factory(Email::class) { Email("user${random.nextInt(1000)}@example.com") }
 }
 ```
 

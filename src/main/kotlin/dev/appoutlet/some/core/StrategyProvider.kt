@@ -6,20 +6,8 @@ import kotlin.reflect.KClass
 /**
  * Provides strategy instances keyed by their base type.
  *
- * [SomeConfig][dev.appoutlet.some.config.SomeConfig] implements this interface so that
- * every resolver and custom factory can look up the active strategy for a given type
- * without depending on concrete strategy properties.
- *
- * ## Usage in resolvers
- *
- * ```kotlin
- * class MyResolver(private val strategyProvider: StrategyProvider) : TypeResolver {
- *     override fun resolve(type: KType, chain: ResolverChain): Any {
- *         val strategy = strategyProvider[MyStrategy::class]
- *         // use strategy …
- *     }
- * }
- * ```
+ * [SomeConfig][dev.appoutlet.some.config.SomeConfig] implements this interface so custom factories can inspect the
+ * active configuration through [FixtureContext.strategyProvider].
  *
  * ## Usage in custom type factories
  *

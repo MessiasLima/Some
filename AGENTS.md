@@ -41,22 +41,10 @@ Documentation pages are under `docs/` and the site config is in `zensical.toml`.
 
 ```
 src/main/kotlin/dev/appoutlet/some/
-├── Some.kt                    # Main API: some<T>(), someSetup {}
-├── config/                    # Configuration classes
-│   ├── SomeConfig.kt          # Immutable config implementing StrategyProvider
-│   ├── SomeConfigBuilder.kt   # Mutable builder with strategy() and factory()
-│   ├── Strategy.kt            # Marker interface for all strategies
-│   ├── NullableStrategy.kt    # Nullable handling strategies
-│   ├── StringStrategy.kt      # String generation strategies
-│   ├── CollectionStrategy.kt  # Collection sizing strategies
-│   └── DefaultValueStrategy.kt # Constructor default handling strategies
-├── core/                      # Core abstractions
-│   ├── FixtureContext.kt       # Runtime context with strategyProvider
-│   ├── ResolverChain.kt        # Resolution session managing circular references
-│   ├── StrategyProvider.kt     # Interface for looking up strategies by type
-│   └── TypeResolver.kt         # Resolver interface
-├── exception/                 # Custom exceptions (one per file)
-└── resolver/                  # Type resolvers
+├── config/          # Configuration, strategies, and builder
+├── core/            # Core abstractions and resolver chain
+├── exception/       # Custom exceptions
+└── resolver/        # Type resolvers
 ```
 
 ---
@@ -87,9 +75,8 @@ someSetup {
 }
 ```
 
-Strategies are stored in `SomeConfig` as a `Map<KClass<out Strategy>, Strategy>` keyed by the
-sealed interface or base class. Resolvers and custom factories receive a `StrategyProvider`
-and retrieve strategies via `strategyProvider[NullableStrategy::class]`.
+Resolvers receive only the strategy they need (nullable, falling back to the strategy default).
+Custom factories access strategies through `FixtureContext.strategyProvider`.
 
 ### Type Detection Pattern
 **Always use `typeOf<T>()` for exact type matching**, not `toString().contains()`:
@@ -107,21 +94,20 @@ Each resolver should have 3+ tests:
 class MyTypeResolverTest {
     @Test
     fun `MyTypeResolver generates MyType values`() {
-        val config = SomeConfig().strategy(MyStrategy())
-        val resolver = MyTypeResolver(config, Random.Default)
+        val resolver = MyTypeResolver(MyStrategy(), Random.Default)
         val result = resolver.resolve(typeOf<MyType>(), defaultTestChain)
         assertIs<MyType>(result)
     }
     
     @Test
     fun `MyTypeResolver canResolve detects MyType type`() {
-        val resolver = MyTypeResolver(SomeConfig(), Random.Default)
+        val resolver = MyTypeResolver(random = Random.Default)
         assertTrue(resolver.canResolve(typeOf<MyType>()))
     }
     
     @Test
     fun `MyTypeResolver rejects non-MyType types`() {
-        val resolver = MyTypeResolver(SomeConfig(), Random.Default)
+        val resolver = MyTypeResolver(random = Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
     }

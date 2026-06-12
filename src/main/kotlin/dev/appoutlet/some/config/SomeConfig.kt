@@ -37,38 +37,16 @@ import kotlin.random.Random
 import kotlin.reflect.KClass
 
 /**
- * Immutable configuration for customizing the behavior of [some][dev.appoutlet.some.some] fixture generation.
+ * Immutable configuration for fixture generation behavior.
  *
- * Controls strategy registration, random seeding, type factories, and property factories. Strategies are
- * stored in a map keyed by their base [KClass] and are retrieved through the [StrategyProvider] interface.
- * Each generation call uses a [SomeConfig] to build an ordered resolver list, and that resolver order defines
- * which customization wins when multiple options could apply.
+ * Use [SomeConfigBuilder] through `someSetup { ... }` or `some<T> { ... }` to configure.
+ * Direct construction is useful for tests that need to explicitly assemble configurations.
+ * Use [toBuilder] to derive a mutable copy of this configuration.
  *
- * Prefer [SomeConfigBuilder] through `some { ... }` or `someSetup { ... }` for user-facing configuration. Direct
- * construction is useful for tests or library integrations that need to assemble configuration values explicitly.
- * Use [toBuilder] to derive a mutable copy without mutating the original configuration.
- *
- * ## Strategy registration
- *
- * Built-in strategies are pre-registered with sensible defaults. Override them or add custom strategies
- * using the [strategy] method:
- *
- * ```kotlin
- * val config = SomeConfig().strategy(NullableStrategy.AlwaysNull)
- * ```
- *
- * Custom strategies can be retrieved from any [StrategyProvider] (including [FixtureContext]) by key:
- *
- * ```kotlin
- * val myStrategy = config[MyCustomStrategy::class]
- * ```
- *
- * @param strategies Strategy instances keyed by their base [KClass].
+ * @param strategies Map of registered strategy instances.
  * @param seed Seed for reproducible random generation. When `null`, [Random.Default] is used.
- * @param typeFactories Custom type factories keyed by the exact class they override. These are resolved before all
- * built-in resolvers.
- * @param propertyFactories Custom property factories keyed by owning class and constructor parameter name. These are
- * applied by [ClassResolver] while constructing model objects.
+ * @param typeFactories Custom type factories keyed by class.
+ * @param propertyFactories Custom property factories keyed by class and property name.
  */
 data class SomeConfig(
     val strategies: Map<KClass<out Strategy>, Strategy> = defaultStrategies(),
@@ -83,23 +61,11 @@ data class SomeConfig(
      * @return The registered strategy instance.
      * @throws NoSuchElementException when no strategy is registered for [key].
      */
+    // TODO - On the @src/main/kotlin/dev/appoutlet/some/core/StrategyProvider.kt add a get function where the user can call strategyProvider.get<StringStrategy>(). I feel its more idiomatic
     override fun <T : Strategy> get(key: KClass<T>): T {
         @Suppress("UNCHECKED_CAST")
         return strategies[key] as? T
             ?: throw NoSuchElementException("No strategy registered for ${key.simpleName}")
-    }
-
-    /**
-     * Returns a new [SomeConfig] with [strategy] registered under its base type key.
-     *
-     * The key is determined by the strategy's immediate [Strategy] subtype. For example,
-     * registering [NullableStrategy.AlwaysNull] replaces the [NullableStrategy] entry.
-     *
-     * @param strategy The strategy instance to register.
-     * @return A new [SomeConfig] with the strategy registered.
-     */
-    inline fun <reified T : Strategy> strategy(strategy: T): SomeConfig {
-        return copy(strategies = strategies + (T::class to strategy))
     }
 
     /**
@@ -134,12 +100,18 @@ data class SomeConfig(
                 random = random,
                 strategyProvider = this,
             ),
-            NullableResolver(this, random),
+            NullableResolver(
+                nullableStrategy = this[NullableStrategy::class],
+                random = random,
+            ),
             ObjectResolver(),
             EnumResolver(random),
             SealedClassResolver(random),
             ValueClassResolver(),
-            StringResolver(this, random),
+            StringResolver(
+                stringStrategy = this[StringStrategy::class],
+                random = random,
+            ),
             IntResolver(random),
             LongResolver(random),
             DoubleResolver(random),
@@ -158,13 +130,26 @@ data class SomeConfig(
             BigIntegerResolver(random),
             LocalDateResolver(random),
             LocalDateTimeResolver(random),
-            ListResolver(this, random),
-            SetResolver(this, random),
-            MapResolver(this, random),
-            ArrayResolver(this, random),
+            ListResolver(
+                collectionStrategy = this[CollectionStrategy::class],
+                random = random,
+            ),
+            SetResolver(
+                collectionStrategy = this[CollectionStrategy::class],
+                random = random,
+            ),
+            MapResolver(
+                collectionStrategy = this[CollectionStrategy::class],
+                random = random,
+            ),
+            ArrayResolver(
+                collectionStrategy = this[CollectionStrategy::class],
+                random = random,
+            ),
             ClassResolver(
                 propertyFactories = propertyFactories,
                 random = random,
+                defaultValueStrategy = this[DefaultValueStrategy::class],
                 strategyProvider = this,
             )
         )
@@ -185,10 +170,10 @@ data class SomeConfig(
          * Returns the default strategy map with sensible defaults for all built-in strategies.
          */
         fun defaultStrategies(): Map<KClass<out Strategy>, Strategy> = mapOf(
-            NullableStrategy::class to NullableStrategy.NullOnCircularReference,
-            StringStrategy::class to StringStrategy.Random(),
-            CollectionStrategy::class to CollectionStrategy(),
-            DefaultValueStrategy::class to DefaultValueStrategy.UseDefault,
+            NullableStrategy::class to NullableStrategy.default,
+            StringStrategy::class to StringStrategy.default,
+            CollectionStrategy::class to CollectionStrategy.default,
+            DefaultValueStrategy::class to DefaultValueStrategy.default,
         )
     }
 }

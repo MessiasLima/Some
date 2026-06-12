@@ -53,16 +53,12 @@ class SomeConfigBuilder {
      * Built-in strategies ([NullableStrategy], [StringStrategy], [CollectionStrategy],
      * [DefaultValueStrategy]) are pre-populated with sensible defaults.
      *
-     * @param T The strategy type.
      * @param strategy The strategy instance to register.
      */
-    inline fun <reified T : Strategy> strategy(strategy: T): SomeConfigBuilder {
-        putStrategy(T::class, strategy)
+    // TODO: investigate the possibility of having this as infix function
+    fun strategy(strategy: Strategy): SomeConfigBuilder {
+        _strategies[strategy.key] = strategy
         return this
-    }
-
-    fun <T : Strategy> putStrategy(kClass: KClass<T>, strategy: T) {
-        _strategies[kClass] = strategy
     }
 
     /**

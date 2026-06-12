@@ -10,13 +10,13 @@ Generates random lowercase alphabetic strings with configurable length.
 
 ```kotlin
 // Default: 8 characters → e.g., "xvqkpmnz"
-some { stringStrategy = StringStrategy.Random() }
+some { strategy(StringStrategy.Random()) }
 
 // Custom length: 16 characters → e.g., "abxfmkwjqztplngh"
-some { stringStrategy = StringStrategy.Random(length = 16) }
+some { strategy(StringStrategy.Random(length = 16)) }
 
 // Short strings: 4 characters → e.g., "rqst"
-some { stringStrategy = StringStrategy.Random(length = 4) }
+some { strategy(StringStrategy.Random(length = 4)) }
 ```
 
 The `length` parameter must be greater than `0`.
@@ -27,7 +27,7 @@ Generates UUID strings in the standard format (e.g., `550e8400-e29b-41d4-a716-44
 
 ```kotlin
 // e.g., "550e8400-e29b-41d4-a716-446655440000"
-some { stringStrategy = StringStrategy.Uuid }
+some { strategy(StringStrategy.Uuid) }
 ```
 
 Useful when you need unique identifiers in your test data.
@@ -38,7 +38,7 @@ Generates human-readable strings like `"string-1234"`.
 
 ```kotlin
 // e.g., "string-1234"
-some { stringStrategy = StringStrategy.Readable }
+some { strategy(StringStrategy.Readable) }
 ```
 
 Useful for debugging and test output where recognizable values help trace failures.
