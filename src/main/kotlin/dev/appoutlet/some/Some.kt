@@ -3,6 +3,7 @@ package dev.appoutlet.some
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.config.SomeConfigBuilder
+import dev.appoutlet.some.config.someConfigBuilder
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
@@ -69,7 +70,7 @@ class Some(
  * @return A configured [Some] instance.
  */
 fun someSetup(config: SomeConfigBuilder.() -> Unit = {}): Some {
-    val someConfig = SomeConfigBuilder().apply(config).build()
+    val someConfig = someConfigBuilder(config)
     val random = someConfig.buildRandom()
     return Some(someConfig.buildResolvers(random), random, someConfig)
 }
