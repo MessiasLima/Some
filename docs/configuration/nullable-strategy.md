@@ -12,7 +12,7 @@ when a nullable type would otherwise create a circular reference.
 Produces concrete values for nullable types unless resolving the value would create a circular reference.
 
 ```kotlin
-some { nullableStrategy = NullableStrategy.NullOnCircularReference }
+some { strategy(NullableStrategy.NullOnCircularReference) }
 ```
 
 This is the default strategy.
@@ -39,7 +39,7 @@ some<StrictNode>() // throws SomeCircularReferenceException
 Always produces `null` for nullable types.
 
 ```kotlin
-some { nullableStrategy = NullableStrategy.AlwaysNull }
+some { strategy(NullableStrategy.AlwaysNull) }
 ```
 
 Use this strategy when testing edge cases or validating null-handling logic.
@@ -49,7 +49,7 @@ Use this strategy when testing edge cases or validating null-handling logic.
 Always produces a non-null concrete value for nullable types.
 
 ```kotlin
-some { nullableStrategy = NullableStrategy.NeverNull }
+some { strategy(NullableStrategy.NeverNull) }
 ```
 
 Use this strategy when you want to ensure all nullable fields are populated, which is useful for testing the "happy path" scenarios.
@@ -60,19 +60,19 @@ Produces `null` based on a configurable probability.
 
 ```kotlin
 // 50% chance of null (default)
-some { nullableStrategy = NullableStrategy.Random() }
+some { strategy(NullableStrategy.Random()) }
 
 // 20% chance of null (mostly non-null values)
-some { nullableStrategy = NullableStrategy.Random(probability = 0.2) }
+some { strategy(NullableStrategy.Random(probability = 0.2)) }
 
 // 80% chance of null (mostly null values)
-some { nullableStrategy = NullableStrategy.Random(probability = 0.8) }
+some { strategy(NullableStrategy.Random(probability = 0.8)) }
 
 // Never generate null (0% chance) - equivalent to NeverNull
-some { nullableStrategy = NullableStrategy.Random(probability = 0.0) }
+some { strategy(NullableStrategy.Random(probability = 0.0)) }
 
 // Always generate null (100% chance) - equivalent to AlwaysNull
-some { nullableStrategy = NullableStrategy.Random(probability = 1.0) }
+some { strategy(NullableStrategy.Random(probability = 1.0)) }
 ```
 
 #### Probability parameter

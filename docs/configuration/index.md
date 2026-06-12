@@ -5,14 +5,14 @@ icon: lucide/settings
 
 Some works with no configuration, but each generation call can be customized when a test needs deterministic output, different null behavior, readable strings, fixed collection sizes, or custom factories.
 
-Configuration is written inside `some {}` or `someSetup {}` blocks. Set options directly in the block:
+Configuration is written inside `some {}` or `someSetup {}` blocks. Register strategies or factories in the block:
 
 ```kotlin
 val user = some<User> {
     seed = 12345L
-    stringStrategy = StringStrategy.Readable
-    nullableStrategy = NullableStrategy.NeverNull
-    collectionStrategy = CollectionStrategy(3..7)
+    strategy(StringStrategy.Readable)
+    strategy(NullableStrategy.NeverNull)
+    strategy(CollectionStrategy(3..7))
 }
 ```
 
@@ -22,8 +22,8 @@ Use `some<T> { ... }` when a configuration only applies to one generated value.
 
 ```kotlin
 val user = some<User> {
-    nullableStrategy = NullableStrategy.AlwaysNull
-    stringStrategy = StringStrategy.Readable
+    strategy(NullableStrategy.AlwaysNull)
+    strategy(StringStrategy.Readable)
 }
 ```
 
@@ -36,8 +36,8 @@ Use `someSetup { ... }` when many generated values should share the same configu
 ```kotlin
 val some = someSetup {
     seed = 12345L
-    stringStrategy = StringStrategy.Uuid
-    collectionStrategy = CollectionStrategy(3..7)
+    strategy(StringStrategy.Uuid)
+    strategy(CollectionStrategy(3..7))
 }
 
 val user = some<User>()
@@ -52,12 +52,12 @@ Reusable configurations can be overridden for a single call. The base instance i
 
 ```kotlin
 val baseSome = someSetup {
-    nullableStrategy = NullableStrategy.NeverNull
-    stringStrategy = StringStrategy.Readable
+    strategy(NullableStrategy.NeverNull)
+    strategy(StringStrategy.Readable)
 }
 
 val result: Person = baseSome {
-    nullableStrategy = NullableStrategy.AlwaysNull
+    strategy(NullableStrategy.AlwaysNull)
 }
 
 // baseSome still uses NeverNull and Readable strings
@@ -66,12 +66,12 @@ val stillNeverNull: Person = baseSome()
 
 ## Defaults
 
-| Option | Default | Description | More |
-|--------|---------|-------------|------|
-| `nullableStrategy` | `NullableStrategy.NullOnCircularReference` | Emits `null` for nullable circular references | [NullableStrategy](nullable-strategy.md) |
-| `stringStrategy` | `StringStrategy.Random()` | Random lowercase alphabetic strings | [StringStrategy](string-strategy.md) |
-| `collectionStrategy` | `CollectionStrategy()` | Collections with 1 to 5 elements | [CollectionStrategy](collection-strategy.md) |
-| `defaultValueStrategy` | `DefaultValueStrategy.UseDefault` | Uses Kotlin defaults for optional parameters | [DefaultValueStrategy](default-value-strategy.md) |
+| Strategy | Default | Description | More |
+|----------|---------|-------------|------|
+| `NullableStrategy` | `NullableStrategy.NullOnCircularReference` | Emits `null` for nullable circular references | [NullableStrategy](nullable-strategy.md) |
+| `StringStrategy` | `StringStrategy.Random()` | Random lowercase alphabetic strings | [StringStrategy](string-strategy.md) |
+| `CollectionStrategy` | `CollectionStrategy()` | Collections with 1 to 5 elements | [CollectionStrategy](collection-strategy.md) |
+| `DefaultValueStrategy` | `DefaultValueStrategy.UseDefault` | Uses Kotlin defaults for optional parameters | [DefaultValueStrategy](default-value-strategy.md) |
 | `seed` | `null` | Uses non-deterministic `Random.Default` | — |
 
 ## Reproducible Data
@@ -93,7 +93,7 @@ Without a seed, values can vary between runs.
 
 ```kotlin
 val user = some<User> {
-    nullableStrategy = NullableStrategy.NeverNull
+    strategy(NullableStrategy.NeverNull)
 }
 ```
 
@@ -101,15 +101,15 @@ val user = some<User> {
 
 ```kotlin
 val user = some<User> {
-    stringStrategy = StringStrategy.Readable
+    strategy(StringStrategy.Readable)
 }
 ```
 
-### Fixed Collection Sizes
+### Small Collection Sizes
 
 ```kotlin
 val order = some<Order> {
-    collectionStrategy = CollectionStrategy(2..2)
+    strategy(CollectionStrategy(2..3))
 }
 ```
 
@@ -117,17 +117,17 @@ val order = some<Order> {
 
 ```kotlin
 val user = some<User> {
-    defaultValueStrategy = DefaultValueStrategy.Generate
+    strategy(DefaultValueStrategy.Generate)
 }
 ```
 
 ### Custom Factories
 
-Use `register` to customize a whole type, and `property` to customize one constructor property.
+Use `factory` to customize a whole type, and `property` to customize one constructor property.
 
 ```kotlin
 val some = someSetup {
-    register(Email::class) { Email("user${random.nextInt(1000)}@example.com") }
+    factory(Email::class) { Email("user${random.nextInt(1000)}@example.com") }
     property(User::role) { "Admin" }
 }
 ```
