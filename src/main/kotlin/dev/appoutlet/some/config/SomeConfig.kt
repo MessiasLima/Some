@@ -89,7 +89,6 @@ data class SomeConfig(
             ?: throw NoSuchElementException("No strategy registered for ${key.simpleName}")
     }
 
-    // TODO: shouldn't this be on the Builder?
     /**
      * Returns a new [SomeConfig] with [strategy] registered under its base type key.
      *
