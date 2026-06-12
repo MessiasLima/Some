@@ -138,3 +138,6 @@ class SomeConfigBuilder {
         propertyFactories = _propertyFactories.toMap()
     )
 }
+
+fun someConfigBuilder(config: SomeConfigBuilder.() -> Unit = {}): SomeConfig =
+    SomeConfigBuilder().apply(config).build()

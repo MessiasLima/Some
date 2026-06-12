@@ -62,10 +62,9 @@ data class SomeConfig(
      * @throws NoSuchElementException when no strategy is registered for [key].
      */
     // TODO - On the @src/main/kotlin/dev/appoutlet/some/core/StrategyProvider.kt add a get function where the user can call strategyProvider.get<StringStrategy>(). I feel its more idiomatic
-    override fun <T : Strategy> get(key: KClass<T>): T {
-        @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Strategy> get(key: KClass<T>): T? {
         return strategies[key] as? T
-            ?: throw NoSuchElementException("No strategy registered for ${key.simpleName}")
     }
 
     /**
@@ -149,7 +148,6 @@ data class SomeConfig(
             ClassResolver(
                 propertyFactories = propertyFactories,
                 random = random,
-                defaultValueStrategy = this[DefaultValueStrategy::class],
                 strategyProvider = this,
             )
         )
