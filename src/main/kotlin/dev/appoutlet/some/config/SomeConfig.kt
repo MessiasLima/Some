@@ -76,19 +76,6 @@ data class SomeConfig(
     val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
 ) : StrategyProvider {
-
-    companion object {
-        /**
-         * Returns the default strategy map with sensible defaults for all built-in strategies.
-         */
-        fun defaultStrategies(): Map<KClass<out Strategy>, Strategy> = mapOf(
-            NullableStrategy::class to NullableStrategy.NullOnCircularReference,
-            StringStrategy::class to StringStrategy.Random(),
-            CollectionStrategy::class to CollectionStrategy(),
-            DefaultValueStrategy::class to DefaultValueStrategy.UseDefault,
-        )
-    }
-
     /**
      * Returns the strategy registered for [key].
      *
@@ -102,6 +89,7 @@ data class SomeConfig(
             ?: throw NoSuchElementException("No strategy registered for ${key.simpleName}")
     }
 
+    // TODO: shouldn't this be on the Builder?
     /**
      * Returns a new [SomeConfig] with [strategy] registered under its base type key.
      *
@@ -111,8 +99,8 @@ data class SomeConfig(
      * @param strategy The strategy instance to register.
      * @return A new [SomeConfig] with the strategy registered.
      */
-    fun <T : Strategy> strategy(strategy: T): SomeConfig {
-        return copy(strategies = strategies + (findStrategyKey(strategy) to strategy))
+    inline fun <reified T : Strategy> strategy(strategy: T): SomeConfig {
+        return copy(strategies = strategies + (T::class to strategy))
     }
 
     /**
@@ -192,22 +180,16 @@ data class SomeConfig(
      * @return [Random] seeded with [seed] if set, or [Random.Default] otherwise.
      */
     internal fun buildRandom(): Random = seed?.let { Random(it) } ?: Random.Default
-}
 
-/**
- * Determines the strategy map key for a given [Strategy] instance.
- *
- * For sealed strategy hierarchies ([NullableStrategy], [StringStrategy], [DefaultValueStrategy]),
- * the key is the sealed interface [KClass] so that any implementation replaces the same entry.
- * For data-class strategies ([CollectionStrategy]), the class itself is the key.
- * Custom strategies that directly implement [Strategy] use their own class as the key.
- */
-internal fun findStrategyKey(strategy: Strategy): KClass<out Strategy> {
-    return when (strategy) {
-        is NullableStrategy -> NullableStrategy::class
-        is StringStrategy -> StringStrategy::class
-        is CollectionStrategy -> CollectionStrategy::class
-        is DefaultValueStrategy -> DefaultValueStrategy::class
-        else -> strategy::class
+    companion object {
+        /**
+         * Returns the default strategy map with sensible defaults for all built-in strategies.
+         */
+        fun defaultStrategies(): Map<KClass<out Strategy>, Strategy> = mapOf(
+            NullableStrategy::class to NullableStrategy.NullOnCircularReference,
+            StringStrategy::class to StringStrategy.Random(),
+            CollectionStrategy::class to CollectionStrategy(),
+            DefaultValueStrategy::class to DefaultValueStrategy.UseDefault,
+        )
     }
 }

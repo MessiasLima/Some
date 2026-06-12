@@ -43,8 +43,8 @@ class SomeConfigBuilder {
      */
     var seed: Long? = null
 
-    private val _typeFactories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf()
-    private val _propertyFactories: MutableMap<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = mutableMapOf()
+    private val _typeFactories = mutableMapOf<KClass<*>, FixtureContext.() -> Any?>()
+    private val _propertyFactories = mutableMapOf<Pair<KClass<*>, String>, FixtureContext.() -> Any?>()
 
     /**
      * Registers a strategy for fixture generation.
@@ -56,9 +56,13 @@ class SomeConfigBuilder {
      * @param T The strategy type.
      * @param strategy The strategy instance to register.
      */
-    fun <T : Strategy> strategy(strategy: T): SomeConfigBuilder {
-        _strategies[findStrategyKey(strategy)] = strategy
+    inline fun <reified T : Strategy> strategy(strategy: T): SomeConfigBuilder {
+        putStrategy(T::class, strategy)
         return this
+    }
+
+    fun <T : Strategy> putStrategy(kClass: KClass<T>, strategy: T) {
+        _strategies[kClass] = strategy
     }
 
     /**
