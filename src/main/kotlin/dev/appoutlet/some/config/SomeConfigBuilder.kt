@@ -55,10 +55,8 @@ class SomeConfigBuilder {
      *
      * @param strategy The strategy instance to register.
      */
-    // TODO: investigate the possibility of having this as infix function
-    fun strategy(strategy: Strategy): SomeConfigBuilder {
+    infix fun strategy(strategy: Strategy) {
         _strategies[strategy.key] = strategy
-        return this
     }
 
     /**

@@ -15,12 +15,20 @@ import kotlin.reflect.KType
  *
  * ## Accessing strategies
  *
- * Use [strategyProvider] to retrieve a registered strategy:
+ * Use [strategyProvider] to retrieve a registered strategy. Both the operator form and the
+ * reified generic extension are supported:
  *
  * ```kotlin
  * factory(MyType::class) {
- *     val stringStrategy = strategyProvider[StringStrategy::class]
- *     MyType(stringStrategy is StringStrategy.Readable)
+ *     val strategy = strategyProvider.get<StringStrategy>()
+ *     MyType(strategy is StringStrategy.Readable)
+ * }
+ * ```
+ *
+ * ```kotlin
+ * factory(MyType::class) {
+ *     val strategy = strategyProvider[StringStrategy::class]
+ *     MyType(strategy is StringStrategy.Readable)
  * }
  * ```
  *

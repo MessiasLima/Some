@@ -61,7 +61,6 @@ data class SomeConfig(
      * @return The registered strategy instance.
      * @throws NoSuchElementException when no strategy is registered for [key].
      */
-    // TODO - On the @src/main/kotlin/dev/appoutlet/some/core/StrategyProvider.kt add a get function where the user can call strategyProvider.get<StringStrategy>(). I feel its more idiomatic
     @Suppress("UNCHECKED_CAST")
     override fun <T : Strategy> get(key: KClass<T>): T? {
         return strategies[key] as? T

@@ -13,7 +13,8 @@ import kotlin.reflect.typeOf
 /**
  * Resolves [Set] and [MutableSet] types using the active [CollectionStrategy].
  *
- * @param collectionStrategy Strategy for determining collection sizes. Defaults to [CollectionStrategy.default] when null.
+ * @param collectionStrategy Strategy for determining collection sizes.
+ * Defaults to [CollectionStrategy.default] when null.
  * @param random Random source used for determining set size within the configured range.
  */
 class SetResolver(

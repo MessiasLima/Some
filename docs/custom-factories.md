@@ -108,7 +108,7 @@ data class Customer(val id: String, val age: Int)
 
 val customer = some<Customer> {
     property(Customer::id) {
-        when (val s = strategyProvider[StringStrategy::class]) {
+        when (val s = strategyProvider.get<StringStrategy>()) {
             is StringStrategy.Random -> "customer-${random.nextInt(1000)}"
             is StringStrategy.Uuid -> "customer-${random.nextLong()}"
             is StringStrategy.Readable -> "customer-${random.nextInt(9000) + 1000}"

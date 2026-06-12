@@ -17,10 +17,16 @@ import kotlin.reflect.KClass
  * ```kotlin
  * someSetup {
  *     factory(MyType::class) {
- *         val strategy = strategyProvider[MyStrategy::class]
- *         MyType(strategy.value)
+ *         val strategy = strategyProvider.get<StringStrategy>()
+ *         MyType(strategy is StringStrategy.Readable)
  *     }
  * }
+ * ```
+ *
+ * The operator form is also supported:
+ *
+ * ```kotlin
+ * val strategy = strategyProvider[MyStrategy::class]
  * ```
  */
 interface StrategyProvider {
@@ -34,3 +40,18 @@ interface StrategyProvider {
      */
     operator fun <T : Strategy> get(key: KClass<T>): T?
 }
+
+/**
+ * Returns the strategy instance of type [T] registered for this provider.
+ *
+ * This is a convenience extension that allows idiomatic usage without explicitly passing a [KClass]:
+ *
+ * ```kotlin
+ * val strategy = strategyProvider.get<StringStrategy>()
+ * ```
+ *
+ * @param T The type of the strategy to retrieve.
+ * @return The registered strategy instance.
+ * @throws NoSuchElementException when no strategy is registered for [T].
+ */
+inline fun <reified T : Strategy> StrategyProvider.get(): T? = get(T::class)

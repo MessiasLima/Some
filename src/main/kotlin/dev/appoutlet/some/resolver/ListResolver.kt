@@ -13,7 +13,8 @@ import kotlin.reflect.typeOf
 /**
  * Resolves [List] and [MutableList] types using the active [CollectionStrategy].
  *
- * @param collectionStrategy Strategy for determining collection sizes. Defaults to [CollectionStrategy.default] when null.
+ * @param collectionStrategy Strategy for determining collection sizes. Defaults to
+ * [CollectionStrategy.default] when null.
  * @param random Random source used for determining list size within the configured range.
  */
 class ListResolver(

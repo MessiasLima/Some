@@ -76,7 +76,14 @@ someSetup {
 ```
 
 Resolvers receive only the strategy they need (nullable, falling back to the strategy default).
-Custom factories access strategies through `FixtureContext.strategyProvider`.
+Custom factories access strategies through `FixtureContext.strategyProvider` using the idiomatic `get()` extension:
+
+```kotlin
+factory(MyType::class) {
+    val strategy = strategyProvider.get<StringStrategy>()
+    MyType(strategy is StringStrategy.Readable)
+}
+```
 
 ### Type Detection Pattern
 **Always use `typeOf<T>()` for exact type matching**, not `toString().contains()`:
