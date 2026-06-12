@@ -12,6 +12,12 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   deploy:
     environment:
@@ -39,8 +45,11 @@ jobs:
       - name: Upload website artifacts
         uses: actions/upload-pages-artifact@v5
         with:
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: site
 
       - name: Deploy website
         uses: actions/deploy-pages@v5
         id: deployment
+        with:
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
