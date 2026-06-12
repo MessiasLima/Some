@@ -1,0 +1,57 @@
+package dev.appoutlet.some.core
+
+import dev.appoutlet.some.config.Strategy
+import kotlin.reflect.KClass
+
+/**
+ * Provides strategy instances keyed by their base type.
+ *
+ * [SomeConfig][dev.appoutlet.some.config.SomeConfig] implements this interface so custom factories can inspect the
+ * active configuration through [FixtureContext.strategyProvider].
+ *
+ * ## Usage in custom type factories
+ *
+ * Custom factories receive a [FixtureContext][dev.appoutlet.some.core.FixtureContext] whose
+ * [FixtureContext.strategyProvider] property implements [StrategyProvider]:
+ *
+ * ```kotlin
+ * someSetup {
+ *     factory(MyType::class) {
+ *         val strategy = strategyProvider.get<StringStrategy>()
+ *         MyType(strategy is StringStrategy.Readable)
+ *     }
+ * }
+ * ```
+ *
+ * The operator form is also supported:
+ *
+ * ```kotlin
+ * val strategy = strategyProvider[MyStrategy::class]
+ * ```
+ */
+interface StrategyProvider {
+    /**
+     * Returns the strategy instance registered for [key].
+     *
+     * @param key The [KClass] of the strategy to retrieve
+     *   (e.g. [NullableStrategy::class][dev.appoutlet.some.config.NullableStrategy]).
+     * @return The registered strategy instance.
+     * @throws NoSuchElementException when no strategy is registered for [key].
+     */
+    operator fun <T : Strategy> get(key: KClass<T>): T?
+}
+
+/**
+ * Returns the strategy instance of type [T] registered for this provider.
+ *
+ * This is a convenience extension that allows idiomatic usage without explicitly passing a [KClass]:
+ *
+ * ```kotlin
+ * val strategy = strategyProvider.get<StringStrategy>()
+ * ```
+ *
+ * @param T The type of the strategy to retrieve.
+ * @return The registered strategy instance.
+ * @throws NoSuchElementException when no strategy is registered for [T].
+ */
+inline fun <reified T : Strategy> StrategyProvider.get(): T? = get(T::class)

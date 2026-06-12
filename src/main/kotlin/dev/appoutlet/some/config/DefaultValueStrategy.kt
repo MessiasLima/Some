@@ -14,13 +14,15 @@ package dev.appoutlet.some.config
  *
  * ```kotlin
  * // Default behavior: use Kotlin defaults
- * some { defaultValueStrategy = DefaultValueStrategy.UseDefault }
+ * some { strategy(DefaultValueStrategy.UseDefault) }
  *
  * // Always generate values, even for parameters with defaults
- * some { defaultValueStrategy = DefaultValueStrategy.Generate }
+ * some { strategy(DefaultValueStrategy.Generate) }
  * ```
  */
-sealed interface DefaultValueStrategy {
+sealed interface DefaultValueStrategy : Strategy {
+    override val key get() = DefaultValueStrategy::class
+
     /**
      * Uses the Kotlin default constructor value for optional parameters.
      *
@@ -35,4 +37,11 @@ sealed interface DefaultValueStrategy {
      * they have default values in their constructor.
      */
     data object Generate : DefaultValueStrategy
+
+    companion object {
+        /**
+         * The default default-value strategy.
+         */
+        val default: DefaultValueStrategy get() = UseDefault
+    }
 }

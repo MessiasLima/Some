@@ -14,7 +14,7 @@ Uses the Kotlin default constructor value for optional parameters.
 data class User(val role: String = "guest")
 
 val user = some<User> {
-    defaultValueStrategy = DefaultValueStrategy.UseDefault
+    strategy(DefaultValueStrategy.UseDefault)
 }
 
 user.role // "guest"
@@ -30,7 +30,7 @@ Generates a value for optional parameters through the resolver chain, ignoring t
 data class User(val role: String = "guest")
 
 val user = some<User> {
-    defaultValueStrategy = DefaultValueStrategy.Generate
+    strategy(DefaultValueStrategy.Generate)
 }
 
 user.role // "a-random-string"
@@ -46,7 +46,7 @@ Custom property factories always take precedence over the default value strategy
 data class User(val role: String = "guest")
 
 val user = some<User> {
-    defaultValueStrategy = DefaultValueStrategy.Generate
+    strategy(DefaultValueStrategy.Generate)
     property(User::role) { "admin" }
 }
 

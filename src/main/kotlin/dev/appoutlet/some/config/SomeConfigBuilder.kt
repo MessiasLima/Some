@@ -11,31 +11,31 @@ import kotlin.reflect.full.instanceParameter
  * Used as the receiver in DSL-style configuration lambdas such as [dev.appoutlet.some.someSetup]
  * and [dev.appoutlet.some.some] overrides. After configuration, call [build] to produce
  * an immutable [SomeConfig].
+ *
+ * ## Strategy registration
+ *
+ * Override built-in strategies or register custom ones using the [strategy] method:
+ *
+ * ```kotlin
+ * someSetup {
+ *     strategy(NullableStrategy.NeverNull)
+ *     strategy(StringStrategy.Uuid)
+ *     strategy(CollectionStrategy(5..10))
+ * }
+ * ```
+ *
+ * ## Factory registration
+ *
+ * Override type resolution with [factory]:
+ *
+ * ```kotlin
+ * someSetup {
+ *     factory(String::class) { "fixed-value" }
+ * }
+ * ```
  */
 class SomeConfigBuilder {
-    /**
-     * Strategy for handling nullable type resolution.
-     * Defaults to [NullableStrategy.NullOnCircularReference].
-     */
-    var nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference
-
-    /**
-     * Strategy for generating string values.
-     * Defaults to [StringStrategy.Random].
-     */
-    var stringStrategy: StringStrategy = StringStrategy.Random()
-
-    /**
-     * Strategy for generating collection sizes.
-     * Defaults to [CollectionStrategy] with a range of 1..5.
-     */
-    var collectionStrategy: CollectionStrategy = CollectionStrategy()
-
-    /**
-     * Strategy for handling data class constructor defaults.
-     * Defaults to [DefaultValueStrategy.UseDefault].
-     */
-    var defaultValueStrategy: DefaultValueStrategy = DefaultValueStrategy.UseDefault
+    private val _strategies: MutableMap<KClass<out Strategy>, Strategy> = mutableMapOf()
 
     /**
      * Seed for reproducible random generation.
@@ -43,8 +43,21 @@ class SomeConfigBuilder {
      */
     var seed: Long? = null
 
-    private val _typeFactories: MutableMap<KClass<*>, FixtureContext.() -> Any?> = mutableMapOf()
-    private val _propertyFactories: MutableMap<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = mutableMapOf()
+    private val _typeFactories = mutableMapOf<KClass<*>, FixtureContext.() -> Any?>()
+    private val _propertyFactories = mutableMapOf<Pair<KClass<*>, String>, FixtureContext.() -> Any?>()
+
+    /**
+     * Registers a strategy for fixture generation.
+     *
+     * The strategy replaces any previous strategy registered under the same base type.
+     * Built-in strategies ([NullableStrategy], [StringStrategy], [CollectionStrategy],
+     * [DefaultValueStrategy]) are pre-populated with sensible defaults.
+     *
+     * @param strategy The strategy instance to register.
+     */
+    infix fun strategy(strategy: Strategy) {
+        _strategies[strategy.key] = strategy
+    }
 
     /**
      * Registers a custom type factory function for type [T].
@@ -55,7 +68,7 @@ class SomeConfigBuilder {
      * @param kClass The [KClass] of the type to override.
      * @param typeFactory Lambda receiving a [FixtureContext] and returning a value of type [T].
      */
-    fun <T : Any> register(kClass: KClass<T>, typeFactory: FixtureContext.() -> T) {
+    fun <T : Any> factory(kClass: KClass<T>, typeFactory: FixtureContext.() -> T) {
         _typeFactories[kClass] = typeFactory
     }
 
@@ -71,6 +84,17 @@ class SomeConfigBuilder {
         val kClass = property.instanceParameter?.type?.classifier as? KClass<*>
             ?: error("Could not determine class for property ${property.name}")
         _propertyFactories[kClass to property.name] = factory
+    }
+
+    /**
+     * Populates the builder's strategy map with entries from an existing map.
+     *
+     * Used internally by [SomeConfig.toBuilder] to transfer strategy registrations.
+     *
+     * @param strategies Map of strategy registrations to copy into this builder.
+     */
+    internal fun populateStrategies(strategies: Map<KClass<out Strategy>, Strategy>) {
+        _strategies.putAll(strategies)
     }
 
     /**
@@ -100,15 +124,18 @@ class SomeConfigBuilder {
     /**
      * Builds an immutable [SomeConfig] from the current state of this builder.
      *
+     * Strategies registered via [strategy] override the built-in defaults. Type and property
+     * factories are copied as immutable maps.
+     *
      * @return A new [SomeConfig] instance with the configured values.
      */
     fun build(): SomeConfig = SomeConfig(
-        nullableStrategy = nullableStrategy,
-        stringStrategy = stringStrategy,
-        collectionStrategy = collectionStrategy,
-        defaultValueStrategy = defaultValueStrategy,
+        strategies = SomeConfig.defaultStrategies() + _strategies,
         seed = seed,
         typeFactories = _typeFactories.toMap(),
         propertyFactories = _propertyFactories.toMap()
     )
 }
+
+fun buildSomeConfig(config: SomeConfigBuilder.() -> Unit = {}): SomeConfig =
+    SomeConfigBuilder().apply(config).build()

@@ -1,7 +1,8 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.StringStrategy
+import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
@@ -58,22 +59,24 @@ class StringResolverTest {
 
     @Test
     fun `StringResolver canResolve detects String type`() {
-        val resolver = StringResolver(StringStrategy.Random(), Random.Default)
+        val resolver = StringResolver(StringStrategy.default, Random.Default)
         assertTrue(resolver.canResolve(typeOf<String>()))
     }
 
     @Test
     fun `StringResolver rejects non-String types`() {
-        val resolver = StringResolver(StringStrategy.Random(), Random.Default)
+        val resolver = StringResolver(StringStrategy.default, Random.Default)
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<Long>()))
     }
 
     @Test
     fun `StringStrategy Random with custom length integrates with SomeConfig`() {
-        val config = SomeConfig(stringStrategy = StringStrategy.Random(length = 20))
+        val config = buildSomeConfig {
+            strategy(StringStrategy.Random(length = 20))
+        }
         val resolvers = config.buildResolvers()
-        val chain = ResolverChain(resolvers)
+        val chain = ResolverChain(resolvers, config[NullableStrategy::class])
 
         val result = chain.resolve(typeOf<String>())
         assertIs<String>(result)

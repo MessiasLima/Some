@@ -1,6 +1,7 @@
 package dev.appoutlet.some.config
 
 import dev.appoutlet.some.core.FixtureContext
+import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.resolver.ArrayResolver
 import dev.appoutlet.some.resolver.BigDecimalResolver
@@ -36,48 +37,45 @@ import kotlin.random.Random
 import kotlin.reflect.KClass
 
 /**
- * Immutable configuration for customizing the behavior of [some][dev.appoutlet.some.some] fixture generation.
+ * Immutable configuration for fixture generation behavior.
  *
- * Controls nullable handling, string generation, collection sizing, random seeding, type factories, and property
- * factories. Each generation call uses a [SomeConfig] to build an ordered resolver list, and that resolver order
- * defines which customization wins when multiple options could apply.
+ * Use [SomeConfigBuilder] through `someSetup { ... }` or `some<T> { ... }` to configure.
+ * Direct construction is useful for tests that need to explicitly assemble configurations.
+ * Use [toBuilder] to derive a mutable copy of this configuration.
  *
- * Prefer [SomeConfigBuilder] through `some { ... }` or `someSetup { ... }` for user-facing configuration. Direct
- * construction is useful for tests or library integrations that need to assemble configuration values explicitly.
- * Use [toBuilder] to derive a mutable copy without mutating the original configuration.
- *
- * @param nullableStrategy Strategy for handling nullable type resolution.
- * @param stringStrategy Strategy for generating values handled by [StringResolver].
- * @param collectionStrategy Strategy for collection sizes handled by collection resolvers.
+ * @param strategies Map of registered strategy instances.
  * @param seed Seed for reproducible random generation. When `null`, [Random.Default] is used.
- * @param typeFactories Custom type factories keyed by the exact class they override. These are resolved before all
- * built-in resolvers.
- * @param defaultValueStrategy Strategy for handling data class constructor defaults.
- * @param propertyFactories Custom property factories keyed by owning class and constructor parameter name. These are
- * applied by [ClassResolver] while constructing model objects.
+ * @param typeFactories Custom type factories keyed by class.
+ * @param propertyFactories Custom property factories keyed by class and property name.
  */
 data class SomeConfig(
-    val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
-    val stringStrategy: StringStrategy = StringStrategy.Random(),
-    val collectionStrategy: CollectionStrategy = CollectionStrategy(),
-    val defaultValueStrategy: DefaultValueStrategy = DefaultValueStrategy.UseDefault,
+    val strategies: Map<KClass<out Strategy>, Strategy> = defaultStrategies(),
     val seed: Long? = null,
     val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
-) {
+) : StrategyProvider {
+    /**
+     * Returns the strategy registered for [key].
+     *
+     * @param key The [KClass] of the strategy to retrieve (e.g. [NullableStrategy::class]).
+     * @return The registered strategy instance.
+     * @throws NoSuchElementException when no strategy is registered for [key].
+     */
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Strategy> get(key: KClass<T>): T? {
+        return strategies[key] as? T
+    }
+
     /**
      * Creates a [SomeConfigBuilder] pre-populated with this configuration's values.
      *
-     * This is used by reusable [dev.appoutlet.some.Some] instances to apply per-call overrides. The returned builder
-     * receives copies of the factory maps, so changing it does not mutate this immutable configuration.
+     * The returned builder receives copies of the strategy, factory, and property maps,
+     * so changing it does not mutate this immutable configuration.
      *
      * @return A [SomeConfigBuilder] containing this configuration's current state.
      */
     fun toBuilder(): SomeConfigBuilder = SomeConfigBuilder().apply {
-        nullableStrategy = this@SomeConfig.nullableStrategy
-        stringStrategy = this@SomeConfig.stringStrategy
-        collectionStrategy = this@SomeConfig.collectionStrategy
-        defaultValueStrategy = this@SomeConfig.defaultValueStrategy
+        populateStrategies(this@SomeConfig.strategies)
         seed = this@SomeConfig.seed
         populateTypeFactories(this@SomeConfig.typeFactories)
         populatePropertyFactories(this@SomeConfig.propertyFactories)
@@ -87,7 +85,7 @@ data class SomeConfig(
      * Creates the resolver chain used to generate fixture values.
      *
      * Resolver order defines precedence: the first resolver that supports a type is used. Type factories are first so
-     * explicit type-level user configuration overrides built-in behavior. [ClassResolver] is last because it is the
+     * explicit user configuration overrides built-in behavior. [ClassResolver] is last because it is the
      * fallback for constructable model classes and is also where property factories are applied.
      *
      * @param random Random source shared by resolvers that generate randomized values.
@@ -95,20 +93,13 @@ data class SomeConfig(
      */
     fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
         return listOf(
-            CustomTypeFactoryResolver(
-                typeFactories = typeFactories,
-                random = random,
-                nullableStrategy = nullableStrategy,
-                stringStrategy = stringStrategy,
-                collectionStrategy = collectionStrategy,
-                defaultValueStrategy = defaultValueStrategy,
-            ),
-            NullableResolver(nullableStrategy, random),
+            CustomTypeFactoryResolver(typeFactories, random, this),
+            NullableResolver(this[NullableStrategy::class], random),
             ObjectResolver(),
             EnumResolver(random),
             SealedClassResolver(random),
             ValueClassResolver(),
-            StringResolver(stringStrategy, random),
+            StringResolver(this[StringStrategy::class], random),
             IntResolver(random),
             LongResolver(random),
             DoubleResolver(random),
@@ -127,18 +118,11 @@ data class SomeConfig(
             BigIntegerResolver(random),
             LocalDateResolver(random),
             LocalDateTimeResolver(random),
-            ListResolver(collectionStrategy, random),
-            SetResolver(collectionStrategy, random),
-            MapResolver(collectionStrategy, random),
-            ArrayResolver(collectionStrategy, random),
-            ClassResolver(
-                propertyFactories = propertyFactories,
-                random = random,
-                nullableStrategy = nullableStrategy,
-                stringStrategy = stringStrategy,
-                collectionStrategy = collectionStrategy,
-                defaultValueStrategy = defaultValueStrategy,
-            )
+            ListResolver(this[CollectionStrategy::class], random),
+            SetResolver(this[CollectionStrategy::class], random),
+            MapResolver(this[CollectionStrategy::class], random),
+            ArrayResolver(this[CollectionStrategy::class], random),
+            ClassResolver(propertyFactories, random, this),
         )
     }
 
@@ -151,4 +135,16 @@ data class SomeConfig(
      * @return [Random] seeded with [seed] if set, or [Random.Default] otherwise.
      */
     internal fun buildRandom(): Random = seed?.let { Random(it) } ?: Random.Default
+
+    companion object {
+        /**
+         * Returns the default strategy map with sensible defaults for all built-in strategies.
+         */
+        fun defaultStrategies(): Map<KClass<out Strategy>, Strategy> = mapOf(
+            NullableStrategy::class to NullableStrategy.default,
+            StringStrategy::class to StringStrategy.default,
+            CollectionStrategy::class to CollectionStrategy.default,
+            DefaultValueStrategy::class to DefaultValueStrategy.default,
+        )
+    }
 }

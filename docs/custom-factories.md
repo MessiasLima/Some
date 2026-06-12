@@ -9,19 +9,19 @@ Use a **type factory** when every occurrence of a type should be generated in a 
 
 | Factory | API | Scope | Typical use |
 |---------|-----|-------|-------------|
-| Type factory | `register(MyType::class) { ... }` | Every generated value of `MyType` | Value objects, primitives in a scenario, third-party types |
+| Type factory | `factory(MyType::class) { ... }` | Every generated value of `MyType` | Value objects, primitives in a scenario, third-party types |
 | Property factory | `property(User::email) { ... }` | One constructor property on one class | Stable IDs, readable names, one field in a large object |
 
 ## Type factories
 
-Use `register` inside a `some {}` or `someSetup {}` block to override how a type is generated.
+Use `factory` inside a `some {}` or `someSetup {}` block to override how a type is generated.
 
 ```kotlin
 data class Product(val name: String, val price: Int)
 
 val product = some<Product> {
-    register(String::class) { "custom-value" }
-    register(Int::class) { 42 }
+    factory(String::class) { "custom-value" }
+    factory(Int::class) { 42 }
 }
 
 // Product(name=custom-value, price=42)
@@ -40,7 +40,7 @@ data class Email(val value: String)
 data class Account(val email: Email, val name: String)
 
 val someWithEmail = someSetup {
-    register(Email::class) {
+    factory(Email::class) {
         Email("user${random.nextInt(1000)}@example.com")
     }
 }
@@ -81,7 +81,7 @@ If both a type factory and property factory could affect the same generated clas
 data class User(val name: String, val role: String)
 
 val user = some<User> {
-    register(User::class) {
+    factory(User::class) {
         User(name = "TypeFactory", role = "TypeFactory role")
     }
 
@@ -101,23 +101,21 @@ Both type factories and property factories receive a `FixtureContext` receiver. 
 |----------|------|-------------|
 | `random` | `Random` | Random instance, including the configured `seed` |
 | `resolutionStack` | `List<KType>` | Types currently being resolved |
-| `nullableStrategy` | `NullableStrategy` | Current nullable strategy |
-| `stringStrategy` | `StringStrategy` | Current string strategy |
-| `collectionStrategy` | `CollectionStrategy` | Current collection sizing strategy |
+| `strategyProvider` | `StrategyProvider` | Access to all registered strategies |
 
 ```kotlin
 data class Customer(val id: String, val age: Int)
 
 val customer = some<Customer> {
     property(Customer::id) {
-        when (stringStrategy) {
+        when (val s = strategyProvider.get<StringStrategy>()) {
             is StringStrategy.Random -> "customer-${random.nextInt(1000)}"
             is StringStrategy.Uuid -> "customer-${random.nextLong()}"
             is StringStrategy.Readable -> "customer-${random.nextInt(9000) + 1000}"
         }
     }
 
-    register(Int::class) { random.nextInt(18, 100) }
+    factory(Int::class) { random.nextInt(18, 100) }
 }
 ```
 
@@ -127,7 +125,7 @@ Use `someSetup` when the same factories should be shared across multiple generat
 
 ```kotlin
 val someWithDefaults = someSetup {
-    register(String::class) { "base-string" }
+    factory(String::class) { "base-string" }
     property(User::role) { "Member" }
 }
 

@@ -1,11 +1,8 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.config.CollectionStrategy
-import dev.appoutlet.some.config.DefaultValueStrategy
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -18,23 +15,17 @@ import kotlin.reflect.KType
  * over every built-in resolver. A type is supported when its [KClass] is present in [typeFactories]. When resolved,
  * the matching type factory is invoked directly and no further resolver delegation happens for that type.
  *
- * Type factories receive a [FixtureContext] containing the active random source, resolution stack, and generation
- * strategies. This lets user code produce values that still respect the current fixture configuration.
+ * Type factories receive a [FixtureContext] containing the active random source, resolution stack, and strategy
+ * provider. This lets user code produce values that still respect the current fixture configuration.
  *
  * @param typeFactories Map of classes to user-provided type factory functions.
  * @param random Random source exposed to type factories through [FixtureContext].
- * @param nullableStrategy Nullable handling strategy exposed to type factories through [FixtureContext].
- * @param stringStrategy String generation strategy exposed to type factories through [FixtureContext].
- * @param collectionStrategy Collection sizing strategy exposed to type factories through [FixtureContext].
- * @param defaultValueStrategy Default value strategy exposed to type factories through [FixtureContext].
+ * @param strategyProvider Provides all registered generation strategies to type factories through [FixtureContext].
  */
 class CustomTypeFactoryResolver(
     private val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?>,
     private val random: Random,
-    private val nullableStrategy: NullableStrategy,
-    private val stringStrategy: StringStrategy,
-    private val collectionStrategy: CollectionStrategy,
-    private val defaultValueStrategy: DefaultValueStrategy,
+    private val strategyProvider: StrategyProvider,
 ) : TypeResolver {
     /**
      * Returns whether [type] has a registered type factory.
@@ -65,14 +56,10 @@ class CustomTypeFactoryResolver(
         val kClass = type.classifier as KClass<*>
         val typeFactory = typeFactories[kClass] ?: return null
 
-        // Bridge: Create FixtureContext for user type factories with an immutable copy of the stack
         val context = FixtureContext(
             random = random,
-            resolutionStack = chain.stack, // This returns an immutable snapshot
-            nullableStrategy = nullableStrategy,
-            stringStrategy = stringStrategy,
-            collectionStrategy = collectionStrategy,
-            defaultValueStrategy = defaultValueStrategy,
+            resolutionStack = chain.stack,
+            strategyProvider = strategyProvider,
         )
 
         return typeFactory.invoke(context)

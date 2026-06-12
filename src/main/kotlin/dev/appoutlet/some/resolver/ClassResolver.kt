@@ -1,11 +1,9 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.config.DefaultValueStrategy
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeInstantiationException
@@ -42,19 +40,15 @@ import kotlin.reflect.jvm.isAccessible
  *
  * @param propertyFactories Per-property factories keyed by owning class and constructor parameter name.
  * @param random Random source exposed to property factories through [FixtureContext].
- * @param nullableStrategy Nullable handling strategy exposed to property factories through [FixtureContext].
- * @param stringStrategy String generation strategy exposed to property factories through [FixtureContext].
- * @param collectionStrategy Collection sizing strategy exposed to property factories through [FixtureContext].
- * @param defaultValueStrategy Strategy for handling constructor defaults.
+ * @param strategyProvider Provides all registered generation strategies to property factories through [FixtureContext].
  */
 class ClassResolver(
     private val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
     private val random: Random = Random.Default,
-    private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
-    private val stringStrategy: StringStrategy = StringStrategy.Random(),
-    private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
-    private val defaultValueStrategy: DefaultValueStrategy = DefaultValueStrategy.UseDefault,
+    private val strategyProvider: StrategyProvider,
 ) : TypeResolver {
+    private val defaultValueStrategy = strategyProvider[DefaultValueStrategy::class] ?: DefaultValueStrategy.default
+
     /**
      * Returns whether [type] can be instantiated by this resolver.
      *
@@ -173,10 +167,7 @@ class ClassResolver(
         val context = FixtureContext(
             random = random,
             resolutionStack = chain.stack,
-            nullableStrategy = nullableStrategy,
-            stringStrategy = stringStrategy,
-            collectionStrategy = collectionStrategy,
-            defaultValueStrategy = defaultValueStrategy,
+            strategyProvider = strategyProvider,
         )
 
         return param to propertyFactory(context)

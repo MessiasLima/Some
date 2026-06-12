@@ -8,19 +8,19 @@ The `CollectionStrategy` takes a single `sizeRange` parameter — an `IntRange` 
 
 ```kotlin
 // Default: 1 to 5 elements
-some { collectionStrategy = CollectionStrategy() }
+some { strategy(CollectionStrategy()) }
 
 // Small collections: 0 to 2 elements
-some { collectionStrategy = CollectionStrategy(0..2) }
+some { strategy(CollectionStrategy(0..2)) }
 
 // Medium collections: 10 to 20 elements
-some { collectionStrategy = CollectionStrategy(10..20) }
+some { strategy(CollectionStrategy(10..20)) }
 
 // Large collections: 50 to 100 elements
-some { collectionStrategy = CollectionStrategy(50..100) }
+some { strategy(CollectionStrategy(50..100)) }
 
-// Fixed size: always exactly 3 elements
-some { collectionStrategy = CollectionStrategy(3..3) }
+// Small collections: 3 to 4 elements
+some { strategy(CollectionStrategy(3..4)) }
 ```
 
 ## Default

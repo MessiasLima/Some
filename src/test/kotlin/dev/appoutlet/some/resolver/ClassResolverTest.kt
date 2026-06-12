@@ -1,11 +1,16 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.config.DefaultValueStrategy
+import dev.appoutlet.some.config.NullableStrategy
+import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.config.buildSomeConfig
+import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.exception.SomeInstantiationException
-import dev.appoutlet.some.some
 import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -41,8 +46,13 @@ sealed class TestSealed {
     data class Sub(val x: Int) : TestSealed()
 }
 
+data class WithDefaultParams(val name: String, val count: Int = 42, val active: Boolean = true)
+
 class ClassResolverTest {
-    private val resolver = ClassResolver(random = Random.Default)
+    private val resolver = ClassResolver(
+        random = Random.Default,
+        strategyProvider = SomeConfig()
+    )
 
     @Test
     fun `ClassResolver resolves data class with primary constructor`() {
@@ -125,5 +135,40 @@ class ClassResolverTest {
     fun `ClassResolver resolves class with private constructor via reflection`() {
         val result = resolver.resolve(typeOf<PrivateConstructorClass>(), defaultTestChain)
         assertTrue(result is PrivateConstructorClass)
+    }
+
+    @Test
+    fun `ClassResolver with UseDefault strategy uses Kotlin default values for optional parameters`() {
+        val config = buildSomeConfig()
+        val resolver = ClassResolver(random = Random.Default, strategyProvider = config)
+
+        val chain = ResolverChain(config.buildResolvers(), config[NullableStrategy::class])
+
+        val result = resolver.resolve(typeOf<WithDefaultParams>(), chain) as WithDefaultParams
+        assertTrue(result.name.isNotEmpty())
+        assertEquals(42, result.count)
+        assertTrue(result.active)
+    }
+
+    @Test
+    fun `ClassResolver with Generate strategy generates values for optional parameters`() {
+        val config = buildSomeConfig {
+            strategy(DefaultValueStrategy.Generate)
+        }
+
+        val resolver = ClassResolver(
+            random = Random.Default,
+            strategyProvider = config,
+        )
+
+        val chain = ResolverChain(config.buildResolvers(), config[NullableStrategy::class])
+
+        val results = List(100) { resolver.resolve(typeOf<WithDefaultParams>(), chain) as WithDefaultParams }
+        val hasNonDefaultCount = results.any { it.count != 42 }
+        val hasNonDefaultActive = results.any { !it.active }
+        assertTrue(
+            hasNonDefaultCount || hasNonDefaultActive,
+            "Expected at least one generated value to differ from Kotlin defaults"
+        )
     }
 }

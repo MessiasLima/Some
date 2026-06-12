@@ -15,17 +15,19 @@ import kotlin.reflect.full.createType
  * - **NeverNull** – always resolves a non-null value.
  * - **Random** – returns `null` based on the strategy's probability.
  *
- * @param nullableStrategy Strategy used to decide whether nullable types should resolve to `null`.
+ * @param nullableStrategy Strategy for resolving nullable types. Defaults to [NullableStrategy.default] when null.
  * @param random Random source used by [NullableStrategy.Random].
  */
 class NullableResolver(
-    private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
+    nullableStrategy: NullableStrategy?,
     private val random: Random
 ) : TypeResolver {
+    private val nullableStrategy = nullableStrategy ?: NullableStrategy.default
+
     override fun canResolve(type: KType): Boolean = type.isMarkedNullable
 
     /**
-     * Resolves [type] according to [nullableStrategy].
+     * Resolves [type] according to the active [NullableStrategy].
      *
      * Strategies that choose a concrete value resolve the non-null version of [type] through [chain].
      *
@@ -39,7 +41,6 @@ class NullableResolver(
             is NullableStrategy.AlwaysNull -> null
             is NullableStrategy.NeverNull -> createNonNullInstance(type, chain)
             is NullableStrategy.Random -> {
-                // Use the probability supplied by the Random strategy instance
                 if (random.nextDouble() < nullableStrategy.probability) {
                     null
                 } else {

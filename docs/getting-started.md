@@ -100,12 +100,12 @@ When you need control over the generated data, pass a config lambda to `some`. T
 
 ```kotlin
 val user = some<User> {
-    stringStrategy = StringStrategy.Readable
+    strategy(StringStrategy.Readable)
 }
 // User(name=string-1234, age=17)
 
 val users = some<List<User>> {
-    collectionStrategy = CollectionStrategy(2..4)
+    strategy(CollectionStrategy(2..4))
 }
 // [User(name=string-1234, age=17), User(name=string-5678, age=23)]
 ```

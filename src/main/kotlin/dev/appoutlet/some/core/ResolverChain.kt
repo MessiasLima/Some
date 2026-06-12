@@ -16,8 +16,9 @@ import kotlin.reflect.KType
  */
 class ResolverChain(
     val resolvers: List<TypeResolver>,
-    private val nullableStrategy: NullableStrategy = NullableStrategy.NullOnCircularReference,
+    nullableStrategy: NullableStrategy?,
 ) {
+    private val nullableStrategy = nullableStrategy ?: NullableStrategy.default
     private val resolutionStack = mutableListOf<KType>()
 
     /**

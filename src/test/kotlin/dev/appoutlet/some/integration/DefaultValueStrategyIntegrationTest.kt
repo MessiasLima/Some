@@ -16,7 +16,7 @@ class DefaultValueStrategyIntegrationTest {
     @Test
     fun `should use default value when strategy is UseDefault`() {
         val result: OptionalData = some {
-            defaultValueStrategy = DefaultValueStrategy.UseDefault
+            strategy(DefaultValueStrategy.UseDefault)
         }
 
         assertEquals("default value", result.optional)
@@ -32,7 +32,7 @@ class DefaultValueStrategyIntegrationTest {
     @Test
     fun `should generate value when strategy is Generate`() {
         val result: OptionalData = some {
-            defaultValueStrategy = DefaultValueStrategy.Generate
+            strategy(DefaultValueStrategy.Generate)
         }
 
         assertNotEquals("default value", result.optional)
@@ -41,7 +41,7 @@ class DefaultValueStrategyIntegrationTest {
     @Test
     fun `property factory should take precedence over UseDefault`() {
         val result: OptionalData = some {
-            defaultValueStrategy = DefaultValueStrategy.UseDefault
+            strategy(DefaultValueStrategy.UseDefault)
             property(OptionalData::optional) { "custom value" }
         }
 
@@ -51,7 +51,7 @@ class DefaultValueStrategyIntegrationTest {
     @Test
     fun `property factory should take precedence over Generate`() {
         val result: OptionalData = some {
-            defaultValueStrategy = DefaultValueStrategy.Generate
+            strategy(DefaultValueStrategy.Generate)
             property(OptionalData::optional) { "custom value" }
         }
 
@@ -61,7 +61,7 @@ class DefaultValueStrategyIntegrationTest {
     @Test
     fun `non-optional parameters should still be resolved`() {
         val result: OptionalData = some {
-            defaultValueStrategy = DefaultValueStrategy.Generate
+            strategy(DefaultValueStrategy.Generate)
         }
 
         assertNotEquals("", result.required)

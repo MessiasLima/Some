@@ -7,10 +7,18 @@ import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
+/**
+ * Resolves [Array] types using the active [CollectionStrategy].
+ *
+ * @param collectionStrategy Strategy for determining array sizes. Defaults to [CollectionStrategy.default] when null.
+ * @param random Random source used for determining array size within the configured range.
+ */
 class ArrayResolver(
-    private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    collectionStrategy: CollectionStrategy?,
     val random: Random
 ) : TypeResolver {
+    private val collectionStrategy = collectionStrategy ?: CollectionStrategy.default
+
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         return kClass.qualifiedName == "kotlin.Array"

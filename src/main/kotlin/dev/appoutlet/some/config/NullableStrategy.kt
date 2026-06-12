@@ -16,25 +16,27 @@ package dev.appoutlet.some.config
  *
  * ```kotlin
  * // Default strategy
- * some { nullableStrategy = NullableStrategy.NullOnCircularReference }
+ * some { strategy(NullableStrategy.NullOnCircularReference) }
  *
  * // Always generate null values
- * some { nullableStrategy = NullableStrategy.AlwaysNull }
+ * some { strategy(NullableStrategy.AlwaysNull) }
  *
  * // Never generate null values
- * some { nullableStrategy = NullableStrategy.NeverNull }
+ * some { strategy(NullableStrategy.NeverNull) }
  *
  * // 50% chance of null (default)
- * some { nullableStrategy = NullableStrategy.Random() }
+ * some { strategy(NullableStrategy.Random()) }
  *
  * // 80% chance of null
- * some { nullableStrategy = NullableStrategy.Random(probability = 0.8) }
+ * some { strategy(NullableStrategy.Random(probability = 0.8)) }
  *
  * // Never generate null (0% chance)
- * some { nullableStrategy = NullableStrategy.Random(probability = 0.0) }
+ * some { strategy(NullableStrategy.Random(probability = 0.0)) }
  * ```
  */
-sealed interface NullableStrategy {
+sealed interface NullableStrategy : Strategy {
+    override val key get() = NullableStrategy::class
+
     /**
      * Returns `null` when a circular reference is detected for a nullable type.
      *
@@ -86,4 +88,11 @@ sealed interface NullableStrategy {
      * ```
      */
     data class Random(val probability: Double = 0.5) : NullableStrategy
+
+    companion object {
+        /**
+         * The default nullable strategy.
+         */
+        val default: NullableStrategy get() = NullOnCircularReference
+    }
 }

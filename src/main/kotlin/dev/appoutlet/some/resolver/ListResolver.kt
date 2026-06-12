@@ -10,18 +10,28 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
+/**
+ * Resolves [List] and [MutableList] types using the active [CollectionStrategy].
+ *
+ * @param collectionStrategy Strategy for determining collection sizes. Defaults to
+ * [CollectionStrategy.default] when null.
+ * @param random Random source used for determining list size within the configured range.
+ */
 class ListResolver(
-    private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    collectionStrategy: CollectionStrategy?,
     val random: Random
 ) : TypeResolver {
+    private val collectionStrategy = collectionStrategy ?: CollectionStrategy.default
+
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         return kClass.isSubclassOf(List::class)
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
-        val elementType = type.arguments.firstOrNull()?.type
-            ?: error("Star projection not supported in List")
+        val elementType = requireNotNull(type.arguments.firstOrNull()?.type) {
+            "Star projection not supported in List"
+        }
 
         val size = random.nextInt(
             collectionStrategy.sizeRange.first,

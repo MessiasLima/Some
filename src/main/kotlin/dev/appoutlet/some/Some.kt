@@ -1,7 +1,9 @@
 package dev.appoutlet.some
 
+import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.config.SomeConfigBuilder
+import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
@@ -29,7 +31,8 @@ class Some(
      */
     @Suppress("MemberNameEqualsClassName")
     inline fun <reified T> some(): T {
-        val session = ResolverChain(resolvers, config.nullableStrategy)
+        val nullableStrategy = config[NullableStrategy::class]
+        val session = ResolverChain(resolvers, nullableStrategy)
         return session.resolve(typeOf<T>()) as T
     }
 
@@ -67,7 +70,7 @@ class Some(
  * @return A configured [Some] instance.
  */
 fun someSetup(config: SomeConfigBuilder.() -> Unit = {}): Some {
-    val someConfig = SomeConfigBuilder().apply(config).build()
+    val someConfig = buildSomeConfig(config)
     val random = someConfig.buildRandom()
     return Some(someConfig.buildResolvers(random), random, someConfig)
 }
@@ -89,7 +92,8 @@ val defaultResolvers: List<TypeResolver> by lazy { defaultConfig.buildResolvers(
  * @return Generated value of type [T].
  */
 inline fun <reified T> some(): T {
-    val session = ResolverChain(defaultResolvers, defaultConfig.nullableStrategy)
+    val nullableStrategy = defaultConfig[NullableStrategy::class]
+    val session = ResolverChain(defaultResolvers, nullableStrategy)
     return session.resolve(typeOf<T>()) as T
 }
 

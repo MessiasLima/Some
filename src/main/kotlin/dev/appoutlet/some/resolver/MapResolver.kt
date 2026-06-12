@@ -10,10 +10,19 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
+/**
+ * Resolves [Map] and [MutableMap] types using the active [CollectionStrategy].
+ *
+ * @param collectionStrategy Strategy for determining collection sizes.
+ * Defaults to [CollectionStrategy.default] when null.
+ * @param random Random source used for determining map size within the configured range.
+ */
 class MapResolver(
-    private val collectionStrategy: CollectionStrategy = CollectionStrategy(),
+    collectionStrategy: CollectionStrategy?,
     val random: Random
 ) : TypeResolver {
+    private val collectionStrategy = collectionStrategy ?: CollectionStrategy.default
+
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         return kClass.isSubclassOf(Map::class)
