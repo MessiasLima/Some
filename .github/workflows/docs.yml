@@ -12,6 +12,12 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   deploy:
     environment:
@@ -20,13 +26,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure GitHub pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Checkount main branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Python 3.x
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
 
@@ -37,10 +43,13 @@ jobs:
         run: zensical build --clean
 
       - name: Upload website artifacts
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: site
 
       - name: Deploy website
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         id: deployment
+        with:
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
