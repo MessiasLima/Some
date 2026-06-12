@@ -2,7 +2,6 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -14,22 +13,24 @@ import kotlin.reflect.typeOf
 /**
  * Resolves [List] and [MutableList] types using the active [CollectionStrategy].
  *
- * @param strategyProvider Provides the active [CollectionStrategy] for determining collection sizes.
+ * @param collectionStrategy Strategy for determining collection sizes. Defaults to [CollectionStrategy.default] when null.
  * @param random Random source used for determining list size within the configured range.
  */
 class ListResolver(
-    private val strategyProvider: StrategyProvider,
+    collectionStrategy: CollectionStrategy?,
     val random: Random
 ) : TypeResolver {
+    private val collectionStrategy = collectionStrategy ?: CollectionStrategy.default
+
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         return kClass.isSubclassOf(List::class)
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
-        val collectionStrategy = strategyProvider[CollectionStrategy::class]
-        val elementType = type.arguments.firstOrNull()?.type
-            ?: error("Star projection not supported in List")
+        val elementType = requireNotNull(type.arguments.firstOrNull()?.type) {
+            "Star projection not supported in List"
+        }
 
         val size = random.nextInt(
             collectionStrategy.sizeRange.first,
