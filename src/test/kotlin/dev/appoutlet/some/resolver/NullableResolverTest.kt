@@ -1,9 +1,8 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.config.someConfigBuilder
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
 import kotlin.reflect.typeOf
@@ -17,8 +16,7 @@ import kotlin.test.assertTrue
 class NullableResolverTest {
     @Test
     fun `NullableResolver with AlwaysNull strategy returns null`() {
-        val strategyProvider: StrategyProvider = SomeConfig().strategy(NullableStrategy.AlwaysNull)
-        val resolver = NullableResolver(strategyProvider, Random.Default)
+        val resolver = NullableResolver(NullableStrategy.AlwaysNull, Random.Default)
 
         repeat(1000) {
             val result = resolver.resolve(typeOf<String?>(), defaultTestChain)
@@ -28,11 +26,13 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with NeverNull strategy generates non-null values`() {
-        val config = SomeConfig().strategy(NullableStrategy.NeverNull)
+        val config = someConfigBuilder {
+            strategy(NullableStrategy.NeverNull)
+        }
         val resolvers = config.buildResolvers()
 
         repeat(1000) {
-            val result = ResolverChain(resolvers).resolve(typeOf<String?>())
+            val result = ResolverChain(resolvers, config[NullableStrategy::class]).resolve(typeOf<String?>())
             assertNotNull(result)
             assertIs<String>(result)
         }
@@ -40,10 +40,12 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy can return null or value`() {
-        val config = SomeConfig().strategy(NullableStrategy.Random())
+        val config = someConfigBuilder {
+            strategy(NullableStrategy.Random())
+        }
         val resolvers = config.buildResolvers()
 
-        val results = (1..100).map { ResolverChain(resolvers).resolve(typeOf<String?>()) }
+        val results = (1..100).map { ResolverChain(resolvers, config[NullableStrategy::class]).resolve(typeOf<String?>()) }
         val hasNull = results.any { it == null }
         val hasValue = results.any { it != null }
         assertTrue(hasNull && hasValue)
@@ -51,11 +53,13 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy and probability 0_0 always returns non-null`() {
-        val config = SomeConfig().strategy(NullableStrategy.Random(probability = 0.0))
+        val config = someConfigBuilder {
+            strategy(NullableStrategy.Random(probability = 0.0))
+        }
         val resolvers = config.buildResolvers()
 
         repeat(1000) {
-            val result = ResolverChain(resolvers).resolve(typeOf<String?>())
+            val result = ResolverChain(resolvers, config[NullableStrategy::class]).resolve(typeOf<String?>())
             assertNotNull(result)
             assertIs<String>(result)
         }
@@ -63,24 +67,26 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy and probability 1_0 always returns null`() {
-        val config = SomeConfig().strategy(NullableStrategy.Random(probability = 1.0))
+        val config = someConfigBuilder {
+            strategy(NullableStrategy.Random(probability = 1.0))
+        }
         val resolvers = config.buildResolvers()
 
         repeat(1000) {
-            val result = ResolverChain(resolvers).resolve(typeOf<String?>())
+            val result = ResolverChain(resolvers, config[NullableStrategy::class]).resolve(typeOf<String?>())
             assertNull(result)
         }
     }
 
     @Test
     fun `NullableResolver canResolve detects nullable types`() {
-        val resolver = NullableResolver(SomeConfig(), Random.Default)
+        val resolver = NullableResolver(NullableStrategy.default, Random.Default)
         assertTrue(resolver.canResolve(typeOf<String?>()))
     }
 
     @Test
     fun `NullableResolver rejects non-nullable types`() {
-        val resolver = NullableResolver(SomeConfig(), Random.Default)
+        val resolver = NullableResolver(NullableStrategy.default, Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
     }
 }

@@ -2,7 +2,6 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KType
@@ -16,13 +15,15 @@ import kotlin.reflect.full.createType
  * - **NeverNull** – always resolves a non-null value.
  * - **Random** – returns `null` based on the strategy's probability.
  *
- * @param strategyProvider Provides the active [NullableStrategy] for resolving nullable types.
+ * @param nullableStrategy Strategy for resolving nullable types. Defaults to [NullableStrategy.default] when null.
  * @param random Random source used by [NullableStrategy.Random].
  */
 class NullableResolver(
-    private val strategyProvider: StrategyProvider,
+    nullableStrategy: NullableStrategy?,
     private val random: Random
 ) : TypeResolver {
+    private val nullableStrategy = nullableStrategy ?: NullableStrategy.default
+
     override fun canResolve(type: KType): Boolean = type.isMarkedNullable
 
     /**
@@ -35,7 +36,6 @@ class NullableResolver(
      * @return `null` or a generated non-null value for [type].
      */
     override fun resolve(type: KType, chain: ResolverChain): Any? {
-        val nullableStrategy = strategyProvider[NullableStrategy::class]
         return when (nullableStrategy) {
             is NullableStrategy.NullOnCircularReference -> createNonNullInstance(type, chain)
             is NullableStrategy.AlwaysNull -> null
