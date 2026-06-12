@@ -10,13 +10,15 @@ package dev.appoutlet.some.config
  *
  * Example usage:
  * ```kotlin
- * val config = SomeConfig().apply {
- *     stringStrategy = StringStrategy.Random(length = 16)
+ * some {
+ *     strategy(StringStrategy.Random(length = 16))
  * }
- * val some = someSetup { stringStrategy = StringStrategy.Uuid }
+ * val some = someSetup { strategy(StringStrategy.Uuid) }
  * ```
  */
 sealed interface StringStrategy : Strategy {
+    override val key get() = StringStrategy::class
+
     /**
      * Generates random lowercase alphabetic strings.
      * @param length The length of the generated string (default 8)
@@ -36,4 +38,11 @@ sealed interface StringStrategy : Strategy {
      * Generates human-readable strings like "string-1234".
      */
     data object Readable : StringStrategy
+
+    companion object {
+        /**
+         * The default string strategy.
+         */
+        val default: StringStrategy get() = Random()
+    }
 }

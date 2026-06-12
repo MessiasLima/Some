@@ -2,7 +2,6 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KType
@@ -13,18 +12,19 @@ import kotlin.uuid.Uuid
 /**
  * Resolves [String] types using the active [StringStrategy].
  *
- * @param strategyProvider Provides the active [StringStrategy] for generating string values.
+ * @param stringStrategy Strategy for generating string values. Defaults to [StringStrategy.default] when null.
  * @param random Random source used when generating random strings.
  */
 @OptIn(ExperimentalUuidApi::class)
 class StringResolver(
-    private val strategyProvider: StrategyProvider,
+    stringStrategy: StringStrategy?,
     val random: Random
 ) : TypeResolver {
+    private val stringStrategy = stringStrategy ?: StringStrategy.default
+
     override fun canResolve(type: KType): Boolean = type == typeOf<String>()
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
-        val stringStrategy = strategyProvider[StringStrategy::class]
         return when (stringStrategy) {
             is StringStrategy.Random -> generateRandomString(stringStrategy.length)
             is StringStrategy.Uuid -> Uuid.random().toString()
