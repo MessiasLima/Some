@@ -139,5 +139,5 @@ class SomeConfigBuilder {
     )
 }
 
-fun someConfigBuilder(config: SomeConfigBuilder.() -> Unit = {}): SomeConfig =
+fun buildSomeConfig(config: SomeConfigBuilder.() -> Unit = {}): SomeConfig =
     SomeConfigBuilder().apply(config).build()

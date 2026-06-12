@@ -2,7 +2,7 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.someConfigBuilder
+import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 class MapResolverTest {
     @Test
     fun `MapResolver generates map with correct size`() {
-        val config = someConfigBuilder {
+        val config = buildSomeConfig {
             strategy(CollectionStrategy(2..4))
         }
         val resolvers = config.buildResolvers()

@@ -2,7 +2,7 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.someConfigBuilder
+import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 class SetResolverTest {
     @Test
     fun `SetResolver generates set with correct size`() {
-        val config = someConfigBuilder {
+        val config = buildSomeConfig {
             strategy(CollectionStrategy(3..5))
         }
         val resolvers = config.buildResolvers()

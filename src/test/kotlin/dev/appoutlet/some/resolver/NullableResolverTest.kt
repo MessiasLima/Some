@@ -1,7 +1,7 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.someConfigBuilder
+import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
@@ -26,7 +26,7 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with NeverNull strategy generates non-null values`() {
-        val config = someConfigBuilder {
+        val config = buildSomeConfig {
             strategy(NullableStrategy.NeverNull)
         }
         val resolvers = config.buildResolvers()
@@ -40,7 +40,7 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy can return null or value`() {
-        val config = someConfigBuilder {
+        val config = buildSomeConfig {
             strategy(NullableStrategy.Random())
         }
         val resolvers = config.buildResolvers()
@@ -53,7 +53,7 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy and probability 0_0 always returns non-null`() {
-        val config = someConfigBuilder {
+        val config = buildSomeConfig {
             strategy(NullableStrategy.Random(probability = 0.0))
         }
         val resolvers = config.buildResolvers()
@@ -67,7 +67,7 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver with Random strategy and probability 1_0 always returns null`() {
-        val config = someConfigBuilder {
+        val config = buildSomeConfig {
             strategy(NullableStrategy.Random(probability = 1.0))
         }
         val resolvers = config.buildResolvers()

@@ -3,7 +3,7 @@ package dev.appoutlet.some.resolver
 import dev.appoutlet.some.config.DefaultValueStrategy
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.config.someConfigBuilder
+import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.exception.SomeInstantiationException
 import dev.appoutlet.some.test.defaultTestChain
@@ -139,7 +139,7 @@ class ClassResolverTest {
 
     @Test
     fun `ClassResolver with UseDefault strategy uses Kotlin default values for optional parameters`() {
-        val config = someConfigBuilder()
+        val config = buildSomeConfig()
         val resolver = ClassResolver(random = Random.Default, strategyProvider = config)
 
         val chain = ResolverChain(config.buildResolvers(), config[NullableStrategy::class])
@@ -152,7 +152,7 @@ class ClassResolverTest {
 
     @Test
     fun `ClassResolver with Generate strategy generates values for optional parameters`() {
-        val config = someConfigBuilder {
+        val config = buildSomeConfig {
             strategy(DefaultValueStrategy.Generate)
         }
 

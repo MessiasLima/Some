@@ -2,7 +2,7 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.StringStrategy
-import dev.appoutlet.some.config.someConfigBuilder
+import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
@@ -72,7 +72,7 @@ class StringResolverTest {
 
     @Test
     fun `StringStrategy Random with custom length integrates with SomeConfig`() {
-        val config = someConfigBuilder {
+        val config = buildSomeConfig {
             strategy(StringStrategy.Random(length = 20))
         }
         val resolvers = config.buildResolvers()
