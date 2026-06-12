@@ -94,23 +94,13 @@ data class SomeConfig(
      */
     fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
         return listOf(
-            CustomTypeFactoryResolver(
-                typeFactories = typeFactories,
-                random = random,
-                strategyProvider = this,
-            ),
-            NullableResolver(
-                nullableStrategy = this[NullableStrategy::class],
-                random = random,
-            ),
+            CustomTypeFactoryResolver(typeFactories, random, this),
+            NullableResolver(this[NullableStrategy::class], random),
             ObjectResolver(),
             EnumResolver(random),
             SealedClassResolver(random),
             ValueClassResolver(),
-            StringResolver(
-                stringStrategy = this[StringStrategy::class],
-                random = random,
-            ),
+            StringResolver(this[StringStrategy::class], random),
             IntResolver(random),
             LongResolver(random),
             DoubleResolver(random),
@@ -129,27 +119,11 @@ data class SomeConfig(
             BigIntegerResolver(random),
             LocalDateResolver(random),
             LocalDateTimeResolver(random),
-            ListResolver(
-                collectionStrategy = this[CollectionStrategy::class],
-                random = random,
-            ),
-            SetResolver(
-                collectionStrategy = this[CollectionStrategy::class],
-                random = random,
-            ),
-            MapResolver(
-                collectionStrategy = this[CollectionStrategy::class],
-                random = random,
-            ),
-            ArrayResolver(
-                collectionStrategy = this[CollectionStrategy::class],
-                random = random,
-            ),
-            ClassResolver(
-                propertyFactories = propertyFactories,
-                random = random,
-                strategyProvider = this,
-            )
+            ListResolver(this[CollectionStrategy::class], random),
+            SetResolver(this[CollectionStrategy::class], random),
+            MapResolver(this[CollectionStrategy::class], random),
+            ArrayResolver(this[CollectionStrategy::class], random),
+            ClassResolver(propertyFactories, random, this),
         )
     }
 
