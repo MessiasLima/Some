@@ -7,21 +7,20 @@ import kotlin.reflect.KType
  * Runtime context provided as the receiver for custom factory functions.
  *
  * Both type factories registered with `factory` and property factories registered with `property` receive this
- * context. It exposes the same random source and generation strategies used by the resolver chain so custom values
- * can stay consistent with the active [dev.appoutlet.some.config.SomeConfig].
+ * context. It exposes the same random source and strategy provider used by the resolver chain so custom values can
+ * stay consistent with the active [dev.appoutlet.some.config.SomeConfig].
  *
  * The context is a snapshot for the current factory invocation. In particular, [resolutionStack] is immutable from the
  * factory's perspective and should be used only for inspection or debugging, not for controlling resolver state.
  *
  * ## Accessing strategies
  *
- * Use [strategyProvider] to retrieve any registered strategy by its base type:
+ * Use [strategyProvider] to retrieve a registered strategy:
  *
  * ```kotlin
  * factory(MyType::class) {
- *     val nullableStrategy = strategyProvider[NullableStrategy::class]
  *     val stringStrategy = strategyProvider[StringStrategy::class]
- *     MyType(nullableStrategy is NullableStrategy.AlwaysNull)
+ *     MyType(stringStrategy is StringStrategy.Readable)
  * }
  * ```
  *
@@ -33,28 +32,4 @@ data class FixtureContext(
     val random: Random,
     val resolutionStack: List<KType>,
     val strategyProvider: StrategyProvider,
-) {
-    /**
-     * Convenience accessor for the [dev.appoutlet.some.config.NullableStrategy] registered in [strategyProvider].
-     */
-    val nullableStrategy: dev.appoutlet.some.config.NullableStrategy
-        get() = strategyProvider[dev.appoutlet.some.config.NullableStrategy::class]
-
-    /**
-     * Convenience accessor for the [dev.appoutlet.some.config.StringStrategy] registered in [strategyProvider].
-     */
-    val stringStrategy: dev.appoutlet.some.config.StringStrategy
-        get() = strategyProvider[dev.appoutlet.some.config.StringStrategy::class]
-
-    /**
-     * Convenience accessor for the [dev.appoutlet.some.config.CollectionStrategy] registered in [strategyProvider].
-     */
-    val collectionStrategy: dev.appoutlet.some.config.CollectionStrategy
-        get() = strategyProvider[dev.appoutlet.some.config.CollectionStrategy::class]
-
-    /**
-     * Convenience accessor for the [dev.appoutlet.some.config.DefaultValueStrategy] registered in [strategyProvider].
-     */
-    val defaultValueStrategy: dev.appoutlet.some.config.DefaultValueStrategy
-        get() = strategyProvider[dev.appoutlet.some.config.DefaultValueStrategy::class]
-}
+)
