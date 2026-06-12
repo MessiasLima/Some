@@ -22,7 +22,10 @@ class ArrayResolverTest {
         val resolvers = config.buildResolvers()
         val resolver = ArrayResolver(CollectionStrategy(3..5), Random.Default)
 
-        val result = resolver.resolve(typeOf<Array<String>>(), ResolverChain(resolvers, config[NullableStrategy::class]))
+        val result = resolver.resolve(
+            typeOf<Array<String>>(),
+            ResolverChain(resolvers, config[NullableStrategy::class])
+        )
         assertIs<Array<*>>(result)
         assertTrue(result.size in 3..5)
         assertTrue(result.all { it is String })

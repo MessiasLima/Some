@@ -45,7 +45,12 @@ class NullableResolverTest {
         }
         val resolvers = config.buildResolvers()
 
-        val results = (1..100).map { ResolverChain(resolvers, config[NullableStrategy::class]).resolve(typeOf<String?>()) }
+        val results = (1..100).map {
+            ResolverChain(
+                resolvers,
+                config[NullableStrategy::class]
+            ).resolve(typeOf<String?>())
+        }
         val hasNull = results.any { it == null }
         val hasValue = results.any { it != null }
         assertTrue(hasNull && hasValue)

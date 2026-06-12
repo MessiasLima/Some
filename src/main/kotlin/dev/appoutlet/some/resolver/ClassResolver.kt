@@ -48,6 +48,7 @@ class ClassResolver(
     private val strategyProvider: StrategyProvider,
 ) : TypeResolver {
     private val defaultValueStrategy = strategyProvider[DefaultValueStrategy::class] ?: DefaultValueStrategy.default
+
     /**
      * Returns whether [type] can be instantiated by this resolver.
      *
@@ -133,8 +134,8 @@ class ClassResolver(
     ): Any? {
         val args = constructor.parameters.mapNotNull { param ->
             val propertyFactory = propertyFactories[kClass to param.name]
-            val shouldGenerate = !param.isOptional
-                    || defaultValueStrategy == DefaultValueStrategy.Generate
+            val shouldGenerate = !param.isOptional ||
+                defaultValueStrategy == DefaultValueStrategy.Generate
 
             when {
                 propertyFactory != null -> resolveByPropertyFactory(chain, param, propertyFactory)

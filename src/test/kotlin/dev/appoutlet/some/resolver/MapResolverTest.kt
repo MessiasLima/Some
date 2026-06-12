@@ -21,7 +21,10 @@ class MapResolverTest {
         val resolvers = config.buildResolvers()
         val resolver = MapResolver(CollectionStrategy(2..4), Random.Default)
 
-        val result = resolver.resolve(typeOf<Map<String, Int>>(), ResolverChain(resolvers, config[NullableStrategy::class]))
+        val result = resolver.resolve(
+            typeOf<Map<String, Int>>(),
+            ResolverChain(resolvers, config[NullableStrategy::class])
+        )
         assertIs<Map<*, *>>(result)
         assertTrue(result.size in 2..4)
     }

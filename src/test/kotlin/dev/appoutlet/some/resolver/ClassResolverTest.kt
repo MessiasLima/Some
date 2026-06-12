@@ -166,6 +166,9 @@ class ClassResolverTest {
         val results = List(100) { resolver.resolve(typeOf<WithDefaultParams>(), chain) as WithDefaultParams }
         val hasNonDefaultCount = results.any { it.count != 42 }
         val hasNonDefaultActive = results.any { !it.active }
-        assertTrue(hasNonDefaultCount || hasNonDefaultActive, "Expected at least one generated value to differ from Kotlin defaults")
+        assertTrue(
+            hasNonDefaultCount || hasNonDefaultActive,
+            "Expected at least one generated value to differ from Kotlin defaults"
+        )
     }
 }
