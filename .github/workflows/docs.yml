@@ -1,4 +1,5 @@
 name: Documentation
+
 on:
   push:
     branches:
@@ -6,23 +7,18 @@ on:
     paths:
       - zensical.toml
       - docs/**
+      - .github/workflows/docs.yml
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Configure GitHub pages
-        uses: actions/configure-pages@v6
-
-      - name: Checkount main branch
+      - name: Checkout main branch
         uses: actions/checkout@v6
 
       - name: Setup Python 3.x
@@ -41,6 +37,16 @@ jobs:
         with:
           path: site
 
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    steps:
       - name: Deploy website
         uses: actions/deploy-pages@v5
         id: deployment
