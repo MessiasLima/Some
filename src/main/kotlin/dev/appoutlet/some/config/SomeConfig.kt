@@ -18,6 +18,7 @@ import dev.appoutlet.some.resolver.IntResolver
 import dev.appoutlet.some.resolver.JavaDurationResolver
 import dev.appoutlet.some.resolver.JavaInstantResolver
 import dev.appoutlet.some.resolver.JavaUuidResolver
+import dev.appoutlet.some.resolver.JavaZonedDateTimeResolver
 import dev.appoutlet.some.resolver.KotlinDurationResolver
 import dev.appoutlet.some.resolver.KotlinInstantResolver
 import dev.appoutlet.some.resolver.KotlinUuidResolver
@@ -114,6 +115,7 @@ data class SomeConfig(
             JavaUuidResolver(),
             JavaInstantResolver(random),
             JavaDurationResolver(random),
+            JavaZonedDateTimeResolver(random),
             BigDecimalResolver(random),
             BigIntegerResolver(random),
             LocalDateResolver(random),

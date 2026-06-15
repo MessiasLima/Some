@@ -132,6 +132,6 @@ Order matters - first match wins:
 3. ObjectResolver, EnumResolver, SealedClassResolver, ValueClassResolver
 4. Primitive resolvers (String, Int, Long, etc.)
 5. **Kotlin native types FIRST** (KotlinUuidResolver, KotlinInstantResolver, KotlinDurationResolver)
-6. **Java types SECOND** (JavaUuidResolver, JavaInstantResolver, JavaDurationResolver)
+6. **Java types SECOND** (JavaUuidResolver, JavaInstantResolver, JavaDurationResolver, JavaZonedDateTimeResolver)
 7. Collection resolvers (List, Set, Map, Array)
 8. ClassResolver (fallback for classes with constructors)

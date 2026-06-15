@@ -32,6 +32,7 @@ For types not listed here, register a [custom factory](custom-factories.md).
 | `java.math.BigInteger` | `some<BigInteger>()` | |
 | `java.time.LocalDate` | `some<LocalDate>()` | |
 | `java.time.LocalDateTime` | `some<LocalDateTime>()` | |
+| `java.time.ZonedDateTime` | `some<ZonedDateTime>()` | |
 | **Collections** | | |
 | `List<T>` | `some<List<String>>()` | See [CollectionStrategy](configuration/collection-strategy.md) |
 | `MutableList<T>` | `some<MutableList<Int>>()` | |
