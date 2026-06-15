@@ -28,6 +28,7 @@ import dev.appoutlet.some.resolver.LocalDateTimeResolver
 import dev.appoutlet.some.resolver.LongResolver
 import dev.appoutlet.some.resolver.MapResolver
 import dev.appoutlet.some.resolver.NullableResolver
+import dev.appoutlet.some.resolver.NumberResolver
 import dev.appoutlet.some.resolver.ObjectResolver
 import dev.appoutlet.some.resolver.SealedClassResolver
 import dev.appoutlet.some.resolver.SetResolver
@@ -109,6 +110,7 @@ data class SomeConfig(
             CharResolver(random),
             ByteResolver(random),
             ShortResolver(random),
+            NumberResolver(random),
             KotlinUuidResolver(),
             KotlinInstantResolver(random),
             KotlinDurationResolver(random),
