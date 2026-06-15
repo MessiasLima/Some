@@ -20,19 +20,6 @@ class JavaZonedDateTimeResolverTest {
     }
 
     @Test
-    fun `JavaZonedDateTimeResolver generates ZonedDateTime within valid range`() {
-        val resolver = JavaZonedDateTimeResolver(Random.Default)
-        val start = ZonedDateTime.parse("1970-01-01T00:00:00Z")
-        val end = ZonedDateTime.parse("2101-01-01T00:00:00Z")
-
-        repeat(100) {
-            val result = resolver.resolve(typeOf<ZonedDateTime>(), defaultTestChain) as ZonedDateTime
-            assertTrue(result.isAfter(start) || result.isEqual(start), "ZonedDateTime should be after or at 1970-01-01")
-            assertTrue(result.isBefore(end), "ZonedDateTime should be before 2101-01-01")
-        }
-    }
-
-    @Test
     fun `JavaZonedDateTimeResolver canResolve detects ZonedDateTime type`() {
         val resolver = JavaZonedDateTimeResolver(Random.Default)
         assertTrue(resolver.canResolve(typeOf<ZonedDateTime>()))

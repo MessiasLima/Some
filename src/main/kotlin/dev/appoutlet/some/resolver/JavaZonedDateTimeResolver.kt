@@ -9,9 +9,6 @@ import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-private const val START_EPOCH = 0L // 1970-01-01T00:00:00Z
-private const val END_EPOCH = 4133894400L // 2101-01-01T00:00:00Z
-
 /**
  * Resolves [ZonedDateTime] instances.
  *
@@ -28,8 +25,8 @@ class JavaZonedDateTimeResolver(private val random: Random) : TypeResolver {
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
-        val epochSecond = random.nextLong(START_EPOCH, END_EPOCH)
-        val zoneId = ZoneId.of(zoneIds[random.nextInt(zoneIds.size)])
-        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), zoneId)
+        val epochSecond = random.nextLong(Instant.MIN.epochSecond, Instant.MAX.epochSecond)
+        val zoneId = zoneIds[random.nextInt(zoneIds.size)]
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneId.of(zoneId))
     }
 }
