@@ -17,6 +17,7 @@ import dev.appoutlet.some.resolver.FloatResolver
 import dev.appoutlet.some.resolver.IntResolver
 import dev.appoutlet.some.resolver.JavaDurationResolver
 import dev.appoutlet.some.resolver.JavaInstantResolver
+import dev.appoutlet.some.resolver.JavaOptionalResolver
 import dev.appoutlet.some.resolver.JavaUuidResolver
 import dev.appoutlet.some.resolver.JavaZonedDateTimeResolver
 import dev.appoutlet.some.resolver.KotlinDurationResolver
@@ -116,6 +117,7 @@ data class SomeConfig(
             JavaInstantResolver(random),
             JavaDurationResolver(random),
             JavaZonedDateTimeResolver(random),
+            JavaOptionalResolver(this[NullableStrategy::class], random),
             BigDecimalResolver(random),
             BigIntegerResolver(random),
             LocalDateResolver(random),
