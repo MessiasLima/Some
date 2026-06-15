@@ -5,7 +5,7 @@ import dev.appoutlet.some.core.TypeResolver
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.Year
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.random.Random
 import kotlin.reflect.KType
@@ -29,6 +29,8 @@ class JavaZonedDateTimeResolver(private val random: Random) : TypeResolver {
         val minute = random.nextInt(MINUTES_IN_HOUR)
         val second = random.nextInt(SECONDS_IN_MINUTE)
         val date = LocalDate.ofYearDay(year, dayOfYear)
-        return ZonedDateTime.of(date, LocalTime.of(hour, minute, second), ZoneOffset.UTC)
+        val zoneIds = ZoneId.getAvailableZoneIds().toList()
+        val zoneId = ZoneId.of(zoneIds[random.nextInt(zoneIds.size)])
+        return ZonedDateTime.of(date, LocalTime.of(hour, minute, second), zoneId)
     }
 }
