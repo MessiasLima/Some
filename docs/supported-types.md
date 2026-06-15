@@ -21,6 +21,7 @@ For types not listed here, register a [custom factory](custom-factories.md).
 | `Char` | `some<Char>()` | |
 | `Byte` | `some<Byte>()` | |
 | `Short` | `some<Short>()` | |
+| `Number` | `some<Number>()` | Resolves to a random concrete numeric type (`Int`, `Long`, `Double`, `Float`, or `Short`) |
 | **Standard Library** | | |
 | `kotlin.uuid.Uuid` | `some<Uuid>()` | Requires `@OptIn(ExperimentalUuidApi::class)` |
 | `java.util.UUID` | `some<UUID>()` | |
