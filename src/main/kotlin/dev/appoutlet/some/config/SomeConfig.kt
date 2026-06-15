@@ -30,6 +30,7 @@ import dev.appoutlet.some.resolver.MapResolver
 import dev.appoutlet.some.resolver.NullableResolver
 import dev.appoutlet.some.resolver.NumberResolver
 import dev.appoutlet.some.resolver.ObjectResolver
+import dev.appoutlet.some.resolver.OptionalResolver
 import dev.appoutlet.some.resolver.SealedClassResolver
 import dev.appoutlet.some.resolver.SetResolver
 import dev.appoutlet.some.resolver.ShortResolver
@@ -118,6 +119,7 @@ data class SomeConfig(
             JavaInstantResolver(random),
             JavaDurationResolver(random),
             JavaZonedDateTimeResolver(random),
+            OptionalResolver(this[NullableStrategy::class], random),
             BigDecimalResolver(random),
             BigIntegerResolver(random),
             LocalDateResolver(random),
