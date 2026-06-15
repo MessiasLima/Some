@@ -25,6 +25,7 @@ For types not listed here, register a [custom factory](custom-factories.md).
 | **Standard Library** | | |
 | `kotlin.uuid.Uuid` | `some<Uuid>()` | Requires `@OptIn(ExperimentalUuidApi::class)` |
 | `java.util.UUID` | `some<UUID>()` | |
+| `java.util.Optional<T>` | `some<Optional<String>>()` | See [NullableStrategy](configuration/nullable-strategy.md) |
 | `kotlin.time.Duration` | `some<Duration>()` | |
 | `java.time.Duration` | `some<java.time.Duration>()` | |
 | `kotlin.time.Instant` | `some<Instant>()` | |

@@ -10,7 +10,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class JavaOptionalResolverTest {
+class OptionalResolverTest {
     @Test
     fun `JavaOptionalResolver generates Optional values`() {
         val result: Optional<String> = some()
@@ -57,41 +57,20 @@ class JavaOptionalResolverTest {
         val result: OptionalCircular = some {
             strategy(NullableStrategy.NullOnCircularReference)
         }
-
         assertNotNull(result)
-        // Since Optional<OptionalCircular> is treated as OptionalCircular?,
-        // and we are at the first level of circularity for OptionalCircular,
-        // it should resolve to a non-null OptionalCircular, but wrapped in Optional.
-
-        // Wait, if it's the first time it sees OptionalCircular, it should resolve it.
-        // If it's a circular reference, it should be null.
-
-        // Let's re-examine how ResolverChain works.
-        // resolve(OptionalCircular)
-        //   -> ClassResolver resolves OptionalCircular
-        //     -> resolve(Optional<OptionalCircular>)
-        //       -> JavaOptionalResolver
-        //         -> resolve(OptionalCircular?)
-        //           -> NullableResolver
-        //             -> resolve(OptionalCircular)
-        //               -> CIRCULAR REFERENCE!
-
-        // If NullableStrategy is NullOnCircularReference, resolve(OptionalCircular?) returns null.
-        // So Optional.ofNullable(null) is Optional.empty().
-
         assertFalse(result.optional.isPresent, "Circular reference should result in empty optional")
     }
 
     @Test
     fun `JavaOptionalResolver canResolve detects Optional types`() {
-        val resolver = JavaOptionalResolver(NullableStrategy.default, kotlin.random.Random.Default)
+        val resolver = OptionalResolver(NullableStrategy.default, kotlin.random.Random.Default)
         assertTrue(resolver.canResolve(typeOf<Optional<String>>()))
         assertTrue(resolver.canResolve(typeOf<Optional<Int>>()))
     }
 
     @Test
     fun `JavaOptionalResolver rejects non-Optional types`() {
-        val resolver = JavaOptionalResolver(NullableStrategy.default, kotlin.random.Random.Default)
+        val resolver = OptionalResolver(NullableStrategy.default, kotlin.random.Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<List<String>>()))
     }
