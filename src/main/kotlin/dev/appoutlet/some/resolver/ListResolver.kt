@@ -2,7 +2,9 @@ package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.get
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -13,15 +15,14 @@ import kotlin.reflect.typeOf
 /**
  * Resolves [List] and [MutableList] types using the active [CollectionStrategy].
  *
- * @param collectionStrategy Strategy for determining collection sizes. Defaults to
- * [CollectionStrategy.default] when null.
+ * @param strategyProvider Provider of all configured generation strategies.
  * @param random Random source used for determining list size within the configured range.
  */
 class ListResolver(
-    collectionStrategy: CollectionStrategy?,
+    strategyProvider: StrategyProvider,
     val random: Random
 ) : TypeResolver {
-    private val collectionStrategy = collectionStrategy ?: CollectionStrategy.default
+    private val collectionStrategy = strategyProvider.get<CollectionStrategy>() ?: CollectionStrategy.default
 
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false

@@ -1,5 +1,6 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.config.DefaultStrategyProvider
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.config.buildSomeConfig
@@ -19,18 +20,23 @@ import kotlin.uuid.Uuid
 class StringResolverTest {
     @Test
     fun `StringResolver respects the default lenght`() {
-        val strategy = StringStrategy.Random()
-        val resolver = StringResolver(strategy, Random.Default)
+        val resolver = StringResolver(
+            DefaultStrategyProvider(),
+            Random.Default
+        )
 
         val result = resolver.resolve(typeOf<String>(), defaultTestChain)
         assertIs<String>(result)
-        assertEquals(result.length, strategy.length)
+        assertEquals(result.length, StringStrategy.Random().length)
     }
 
     @Test
     fun `StringResolver generates random string with custom length`() {
         val customLength = 16
-        val resolver = StringResolver(StringStrategy.Random(length = customLength), Random.Default)
+        val resolver = StringResolver(
+            DefaultStrategyProvider(mapOf(StringStrategy::class to StringStrategy.Random(length = customLength))),
+            Random.Default
+        )
 
         val result = resolver.resolve(typeOf<String>(), defaultTestChain)
         assertIs<String>(result)
@@ -40,7 +46,10 @@ class StringResolverTest {
     @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `StringResolver generates UUID when configured`() {
-        val resolver = StringResolver(StringStrategy.Uuid, Random.Default)
+        val resolver = StringResolver(
+            DefaultStrategyProvider(mapOf(StringStrategy::class to StringStrategy.Uuid)),
+            Random.Default
+        )
 
         val result = resolver.resolve(typeOf<String>(), defaultTestChain) as String
         val uuid = Uuid.parse(result)
@@ -50,7 +59,10 @@ class StringResolverTest {
 
     @Test
     fun `StringResolver generates readable strings`() {
-        val resolver = StringResolver(StringStrategy.Readable, Random.Default)
+        val resolver = StringResolver(
+            DefaultStrategyProvider(mapOf(StringStrategy::class to StringStrategy.Readable)),
+            Random.Default
+        )
 
         val result = resolver.resolve(typeOf<String>(), defaultTestChain)
         assertIs<String>(result)
@@ -59,13 +71,13 @@ class StringResolverTest {
 
     @Test
     fun `StringResolver canResolve detects String type`() {
-        val resolver = StringResolver(StringStrategy.default, Random.Default)
+        val resolver = StringResolver(DefaultStrategyProvider(), Random.Default)
         assertTrue(resolver.canResolve(typeOf<String>()))
     }
 
     @Test
     fun `StringResolver rejects non-String types`() {
-        val resolver = StringResolver(StringStrategy.default, Random.Default)
+        val resolver = StringResolver(DefaultStrategyProvider(), Random.Default)
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<Long>()))
     }

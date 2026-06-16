@@ -3,6 +3,7 @@ package dev.appoutlet.some.config
 import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.TypeResolverProvider
 import dev.appoutlet.some.resolver.ArrayResolver
 import dev.appoutlet.some.resolver.BigDecimalResolver
 import dev.appoutlet.some.resolver.BigIntegerResolver
@@ -36,6 +37,7 @@ import dev.appoutlet.some.resolver.SetResolver
 import dev.appoutlet.some.resolver.ShortResolver
 import dev.appoutlet.some.resolver.StringResolver
 import dev.appoutlet.some.resolver.ValueClassResolver
+import java.util.ServiceLoader
 import kotlin.random.Random
 import kotlin.reflect.KClass
 
@@ -52,11 +54,13 @@ import kotlin.reflect.KClass
  * @param propertyFactories Custom property factories keyed by class and property name.
  */
 data class SomeConfig(
-    val strategies: Map<KClass<out Strategy>, Strategy> = defaultStrategies(),
+    val strategies: Map<KClass<out Strategy>, Strategy> = emptyMap(),
     val seed: Long? = null,
     val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
 ) : StrategyProvider {
+    private val strategyProvider: StrategyProvider = DefaultStrategyProvider(strategies)
+
     /**
      * Returns the strategy registered for [key].
      *
@@ -64,10 +68,7 @@ data class SomeConfig(
      * @return The registered strategy instance.
      * @throws NoSuchElementException when no strategy is registered for [key].
      */
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Strategy> get(key: KClass<T>): T? {
-        return strategies[key] as? T
-    }
+    override fun <T : Strategy> get(key: KClass<T>): T? = strategyProvider[key]
 
     /**
      * Creates a [SomeConfigBuilder] pre-populated with this configuration's values.
@@ -87,22 +88,31 @@ data class SomeConfig(
     /**
      * Creates the resolver chain used to generate fixture values.
      *
-     * Resolver order defines precedence: the first resolver that supports a type is used. Type factories are first so
-     * explicit user configuration overrides built-in behavior. [ClassResolver] is last because it is the
-     * fallback for constructable model classes and is also where property factories are applied.
+     * Resolver order defines precedence: the first resolver that supports a type is used.
+     *
+     * 1. [CustomTypeFactoryResolver] is first so explicit user factories override everything.
+     * 2. [NullableResolver] handles nullable wrappers before any concrete type resolver.
+     * 3. Third-party resolvers discovered via [java.util.ServiceLoader] come next, allowing external libraries to
+     *    override built-in behavior for basic types.
+     * 4. Built-in resolvers handle remaining standard types.
+     * 5. [ClassResolver] is last because it is the fallback for constructable model classes and is also where
+     *    property factories are applied.
+     *
+     * Resolvers that need strategies receive a [StrategyProvider]; the rest receive only the shared [Random] source.
+     * This keeps resolver construction free of strategy-specific knowledge.
      *
      * @param random Random source shared by resolvers that generate randomized values.
      * @return The ordered [TypeResolver] list for this configuration.
      */
     fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
-        return listOf(
-            CustomTypeFactoryResolver(typeFactories, random, this),
-            NullableResolver(this[NullableStrategy::class], random),
+        val strategyProvider = DefaultStrategyProvider(strategies)
+
+        val builtInResolvers = listOf(
             ObjectResolver(),
             EnumResolver(random),
             SealedClassResolver(random),
             ValueClassResolver(),
-            StringResolver(this[StringStrategy::class], random),
+            StringResolver(strategyProvider, random),
             IntResolver(random),
             LongResolver(random),
             DoubleResolver(random),
@@ -119,17 +129,52 @@ data class SomeConfig(
             JavaInstantResolver(random),
             JavaDurationResolver(random),
             JavaZonedDateTimeResolver(random),
-            OptionalResolver(this[NullableStrategy::class], random),
+            OptionalResolver(strategyProvider, random),
             BigDecimalResolver(random),
             BigIntegerResolver(random),
             LocalDateResolver(random),
             LocalDateTimeResolver(random),
-            ListResolver(this[CollectionStrategy::class], random),
-            SetResolver(this[CollectionStrategy::class], random),
-            MapResolver(this[CollectionStrategy::class], random),
-            ArrayResolver(this[CollectionStrategy::class], random),
-            ClassResolver(propertyFactories, random, this),
+            ListResolver(strategyProvider, random),
+            SetResolver(strategyProvider, random),
+            MapResolver(strategyProvider, random),
+            ArrayResolver(strategyProvider, random),
         )
+
+        val discoveredResolvers = discoverResolvers(strategyProvider, random)
+
+        return listOf(
+            CustomTypeFactoryResolver(strategyProvider, typeFactories, random),
+            NullableResolver(strategyProvider, random),
+        ) + discoveredResolvers + builtInResolvers + ClassResolver(strategyProvider, propertyFactories, random)
+    }
+
+    /**
+     * Discovers additional [TypeResolver]s from third-party libraries via [java.util.ServiceLoader].
+     *
+     * Failures during discovery or provider instantiation are swallowed so the library always falls back to the
+     * built-in resolver chain.
+     *
+     * @param strategyProvider Provider of all configured generation strategies.
+     * @param random Random source shared by discovered resolvers.
+     * @return Ordered list of discovered resolvers, or an empty list if discovery fails.
+     */
+    private fun discoverResolvers(
+        strategyProvider: StrategyProvider,
+        random: Random,
+    ): List<TypeResolver> {
+        val providers = try {
+            ServiceLoader.load(TypeResolverProvider::class.java).toList()
+        } catch (_: Throwable) {
+            return emptyList()
+        }
+
+        return providers.flatMap { provider ->
+            try {
+                provider.createResolvers(strategyProvider, random)
+            } catch (_: Throwable) {
+                emptyList()
+            }
+        }
     }
 
     /**
@@ -141,16 +186,4 @@ data class SomeConfig(
      * @return [Random] seeded with [seed] if set, or [Random.Default] otherwise.
      */
     internal fun buildRandom(): Random = seed?.let { Random(it) } ?: Random.Default
-
-    companion object {
-        /**
-         * Returns the default strategy map with sensible defaults for all built-in strategies.
-         */
-        fun defaultStrategies(): Map<KClass<out Strategy>, Strategy> = mapOf(
-            NullableStrategy::class to NullableStrategy.default,
-            StringStrategy::class to StringStrategy.default,
-            CollectionStrategy::class to CollectionStrategy.default,
-            DefaultValueStrategy::class to DefaultValueStrategy.default,
-        )
-    }
 }

@@ -18,14 +18,14 @@ import kotlin.reflect.KType
  * Type factories receive a [FixtureContext] containing the active random source, resolution stack, and strategy
  * provider. This lets user code produce values that still respect the current fixture configuration.
  *
+ * @param strategyProvider Provides all registered generation strategies to type factories through [FixtureContext].
  * @param typeFactories Map of classes to user-provided type factory functions.
  * @param random Random source exposed to type factories through [FixtureContext].
- * @param strategyProvider Provides all registered generation strategies to type factories through [FixtureContext].
  */
 class CustomTypeFactoryResolver(
+    val strategyProvider: StrategyProvider,
     private val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?>,
     private val random: Random,
-    private val strategyProvider: StrategyProvider,
 ) : TypeResolver {
     /**
      * Returns whether [type] has a registered type factory.
