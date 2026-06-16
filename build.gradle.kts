@@ -23,6 +23,7 @@ dependencies {
     dokkaHtmlPlugin(libs.dokka.versioning)
 
     implementation(libs.kotlin.reflect)
+    implementation(libs.kermit)
 
     testImplementation(libs.kotlin.test)
 }

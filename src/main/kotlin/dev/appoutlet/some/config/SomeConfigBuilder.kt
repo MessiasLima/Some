@@ -131,7 +131,7 @@ class SomeConfigBuilder {
      * @return A new [SomeConfig] instance with the configured values.
      */
     fun build(): SomeConfig = SomeConfig(
-        strategies = _strategies,
+        strategies = _strategies.toMap(),
         seed = seed,
         typeFactories = _typeFactories.toMap(),
         propertyFactories = _propertyFactories.toMap()

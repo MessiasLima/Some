@@ -4,6 +4,7 @@ import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.TypeResolverProvider
+import dev.appoutlet.some.logging.logger
 import dev.appoutlet.some.resolver.ArrayResolver
 import dev.appoutlet.some.resolver.BigDecimalResolver
 import dev.appoutlet.some.resolver.BigIntegerResolver
@@ -60,6 +61,7 @@ data class SomeConfig(
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
 ) : StrategyProvider {
     private val strategyProvider: StrategyProvider = DefaultStrategyProvider(strategies)
+    private val logger by logger()
 
     /**
      * Returns the strategy registered for [key].
@@ -158,20 +160,23 @@ data class SomeConfig(
      * @param random Random source shared by discovered resolvers.
      * @return Ordered list of discovered resolvers, or an empty list if discovery fails.
      */
+    @Suppress("TooGenericExceptionCaught")
     private fun discoverResolvers(
         strategyProvider: StrategyProvider,
         random: Random,
     ): List<TypeResolver> {
         val providers = try {
             ServiceLoader.load(TypeResolverProvider::class.java).toList()
-        } catch (_: Throwable) {
+        } catch (e: Throwable) {
+            logger.w(e) { "Failed to discover TypeResolverProvider implementations" }
             return emptyList()
         }
 
         return providers.flatMap { provider ->
             try {
                 provider.createResolvers(strategyProvider, random)
-            } catch (_: Throwable) {
+            } catch (e: Throwable) {
+                logger.w(e) { "Failed to instantiate resolver provider: ${provider::class.simpleName}" }
                 emptyList()
             }
         }

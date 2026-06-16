@@ -6,6 +6,7 @@ import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.get
 import dev.appoutlet.some.exception.SomeCircularReferenceException
+import dev.appoutlet.some.logging.logger
 import java.util.Optional
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -27,6 +28,8 @@ class OptionalResolver(
     strategyProvider: StrategyProvider,
     private val random: Random
 ) : TypeResolver {
+    private val logger by logger()
+
     /**
      * Resolved nullable strategy used to decide whether the resulting [Optional] is empty or present.
      *
@@ -78,7 +81,8 @@ class OptionalResolver(
             is NullableStrategy.NullOnCircularReference -> {
                 try {
                     Optional.ofNullable(chain.resolve(valueType))
-                } catch (_: SomeCircularReferenceException) {
+                } catch (e: SomeCircularReferenceException) {
+                    logger.d(e) { "Circular reference detected in Optional<$valueType>, returning empty" }
                     Optional.empty<Any>()
                 }
             }

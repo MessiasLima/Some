@@ -8,6 +8,7 @@ import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.get
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeInstantiationException
+import dev.appoutlet.some.logging.logger
 import java.lang.reflect.Modifier
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -48,6 +49,7 @@ class ClassResolver(
     private val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
     private val random: Random = Random.Default,
 ) : TypeResolver {
+    private val logger by logger()
     private val defaultValueStrategy = strategyProvider.get<DefaultValueStrategy>() ?: DefaultValueStrategy.default
 
     /**
@@ -118,12 +120,14 @@ class ClassResolver(
             } catch (e: SomeCircularReferenceException) {
                 throw e
             } catch (e: Exception) {
+                logger.d(e) { "Constructor failed for ${kClass.simpleName}" }
                 failures.add(
                     "Constructor ${constructor.parameters.map { it.name }}: ${e.message ?: e::class.simpleName}"
                 )
             }
         }
 
+        logger.w { "All constructors failed for ${kClass.simpleName}" }
         throw SomeInstantiationException(kClass, failures)
     }
 
