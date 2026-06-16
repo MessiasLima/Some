@@ -16,7 +16,8 @@ nav = [
       "configuration/collection-strategy.md"
     ] },
   "supported-types.md",
-  "custom-factories.md" ,
+  "custom-factories.md",
+  "custom-resolvers.md",
   { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }
 ]
 

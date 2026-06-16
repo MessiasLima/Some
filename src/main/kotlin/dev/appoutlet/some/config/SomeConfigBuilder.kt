@@ -50,8 +50,9 @@ class SomeConfigBuilder {
      * Registers a strategy for fixture generation.
      *
      * The strategy replaces any previous strategy registered under the same base type.
-     * Built-in strategies ([NullableStrategy], [StringStrategy], [CollectionStrategy],
-     * [DefaultValueStrategy]) are pre-populated with sensible defaults.
+     * When no strategy is explicitly registered, each resolver falls back to its own
+     * sensible default (e.g. [NullableStrategy.NullOnCircularReference],
+     * [StringStrategy.Random], [CollectionStrategy] with a range of 1..5).
      *
      * @param strategy The strategy instance to register.
      */

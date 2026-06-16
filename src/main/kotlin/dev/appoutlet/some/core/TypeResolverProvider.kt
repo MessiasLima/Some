@@ -7,10 +7,15 @@ import kotlin.random.Random
  *
  * Implementations are discovered at runtime via [java.util.ServiceLoader]. Third-party libraries
  * can ship their own provider to extend `Some` without requiring users to write configuration.
+ *
+ * Contributed resolvers are inserted between [NullableResolver][dev.appoutlet.some.resolver.NullableResolver]
+ * and the built-in resolvers, giving them priority over built-in type handling while still allowing
+ * user-registered type factories ([CustomTypeFactoryResolver][dev.appoutlet.some.resolver.CustomTypeFactoryResolver])
+ * to take precedence.
  */
 interface TypeResolverProvider {
     /**
-     * Creates resolvers to be appended to the built-in resolver chain.
+     * Creates resolvers to be contributed to the fixture generation chain.
      *
      * @param strategyProvider Provider of all configured generation strategies.
      * @param random Shared random source.

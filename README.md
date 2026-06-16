@@ -33,6 +33,7 @@ val user = some<User>()
 - **Universal type support** — Works with data classes, sealed classes/interfaces, object singletons, value classes, generics, and all standard collections. If Kotlin can represent it, Some can generate it.
 - **Nested and recursive structures** — Handles deeply nested data classes, circular references, and recursive sealed class hierarchies without infinite loops.
 - **Fine-grained control** — Override how specific fields are generated: control nullable probability, string format, collection sizes, register custom type factories for types, or use property factories for individual fields.
+- **Extensible** — Ship custom `TypeResolverProvider` implementations discovered via `ServiceLoader` to add support for domain-specific, third-party, or internal application types — with custom strategies and no consumer configuration required.
 - **Deterministic by choice** — Set a seed for reproducible test data across runs, or default to random for variation.
 
 ## Installation
