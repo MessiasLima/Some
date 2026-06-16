@@ -45,7 +45,7 @@ import kotlin.reflect.jvm.isAccessible
  * @param random Random source exposed to property factories through [FixtureContext].
  */
 class ClassResolver(
-    val strategyProvider: StrategyProvider,
+    private val strategyProvider: StrategyProvider,
     private val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
     private val random: Random = Random.Default,
 ) : TypeResolver {

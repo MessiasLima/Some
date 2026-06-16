@@ -61,4 +61,10 @@ class ServiceLoaderDiscoveryTest {
         val result: Int = some()
         assertTrue(result in Int.MIN_VALUE..Int.MAX_VALUE)
     }
+
+    @Test
+    fun `valid providers survive when another provider fails during loading`() {
+        val result: DiscoveredType = some()
+        assertEquals("discovered", result.value)
+    }
 }

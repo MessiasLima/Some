@@ -20,7 +20,7 @@ import kotlin.reflect.typeOf
  */
 class ListResolver(
     strategyProvider: StrategyProvider,
-    val random: Random
+    private val random: Random
 ) : TypeResolver {
     private val collectionStrategy = strategyProvider.get<CollectionStrategy>() ?: CollectionStrategy.default
 

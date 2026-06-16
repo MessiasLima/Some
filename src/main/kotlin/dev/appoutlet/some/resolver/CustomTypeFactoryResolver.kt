@@ -23,7 +23,7 @@ import kotlin.reflect.KType
  * @param random Random source exposed to type factories through [FixtureContext].
  */
 class CustomTypeFactoryResolver(
-    val strategyProvider: StrategyProvider,
+    private val strategyProvider: StrategyProvider,
     private val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?>,
     private val random: Random,
 ) : TypeResolver {

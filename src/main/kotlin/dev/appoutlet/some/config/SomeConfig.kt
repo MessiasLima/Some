@@ -107,8 +107,6 @@ data class SomeConfig(
      * @return The ordered [TypeResolver] list for this configuration.
      */
     fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
-        val strategyProvider = DefaultStrategyProvider(strategies)
-
         val builtInResolvers = listOf(
             ObjectResolver(),
             EnumResolver(random),
@@ -165,11 +163,16 @@ data class SomeConfig(
         strategyProvider: StrategyProvider,
         random: Random,
     ): List<TypeResolver> {
-        val providers = try {
-            ServiceLoader.load(TypeResolverProvider::class.java).toList()
-        } catch (e: Throwable) {
-            logger.w(e) { "Failed to discover TypeResolverProvider implementations" }
-            return emptyList()
+        val loader = ServiceLoader.load(TypeResolverProvider::class.java)
+        val providers = mutableListOf<TypeResolverProvider>()
+        val iterator = loader.iterator()
+
+        while (iterator.hasNext()) {
+            try {
+                providers.add(iterator.next())
+            } catch (e: Throwable) {
+                logger.w(e) { "Failed to load a TypeResolverProvider implementation" }
+            }
         }
 
         return providers.flatMap { provider ->
