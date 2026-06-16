@@ -1,5 +1,6 @@
 [versions]
 kotlin = "2.3.21"
+autoserviceIr = "0.1.5"
 detekt = "1.23.8"
 dokka = "2.2.0"
 gitHooksPlugin = "1.1.1"
@@ -9,12 +10,14 @@ mavenPublish = "0.36.0"
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
+kermit = { module = "co.touchlab:kermit", version = "2.0.4" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+autoservice-ir = { id = "com.fueledbycaffeine.autoservice", version.ref = "autoserviceIr" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitHooks = { id = "eu.bambooapps.gradle.plugin.githook", version.ref = "gitHooksPlugin" }

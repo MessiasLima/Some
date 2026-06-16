@@ -5,7 +5,7 @@ icon: lucide/file-type
 
 Some resolves common Kotlin and Java types with zero configuration. Nullable variants (`T?`) are supported everywhere — [NullableStrategy](configuration/nullable-strategy.md) controls whether `null` is emitted.
 
-For types not listed here, register a [custom factory](custom-factories.md).
+For types not listed here, register a [custom factory](custom-factories.md) or ship a [custom resolver](custom-resolvers.md).
 
 ## Reference
 
@@ -64,3 +64,5 @@ someSetup {
 ```
 
 See [Type and Property Factories](custom-factories.md) for more.
+
+For library authors or application developers who want to bundle resolver logic for a custom type, see [Custom Resolvers](custom-resolvers.md) to learn about `TypeResolverProvider`.

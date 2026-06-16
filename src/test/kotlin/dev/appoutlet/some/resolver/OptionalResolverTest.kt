@@ -1,8 +1,10 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.config.DefaultStrategyProvider
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.some
 import java.util.Optional
+import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -63,14 +65,14 @@ class OptionalResolverTest {
 
     @Test
     fun `JavaOptionalResolver canResolve detects Optional types`() {
-        val resolver = OptionalResolver(NullableStrategy.default, kotlin.random.Random.Default)
+        val resolver = OptionalResolver(DefaultStrategyProvider(), Random.Default)
         assertTrue(resolver.canResolve(typeOf<Optional<String>>()))
         assertTrue(resolver.canResolve(typeOf<Optional<Int>>()))
     }
 
     @Test
     fun `JavaOptionalResolver rejects non-Optional types`() {
-        val resolver = OptionalResolver(NullableStrategy.default, kotlin.random.Random.Default)
+        val resolver = OptionalResolver(DefaultStrategyProvider(), Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<List<String>>()))
     }

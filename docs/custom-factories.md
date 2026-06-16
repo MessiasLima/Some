@@ -146,3 +146,5 @@ val stillBase = someWithDefaults<User>()
 ## Choosing the right override
 
 Prefer property factories for test readability when only one field matters. Prefer type factories when a type has domain rules, validation constraints, or a value format that should be consistent wherever that type appears.
+
+If you are building a library or need to provide resolver logic for internal application types, consider shipping a [custom resolver](custom-resolvers.md) instead. Custom resolvers are discovered automatically via `ServiceLoader` and don't require consumers to write any configuration.

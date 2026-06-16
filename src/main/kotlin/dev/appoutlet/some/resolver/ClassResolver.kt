@@ -5,8 +5,10 @@ import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.get
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeInstantiationException
+import dev.appoutlet.some.logging.logger
 import java.lang.reflect.Modifier
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -38,16 +40,17 @@ import kotlin.reflect.jvm.isAccessible
  * Generic type arguments from the requested [KType] are mapped onto constructor parameter types before delegation,
  * allowing declarations such as `Box<String>` to resolve constructor parameters declared as `T`.
  *
+ * @param strategyProvider Provides all registered generation strategies to property factories through [FixtureContext].
  * @param propertyFactories Per-property factories keyed by owning class and constructor parameter name.
  * @param random Random source exposed to property factories through [FixtureContext].
- * @param strategyProvider Provides all registered generation strategies to property factories through [FixtureContext].
  */
 class ClassResolver(
+    private val strategyProvider: StrategyProvider,
     private val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
     private val random: Random = Random.Default,
-    private val strategyProvider: StrategyProvider,
 ) : TypeResolver {
-    private val defaultValueStrategy = strategyProvider[DefaultValueStrategy::class] ?: DefaultValueStrategy.default
+    private val logger by logger()
+    private val defaultValueStrategy = strategyProvider.get<DefaultValueStrategy>() ?: DefaultValueStrategy.default
 
     /**
      * Returns whether [type] can be instantiated by this resolver.
@@ -117,12 +120,14 @@ class ClassResolver(
             } catch (e: SomeCircularReferenceException) {
                 throw e
             } catch (e: Exception) {
+                logger.d(e) { "Constructor failed for ${kClass.simpleName}" }
                 failures.add(
                     "Constructor ${constructor.parameters.map { it.name }}: ${e.message ?: e::class.simpleName}"
                 )
             }
         }
 
+        logger.w { "All constructors failed for ${kClass.simpleName}" }
         throw SomeInstantiationException(kClass, failures)
     }
 

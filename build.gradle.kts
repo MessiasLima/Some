@@ -2,6 +2,7 @@ import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.autoservice.ir)
     alias(libs.plugins.detekt)
     alias(libs.plugins.dokka)
     alias(libs.plugins.gitHooks)
@@ -22,6 +23,7 @@ dependencies {
     dokkaHtmlPlugin(libs.dokka.versioning)
 
     implementation(libs.kotlin.reflect)
+    implementation(libs.kermit)
 
     testImplementation(libs.kotlin.test)
 }

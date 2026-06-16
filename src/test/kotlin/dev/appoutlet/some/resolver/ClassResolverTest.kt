@@ -1,10 +1,7 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.config.DefaultStrategyProvider
 import dev.appoutlet.some.config.DefaultValueStrategy
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.config.buildSomeConfig
-import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.exception.SomeInstantiationException
 import dev.appoutlet.some.test.defaultTestChain
 import kotlin.random.Random
@@ -50,8 +47,8 @@ data class WithDefaultParams(val name: String, val count: Int = 42, val active: 
 
 class ClassResolverTest {
     private val resolver = ClassResolver(
-        random = Random.Default,
-        strategyProvider = SomeConfig()
+        strategyProvider = DefaultStrategyProvider(),
+        random = Random.Default
     )
 
     @Test
@@ -139,12 +136,7 @@ class ClassResolverTest {
 
     @Test
     fun `ClassResolver with UseDefault strategy uses Kotlin default values for optional parameters`() {
-        val config = buildSomeConfig()
-        val resolver = ClassResolver(random = Random.Default, strategyProvider = config)
-
-        val chain = ResolverChain(config.buildResolvers(), config[NullableStrategy::class])
-
-        val result = resolver.resolve(typeOf<WithDefaultParams>(), chain) as WithDefaultParams
+        val result = resolver.resolve(typeOf<WithDefaultParams>(), defaultTestChain) as WithDefaultParams
         assertTrue(result.name.isNotEmpty())
         assertEquals(42, result.count)
         assertTrue(result.active)
@@ -152,18 +144,16 @@ class ClassResolverTest {
 
     @Test
     fun `ClassResolver with Generate strategy generates values for optional parameters`() {
-        val config = buildSomeConfig {
-            strategy(DefaultValueStrategy.Generate)
-        }
-
-        val resolver = ClassResolver(
-            random = Random.Default,
-            strategyProvider = config,
+        val generateResolver = ClassResolver(
+            strategyProvider = DefaultStrategyProvider(
+                mapOf(DefaultValueStrategy::class to DefaultValueStrategy.Generate)
+            ),
+            random = Random.Default
         )
 
-        val chain = ResolverChain(config.buildResolvers(), config[NullableStrategy::class])
-
-        val results = List(100) { resolver.resolve(typeOf<WithDefaultParams>(), chain) as WithDefaultParams }
+        val results = List(100) {
+            generateResolver.resolve(typeOf<WithDefaultParams>(), defaultTestChain) as WithDefaultParams
+        }
         val hasNonDefaultCount = results.any { it.count != 42 }
         val hasNonDefaultActive = results.any { !it.active }
         assertTrue(

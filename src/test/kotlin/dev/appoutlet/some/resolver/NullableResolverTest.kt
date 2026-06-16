@@ -1,5 +1,6 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.config.DefaultStrategyProvider
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
@@ -16,7 +17,10 @@ import kotlin.test.assertTrue
 class NullableResolverTest {
     @Test
     fun `NullableResolver with AlwaysNull strategy returns null`() {
-        val resolver = NullableResolver(NullableStrategy.AlwaysNull, Random.Default)
+        val resolver = NullableResolver(
+            DefaultStrategyProvider(mapOf(NullableStrategy::class to NullableStrategy.AlwaysNull)),
+            Random.Default
+        )
 
         repeat(1000) {
             val result = resolver.resolve(typeOf<String?>(), defaultTestChain)
@@ -85,13 +89,13 @@ class NullableResolverTest {
 
     @Test
     fun `NullableResolver canResolve detects nullable types`() {
-        val resolver = NullableResolver(NullableStrategy.default, Random.Default)
+        val resolver = NullableResolver(DefaultStrategyProvider(), Random.Default)
         assertTrue(resolver.canResolve(typeOf<String?>()))
     }
 
     @Test
     fun `NullableResolver rejects non-nullable types`() {
-        val resolver = NullableResolver(NullableStrategy.default, Random.Default)
+        val resolver = NullableResolver(DefaultStrategyProvider(), Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
     }
 }

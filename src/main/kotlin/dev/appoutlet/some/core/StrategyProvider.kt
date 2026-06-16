@@ -31,18 +31,17 @@ import kotlin.reflect.KClass
  */
 interface StrategyProvider {
     /**
-     * Returns the strategy instance registered for [key].
+     * Returns the strategy instance registered for [key], or `null` when no strategy is registered.
      *
      * @param key The [KClass] of the strategy to retrieve
      *   (e.g. [NullableStrategy::class][dev.appoutlet.some.config.NullableStrategy]).
-     * @return The registered strategy instance.
-     * @throws NoSuchElementException when no strategy is registered for [key].
+     * @return The registered strategy instance, or `null` when no strategy is registered for [key].
      */
     operator fun <T : Strategy> get(key: KClass<T>): T?
 }
 
 /**
- * Returns the strategy instance of type [T] registered for this provider.
+ * Returns the strategy instance of type [T] registered for this provider, or `null` when no strategy is registered.
  *
  * This is a convenience extension that allows idiomatic usage without explicitly passing a [KClass]:
  *
@@ -51,7 +50,6 @@ interface StrategyProvider {
  * ```
  *
  * @param T The type of the strategy to retrieve.
- * @return The registered strategy instance.
- * @throws NoSuchElementException when no strategy is registered for [T].
+ * @return The registered strategy instance, or `null` when no strategy is registered for [T].
  */
 inline fun <reified T : Strategy> StrategyProvider.get(): T? = get(T::class)
