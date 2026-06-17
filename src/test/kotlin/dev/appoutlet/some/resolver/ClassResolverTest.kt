@@ -4,6 +4,7 @@ import dev.appoutlet.some.config.DefaultStrategyProvider
 import dev.appoutlet.some.config.DefaultValueStrategy
 import dev.appoutlet.some.exception.SomeInstantiationException
 import dev.appoutlet.some.test.defaultTestChain
+import java.math.BigInteger
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
@@ -44,6 +45,19 @@ sealed class TestSealed {
 }
 
 data class WithDefaultParams(val name: String, val count: Int = 42, val active: Boolean = true)
+
+@Suppress("TooGenericExceptionThrown")
+class ThrowingConstructorClass(val name: String) {
+    init {
+        throw RuntimeException()
+    }
+}
+
+class MyArrayList<E> : ArrayList<E>()
+
+class MyHashSet<E> : HashSet<E>()
+
+class MyHashMap<K, V> : HashMap<K, V>()
 
 class ClassResolverTest {
     private val resolver = ClassResolver(
@@ -160,5 +174,33 @@ class ClassResolverTest {
             hasNonDefaultCount || hasNonDefaultActive,
             "Expected at least one generated value to differ from Kotlin defaults"
         )
+    }
+
+    @Test
+    fun `ClassResolver canResolve rejects List subclass`() {
+        assertFalse(resolver.canResolve(typeOf<MyArrayList<String>>()))
+    }
+
+    @Test
+    fun `ClassResolver canResolve rejects Set subclass`() {
+        assertFalse(resolver.canResolve(typeOf<MyHashSet<String>>()))
+    }
+
+    @Test
+    fun `ClassResolver canResolve rejects Map subclass`() {
+        assertFalse(resolver.canResolve(typeOf<MyHashMap<String, Int>>()))
+    }
+
+    @Test
+    fun `ClassResolver canResolve rejects Number subclass`() {
+        assertFalse(resolver.canResolve(typeOf<BigInteger>()))
+    }
+
+    @Test
+    fun `ClassResolver throws SomeInstantiationException with null message constructor exception`() {
+        val exception = assertFailsWith<SomeInstantiationException> {
+            resolver.resolve(typeOf<ThrowingConstructorClass>(), defaultTestChain)
+        }
+        assertTrue(exception.message!!.contains("InvocationTargetException"))
     }
 }

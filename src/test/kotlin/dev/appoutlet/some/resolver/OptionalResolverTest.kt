@@ -3,10 +3,12 @@ package dev.appoutlet.some.resolver
 import dev.appoutlet.some.config.DefaultStrategyProvider
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.some
+import dev.appoutlet.some.test.defaultTestChain
 import java.util.Optional
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -75,5 +77,14 @@ class OptionalResolverTest {
         val resolver = OptionalResolver(DefaultStrategyProvider(), Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<List<String>>()))
+    }
+
+    @Test
+    fun `JavaOptionalResolver throws error on star projection`() {
+        val resolver = OptionalResolver(DefaultStrategyProvider(), Random.Default)
+
+        assertFailsWith<IllegalArgumentException> {
+            resolver.resolve(typeOf<Optional<*>>(), defaultTestChain)
+        }
     }
 }
