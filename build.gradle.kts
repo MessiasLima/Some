@@ -52,9 +52,9 @@ kover {
     reports {
         verify {
             rule {
-                minBound(90, CoverageUnit.INSTRUCTION)
-                minBound(90, CoverageUnit.LINE)
-                minBound(67, CoverageUnit.BRANCH)
+                minBound(95, CoverageUnit.INSTRUCTION)
+                minBound(95, CoverageUnit.LINE)
+                minBound(75, CoverageUnit.BRANCH)
             }
         }
     }
