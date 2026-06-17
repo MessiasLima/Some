@@ -1,5 +1,10 @@
 package dev.appoutlet.some.config
 
+import dev.appoutlet.some.core.Strategy
+import dev.appoutlet.some.resolver.collection.CollectionStrategy
+import dev.appoutlet.some.resolver.klass.DefaultValueStrategy
+import dev.appoutlet.some.resolver.nullable.NullableStrategy
+import dev.appoutlet.some.resolver.string.StringStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

@@ -1,6 +1,8 @@
 package dev.appoutlet.some.test
 
 import com.fueledbycaffeine.autoservice.AutoService
+import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.core.Strategy
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.TypeResolverProvider

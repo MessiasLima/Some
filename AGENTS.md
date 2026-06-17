@@ -41,10 +41,13 @@ Documentation pages are under `docs/` and the site config is in `zensical.toml`.
 
 ```
 src/main/kotlin/dev/appoutlet/some/
-├── config/          # Configuration, strategies, and builder
-├── core/            # Core abstractions and resolver chain
+├── config/          # Global configuration and builder
+├── core/            # Core abstractions, strategies, and resolver chain
 ├── exception/       # Custom exceptions
-└── resolver/        # Type resolvers
+└── resolver/        # Type resolvers grouped by type
+    ├── string/      # String resolver and strategy
+    ├── primitive/   # Numeric and boolean resolvers
+    └── ...
 ```
 
 ---
@@ -54,7 +57,7 @@ src/main/kotlin/dev/appoutlet/some/
 ### File Organization
 - **One class per file** - Each resolver, exception, and config class has its own file
 - **File name matches class name** - `IntResolver.kt` contains `class IntResolver`
-- **Package structure mirrors functionality** - resolvers in `resolver/`, config in `config/`
+- **Package-by-type** - Group resolvers with their related strategies in a sub-package of `resolver/` (e.g., `resolver/string/` contains both `StringResolver` and `StringStrategy`).
 
 ### Naming Conventions
 - **Resolvers**: `{Type}Resolver` (e.g., `IntResolver`, `ListResolver`)

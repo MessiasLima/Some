@@ -1,6 +1,8 @@
 package dev.appoutlet.some.core
 
-import dev.appoutlet.some.config.Strategy
+import dev.appoutlet.some.config.SomeConfig
+import dev.appoutlet.some.resolver.nullable.NullableStrategy
+import dev.appoutlet.some.resolver.string.StringStrategy
 import kotlin.reflect.KClass
 
 /**
@@ -34,7 +36,7 @@ interface StrategyProvider {
      * Returns the strategy instance registered for [key], or `null` when no strategy is registered.
      *
      * @param key The [KClass] of the strategy to retrieve
-     *   (e.g. [NullableStrategy::class][dev.appoutlet.some.config.NullableStrategy]).
+     *   (e.g. [NullableStrategy::class][dev.appoutlet.some.resolver.nullable.NullableStrategy]).
      * @return The registered strategy instance, or `null` when no strategy is registered for [key].
      */
     operator fun <T : Strategy> get(key: KClass<T>): T?

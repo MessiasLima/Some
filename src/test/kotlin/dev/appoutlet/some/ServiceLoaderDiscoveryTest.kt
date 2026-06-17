@@ -1,13 +1,5 @@
 package dev.appoutlet.some
 
-import dev.appoutlet.some.config.SomeConfig
-import dev.appoutlet.some.resolver.ClassResolver
-import dev.appoutlet.some.resolver.CustomTypeFactoryResolver
-import dev.appoutlet.some.resolver.NullableResolver
-import dev.appoutlet.some.resolver.ObjectResolver
-import dev.appoutlet.some.resolver.StringResolver
-import dev.appoutlet.some.test.DiscoveredType
-import dev.appoutlet.some.test.TestTypeResolver
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

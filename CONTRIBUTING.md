@@ -69,6 +69,7 @@ You are welcome to use any coding tool you prefer, including AI-assisted tools s
 What matters most is the quality of the result:
 
 - **Code should be clear and idiomatic**: follow the project's conventions, keep changes focused, and make sure Detekt passes.
+- **Package-by-type**: When adding new type support, group the resolver and its related strategies in a new sub-package under `dev.appoutlet.some.resolver`.
 - **Tests should be meaningful**: test real behavior and important edge cases. Avoid tests that only exist to increase coverage without validating useful behavior.
 - **Changes should be covered by tests**: new behavior and bug fixes should include appropriate tests, and the project coverage requirements must continue to pass.
 

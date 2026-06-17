@@ -1,5 +1,6 @@
 package dev.appoutlet.some.config
 
+import dev.appoutlet.some.core.Strategy
 import dev.appoutlet.some.core.StrategyProvider
 import kotlin.reflect.KClass
 

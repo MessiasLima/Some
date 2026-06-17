@@ -1,9 +1,10 @@
 package dev.appoutlet.some.integration
 
-import dev.appoutlet.some.config.CollectionStrategy
-import dev.appoutlet.some.config.DefaultValueStrategy
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.config.StringStrategy
+import dev.appoutlet.some.core.Strategy
+import dev.appoutlet.some.resolver.collection.CollectionStrategy
+import dev.appoutlet.some.resolver.klass.DefaultValueStrategy
+import dev.appoutlet.some.resolver.nullable.NullableStrategy
+import dev.appoutlet.some.resolver.string.StringStrategy
 import dev.appoutlet.some.some
 import dev.appoutlet.some.someSetup
 import kotlin.test.Test

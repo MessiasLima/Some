@@ -1,6 +1,7 @@
 package dev.appoutlet.some.integration
 
-import dev.appoutlet.some.config.DefaultValueStrategy
+import dev.appoutlet.some.core.Strategy
+import dev.appoutlet.some.resolver.klass.DefaultValueStrategy
 import dev.appoutlet.some.some
 import kotlin.test.Test
 import kotlin.test.assertEquals

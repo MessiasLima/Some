@@ -1,7 +1,9 @@
 package dev.appoutlet.some.integration
 
-import dev.appoutlet.some.config.NullableStrategy
+import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.core.Strategy
 import dev.appoutlet.some.exception.SomeCircularReferenceException
+import dev.appoutlet.some.resolver.nullable.NullableStrategy
 import dev.appoutlet.some.some
 import kotlin.test.Test
 import kotlin.test.assertFailsWith

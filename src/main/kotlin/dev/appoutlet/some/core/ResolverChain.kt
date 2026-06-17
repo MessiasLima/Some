@@ -1,8 +1,8 @@
 package dev.appoutlet.some.core
 
-import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeUnresolvableTypeException
+import dev.appoutlet.some.resolver.nullable.NullableStrategy
 import kotlin.reflect.KType
 
 /**
@@ -65,7 +65,7 @@ class ResolverChain(
      *
      * Classifier comparison treats `T` and `T?` as the same logical type, which is required to detect recursive
      * fields such as `data class Node(val next: Node?)`. The non-nullable case immediately after a nullable stack
-     * entry is not circular: that is the expected path where [dev.appoutlet.some.resolver.NullableResolver]
+     * entry is not circular: that is the expected path where [dev.appoutlet.some.resolver.nullable.NullableResolver]
      * unwraps `T?` into `T` before resolving the concrete value.
      */
     private fun detectCircularReference(type: KType): Boolean {

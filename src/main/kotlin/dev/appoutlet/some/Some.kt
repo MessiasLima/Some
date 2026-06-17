@@ -1,110 +1,56 @@
 package dev.appoutlet.some
 
-import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.config.SomeConfigBuilder
-import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.get
+import dev.appoutlet.some.resolver.nullable.NullableStrategy
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 
-/**
- * Fixture generator configured with a resolver chain and shared random source.
- *
- * Instances are created by [someSetup] and can be reused to generate multiple values with the same configuration.
- *
- * @param resolvers Ordered resolver list used to generate values.
- * @param random Random source shared by resolvers created for this instance.
- * @param config Configuration used by this generator.
- */
 class Some(
     val resolvers: List<TypeResolver>,
     val random: Random,
     val config: SomeConfig
 ) {
-    /**
-     * Generates a fixture value of type [T] using this instance's configuration.
-     *
-     * @param T Type to generate.
-     * @return Generated value of type [T].
-     */
-    @Suppress("MemberNameEqualsClassName")
-    inline fun <reified T> some(): T {
-        val nullableStrategy = config[NullableStrategy::class]
-        val session = ResolverChain(resolvers, nullableStrategy)
-        return session.resolve(typeOf<T>()) as T
-    }
-
-    /**
-     * Generates a fixture value of type [T].
-     *
-     * Enables concise usage such as `some<User>()` when `some` is a [Some] instance.
-     *
-     * @param T Type to generate.
-     * @return Generated value of type [T].
-     */
-    inline operator fun <reified T> invoke(): T = some()
-
-    /**
-     * Generates a fixture value of type [T] with per-call configuration overrides.
-     *
-     * Overrides are applied to a copy of this instance's configuration and do not mutate the original [Some].
-     *
-     * @param T Type to generate.
-     * @param config Configuration overrides for this call.
-     * @return Generated value of type [T].
-     */
-    inline operator fun <reified T> invoke(noinline config: SomeConfigBuilder.() -> Unit = {}): T {
-        val aggregatedConfig = this.config.toBuilder().apply(config).build()
-        return Some(aggregatedConfig.buildResolvers(random), random, aggregatedConfig).some()
+    inline fun <reified T : Any> some(): T {
+        val strategy = config.get<NullableStrategy>() ?: NullableStrategy.default
+        val chain = ResolverChain(resolvers, strategy)
+        return chain.resolve(typeOf<T>()) as T
     }
 }
 
-/**
- * Creates a reusable [Some] generator.
- *
- * Use this when multiple fixtures should share the same configuration and random source.
- *
- * @param config Configuration applied to the created generator.
- * @return A configured [Some] instance.
- */
-fun someSetup(config: SomeConfigBuilder.() -> Unit = {}): Some {
-    val someConfig = buildSomeConfig(config)
-    val random = someConfig.buildRandom()
-    return Some(someConfig.buildResolvers(random), random, someConfig)
+inline fun <reified T : Any> some(noinline configuration: (SomeConfigBuilder.() -> Unit)? = null): T {
+    val config = if (configuration != null) {
+        buildSomeConfig(configuration)
+    } else {
+        defaultSomeConfig
+    }
+    val some = Some(config.buildResolvers(), config.buildRandom(), config)
+    return some.some<T>()
 }
 
-/**
- * Lazily-created default configuration used by top-level [some].
- */
-val defaultConfig: SomeConfig by lazy { SomeConfig() }
-
-/**
- * Lazily-created default resolver chain used by top-level [some].
- */
-val defaultResolvers: List<TypeResolver> by lazy { defaultConfig.buildResolvers() }
-
-/**
- * Generates a fixture value using the default configuration.
- *
- * @param T Type to generate.
- * @return Generated value of type [T].
- */
-inline fun <reified T> some(): T {
-    val nullableStrategy = defaultConfig[NullableStrategy::class]
-    val session = ResolverChain(defaultResolvers, nullableStrategy)
-    return session.resolve(typeOf<T>()) as T
+fun someSetup(configuration: SomeConfigBuilder.() -> Unit = {}): Some {
+    val config = buildSomeConfig(configuration)
+    return Some(config.buildResolvers(), config.buildRandom(), config)
 }
 
-/**
- * Generates a fixture value using one-off configuration overrides.
- *
- * @param T Type to generate.
- * @param config Configuration applied only to this generation call.
- * @return Generated value of type [T].
- */
-inline fun <reified T> some(noinline config: SomeConfigBuilder.() -> Unit = {}): T {
-    val someSetup = someSetup(config)
-    return someSetup.some<T>()
+@PublishedApi
+internal val defaultSomeConfig: SomeConfig by lazy { buildSomeConfig() }
+
+@PublishedApi
+internal val defaultResolvers: List<TypeResolver> by lazy {
+    defaultSomeConfig.buildResolvers()
+}
+
+@PublishedApi
+internal inline fun <reified T : Any> someDefault(): T {
+    val strategy = defaultSomeConfig.get<NullableStrategy>() ?: NullableStrategy.default
+    val chain = ResolverChain(defaultResolvers, strategy)
+    return chain.resolve(typeOf<T>()) as T
+}
+
+fun buildSomeConfig(configuration: SomeConfigBuilder.() -> Unit = {}): SomeConfig {
+    return SomeConfigBuilder().apply(configuration).build()
 }

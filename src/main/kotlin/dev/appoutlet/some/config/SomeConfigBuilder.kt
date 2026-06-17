@@ -1,6 +1,10 @@
 package dev.appoutlet.some.config
 
 import dev.appoutlet.some.core.FixtureContext
+import dev.appoutlet.some.core.Strategy
+import dev.appoutlet.some.resolver.collection.CollectionStrategy
+import dev.appoutlet.some.resolver.nullable.NullableStrategy
+import dev.appoutlet.some.resolver.string.StringStrategy
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.instanceParameter
