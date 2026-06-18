@@ -55,7 +55,7 @@ import kotlin.reflect.KClass
  * @param propertyFactories Custom property factories keyed by class and property name.
  */
 data class SomeConfig(
-    val strategies: Map<KClass<out Strategy>, Strategy> = emptyMap(),
+    val strategies: Map<KClass<out Strategy>, Strategy> = defaultStrategies(),
     val seed: Long? = null,
     val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
@@ -116,7 +116,7 @@ data class SomeConfig(
             IntResolver(random),
             LongResolver(random),
             DoubleResolver(random),
-            FloatResolver(random),
+            FloatResolver(strategyProvider, random),
             BooleanResolver(random),
             CharResolver(random),
             ByteResolver(random),
@@ -194,4 +194,17 @@ data class SomeConfig(
      * @return [Random] seeded with [seed] if set, or [Random.Default] otherwise.
      */
     internal fun buildRandom(): Random = seed?.let { Random(it) } ?: Random.Default
+
+    companion object {
+        /**
+         * Returns the default strategies for fixture generation.
+         */
+        fun defaultStrategies(): Map<KClass<out Strategy>, Strategy> = mapOf(
+            NullableStrategy::class to NullableStrategy.default,
+            StringStrategy::class to StringStrategy.default,
+            CollectionStrategy::class to CollectionStrategy.default,
+            FloatStrategy::class to FloatStrategy.default,
+            DefaultValueStrategy::class to DefaultValueStrategy.default,
+        )
+    }
 }
