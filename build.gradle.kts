@@ -15,8 +15,8 @@ repositories {
 
 dependencies {
     dokkaHtmlPlugin(libs.dokka.versioning)
-    dokka(project(":android:"))
-    dokka(project(":core:"))
+    dokka(projects.android)
+    dokka(projects.core)
 }
 
 tasks.named("prepareKotlinBuildScriptModel") {
