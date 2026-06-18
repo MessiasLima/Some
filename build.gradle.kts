@@ -15,29 +15,28 @@ repositories {
 
 dependencies {
     dokkaHtmlPlugin(libs.dokka.versioning)
+    dokka(project(":android:"))
+    dokka(project(":core:"))
 }
-
 
 tasks.named("prepareKotlinBuildScriptModel") {
     dependsOn(":installGitHooks")
 }
 
 dokka {
-    dokkaPublications {
-        html {
-            outputDirectory.set(layout.projectDirectory.dir("docs/reference/version/${project.version}"))
-            includes.from("$projectDir/docs/module.md")
-        }
+    dokkaPublications.html {
+        outputDirectory.set(rootDir.resolve("docs/reference/version/${project.version}"))
+        includes.from("$rootDir/docs/reference/index.md")
     }
 
     pluginsConfiguration {
         html {
-            customAssets.from("$projectDir/docs/logo-icon.svg")
+            customAssets.from("$rootDir/docs/logo-icon.svg")
             footerMessage.set("© AppOutlet, Lda")
         }
 
         versioning {
-            olderVersionsDir.set(layout.projectDirectory.dir("docs/reference/version"))
+            olderVersionsDir.set(rootDir.resolve("docs/reference/version"))
         }
     }
 }

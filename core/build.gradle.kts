@@ -1,8 +1,9 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.autoservice.ir)
-    alias(libs.plugins.mavenPublish)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.mavenPublish)
 }
 
 repositories {
