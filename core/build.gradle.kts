@@ -4,9 +4,9 @@ plugins {
     alias(libs.plugins.mavenPublish)
 }
 
-// Remove this setup temporarily
-// group = rootProject.group
-// version = rootProject.version
+// Remove this setup temporarity
+// group = "dev.appoutlet"
+// version = "0.2.1"
 
 repositories {
     mavenCentral()
