@@ -4,8 +4,9 @@ plugins {
     alias(libs.plugins.mavenPublish)
 }
 
-group = "dev.appoutlet"
-version = "0.2.1"
+// Remove this setup temporarily
+// group = rootProject.group
+// version = rootProject.version
 
 repositories {
     mavenCentral()
@@ -30,7 +31,7 @@ mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 
-    coordinates(artifactId = "some")
+    coordinates(artifactId = "some-core")
 
     pom {
         name.set("Some")

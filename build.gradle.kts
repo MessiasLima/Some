@@ -54,6 +54,8 @@ dokka {
 }
 
 tasks.register("generateDokkaRedirect") {
+    description = "Generate a html file that redirects to the latest documentation version"
+
     val version = project.version
     val targetDir = project.file("docs/reference/latest")
 
