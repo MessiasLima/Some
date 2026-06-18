@@ -1,13 +1,9 @@
-import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
-
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.autoservice.ir)
-    alias(libs.plugins.detekt)
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+
     alias(libs.plugins.dokka)
     alias(libs.plugins.gitHooks)
-    alias(libs.plugins.kover)
-    alias(libs.plugins.mavenPublish)
 }
 
 group = "dev.appoutlet"
@@ -18,105 +14,36 @@ repositories {
 }
 
 dependencies {
-    detektPlugins(libs.detekt.formatting)
-
     dokkaHtmlPlugin(libs.dokka.versioning)
-
-    implementation(libs.kotlin.reflect)
-    implementation(libs.kermit)
-
-    testImplementation(libs.kotlin.test)
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-detekt {
-    autoCorrect = true
-    parallel = true
-    buildUponDefaultConfig = true
-    config.setFrom("$rootDir/detekt/detekt.yml")
-    source.setFrom("src/main/kotlin", "src/test/kotlin")
+    dokka(projects.android)
+    dokka(projects.core)
 }
 
 tasks.named("prepareKotlinBuildScriptModel") {
     dependsOn(":installGitHooks")
 }
 
-kover {
-    reports {
-        verify {
-            rule {
-                minBound(95, CoverageUnit.INSTRUCTION)
-                minBound(95, CoverageUnit.LINE)
-                minBound(75, CoverageUnit.BRANCH)
-            }
-        }
-    }
-}
-
-mavenPublishing {
-    publishToMavenCentral(automaticRelease = true)
-    signAllPublications()
-
-    coordinates(artifactId = "some")
-
-    pom {
-        name.set("Some")
-        description.set("A Kotlin test data generation library that creates random instances of data classes, sealed classes/interfaces, collections, and primitive types.")
-        inceptionYear.set("2026")
-        url.set("https://github.com/MessiasLima/Some")
-
-        licenses {
-            license {
-                name.set("The Apache License, Version 2.0")
-                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                distribution.set("repo")
-            }
-        }
-
-        developers {
-            developer {
-                id.set("MessiasLima")
-                name.set("Messias Lima")
-                url.set("https://github.com/MessiasLima")
-            }
-        }
-
-        scm {
-            url.set("https://github.com/MessiasLima/Some")
-            connection.set("scm:git:git://github.com/MessiasLima/Some.git")
-            developerConnection.set("scm:git:ssh://git@github.com/MessiasLima/Some.git")
-        }
-    }
-}
-
 dokka {
-    dokkaPublications {
-        html {
-            outputDirectory.set(layout.projectDirectory.dir("docs/reference/version/${project.version}"))
-            includes.from("$projectDir/docs/module.md")
-        }
+    dokkaPublications.html {
+        outputDirectory.set(rootDir.resolve("docs/reference/version/${project.version}"))
+        includes.from("$rootDir/docs/reference/index.md")
     }
 
     pluginsConfiguration {
         html {
-            customAssets.from("$projectDir/docs/logo-icon.svg")
+            customAssets.from("$rootDir/docs/logo-icon.svg")
             footerMessage.set("© AppOutlet, Lda")
         }
 
         versioning {
-            olderVersionsDir.set(layout.projectDirectory.dir("docs/reference/version"))
+            olderVersionsDir.set(rootDir.resolve("docs/reference/version"))
         }
     }
 }
 
 tasks.register("generateDokkaRedirect") {
+    description = "Generate a html file that redirects to the latest documentation version"
+
     val version = project.version
     val targetDir = project.file("docs/reference/latest")
 

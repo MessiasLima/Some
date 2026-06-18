@@ -6,7 +6,7 @@ build/
 local.properties
 
 ### IntelliJ IDEA ###
-.idea/*
+.idea
 *.iws
 *.iml
 *.ipr
@@ -43,5 +43,4 @@ bin/
 .DS_Store
 
 ### OpenCode ###
-.opencode/issues
-.opencode/plans
+.opencode
