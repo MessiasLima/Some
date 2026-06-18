@@ -6,6 +6,9 @@ plugins {
     alias(libs.plugins.mavenPublish)
 }
 
+group = rootProject.group
+version = rootProject.version
+
 repositories {
     mavenCentral()
 }

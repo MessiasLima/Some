@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.dokka)
 }
 
+group = rootProject.group
+version = rootProject.version
+
 android {
     namespace = "dev.appoutlet.some.android"
 
