@@ -2,11 +2,8 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.autoservice.ir)
     alias(libs.plugins.mavenPublish)
+    alias(libs.plugins.detekt)
 }
-
-// Remove this setup temporarity
-// group = "dev.appoutlet"
-// version = "0.2.1"
 
 repositories {
     mavenCentral()
@@ -17,6 +14,8 @@ dependencies {
     implementation(libs.kermit)
 
     testImplementation(libs.kotlin.test)
+
+    detektPlugins(libs.detekt.formatting)
 }
 
 kotlin {
@@ -62,3 +61,5 @@ mavenPublishing {
         }
     }
 }
+
+detekt { autoCorrect = true }

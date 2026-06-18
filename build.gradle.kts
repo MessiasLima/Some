@@ -1,5 +1,4 @@
 plugins {
-    alias(libs.plugins.detekt)
     alias(libs.plugins.dokka)
     alias(libs.plugins.gitHooks)
 }
@@ -12,22 +11,9 @@ repositories {
 }
 
 dependencies {
-    detektPlugins(libs.detekt.formatting)
     dokkaHtmlPlugin(libs.dokka.versioning)
 }
 
-detekt {
-    autoCorrect = true
-    parallel = true
-    buildUponDefaultConfig = true
-    config.setFrom("$rootDir/detekt/detekt.yml")
-    source.setFrom(
-        files(
-            "core/src/main/kotlin",
-            "core/src/test/kotlin"
-        )
-    )
-}
 
 tasks.named("prepareKotlinBuildScriptModel") {
     dependsOn(":installGitHooks")
