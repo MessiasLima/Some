@@ -1,5 +1,6 @@
 [versions]
 agp = "9.2.1"
+androidxCompose = "1.11.3"
 autoserviceIr = "0.1.5"
 detekt = "1.23.8"
 dokka = "2.2.0"
@@ -9,6 +10,7 @@ kotlin = "2.4.0"
 mavenPublish = "0.36.0"
 
 [libraries]
+androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

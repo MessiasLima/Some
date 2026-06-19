@@ -32,7 +32,9 @@ detekt { autoCorrect = true }
 dependencies {
     implementation(projects.core)
 
+    testImplementation(libs.androidx.compose.ui)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test)
 
     detektPlugins(libs.detekt.formatting)
 }

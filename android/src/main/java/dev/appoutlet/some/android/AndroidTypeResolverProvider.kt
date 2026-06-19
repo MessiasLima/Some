@@ -5,7 +5,7 @@ import dev.appoutlet.some.core.TypeResolver
 import dev.appoutlet.some.core.TypeResolverProvider
 import kotlin.random.Random
 
-class AndroidResolverProvider : TypeResolverProvider {
+class AndroidTypeResolverProvider : TypeResolverProvider {
     override fun createResolvers(
         strategyProvider: StrategyProvider,
         random: Random
