@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.autoservice.ir)
     alias(libs.plugins.detekt)
     alias(libs.plugins.dokka)
 }
