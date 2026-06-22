@@ -1,13 +1,13 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
 import java.time.Duration
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-class JavaDurationResolver(val random: Random) : TypeResolver {
+class JavaDurationResolver(val random: Random) : Resolver {
     override fun canResolve(type: KType): Boolean {
         return type == typeOf<Duration>()
     }

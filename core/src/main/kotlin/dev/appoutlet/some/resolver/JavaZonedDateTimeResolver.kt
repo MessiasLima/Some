@@ -1,7 +1,7 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -17,7 +17,7 @@ import kotlin.reflect.typeOf
  *
  * @param random The random source used for generation.
  */
-class JavaZonedDateTimeResolver(private val random: Random) : TypeResolver {
+class JavaZonedDateTimeResolver(private val random: Random) : Resolver {
     private val zoneIds by lazy { ZoneId.getAvailableZoneIds().toList() }
 
     override fun canResolve(type: KType): Boolean {

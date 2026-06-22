@@ -65,4 +65,4 @@ someSetup {
 
 See [Type and Property Factories](custom-factories.md) for more.
 
-For library authors or application developers who want to bundle resolver logic for a custom type, see [Custom Resolvers](custom-resolvers.md) to learn about `TypeResolverProvider`.
+For library authors or application developers who want to bundle resolver logic for a custom type, see [Custom Resolvers](custom-resolvers.md) to learn about `ResolverProvider`.

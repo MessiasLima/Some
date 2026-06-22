@@ -1,7 +1,7 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
@@ -9,7 +9,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
-class KotlinDurationResolver(val random: Random) : TypeResolver {
+class KotlinDurationResolver(val random: Random) : Resolver {
     override fun canResolve(type: KType): Boolean {
         return type == typeOf<Duration>()
     }

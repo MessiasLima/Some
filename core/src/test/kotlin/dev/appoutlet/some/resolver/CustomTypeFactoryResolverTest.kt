@@ -14,7 +14,7 @@ data class CustomFactoryClass(val value: String)
 class CustomTypeFactoryResolverTest {
     @Test
     fun `CustomTypeFactoryResolver canResolve detects registered types`() {
-        val resolver = CustomTypeFactoryResolver(
+        val resolver = CustomFactoryResolver(
             DefaultStrategyProvider(),
             mapOf(CustomFactoryClass::class to { CustomFactoryClass("test") }),
             Random.Default
@@ -24,7 +24,7 @@ class CustomTypeFactoryResolverTest {
 
     @Test
     fun `CustomTypeFactoryResolver canResolve rejects unregistered types`() {
-        val resolver = CustomTypeFactoryResolver(
+        val resolver = CustomFactoryResolver(
             DefaultStrategyProvider(),
             mapOf(CustomFactoryClass::class to { CustomFactoryClass("test") }),
             Random.Default
@@ -35,7 +35,7 @@ class CustomTypeFactoryResolverTest {
 
     @Test
     fun `CustomTypeFactoryResolver resolve returns factory result`() {
-        val resolver = CustomTypeFactoryResolver(
+        val resolver = CustomFactoryResolver(
             DefaultStrategyProvider(),
             mapOf(CustomFactoryClass::class to { CustomFactoryClass("from-factory") }),
             Random.Default

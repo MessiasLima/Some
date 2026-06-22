@@ -2,12 +2,12 @@ package dev.appoutlet.some
 
 import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.resolver.ClassResolver
-import dev.appoutlet.some.resolver.CustomTypeFactoryResolver
+import dev.appoutlet.some.resolver.CustomFactoryResolver
 import dev.appoutlet.some.resolver.NullableResolver
 import dev.appoutlet.some.resolver.ObjectResolver
 import dev.appoutlet.some.resolver.StringResolver
 import dev.appoutlet.some.test.DiscoveredType
-import dev.appoutlet.some.test.TestTypeResolver
+import dev.appoutlet.some.test.TestResolver
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -40,15 +40,15 @@ class ServiceLoaderDiscoveryTest {
         val resolvers = SomeConfig().buildResolvers()
         val resolverClasses = resolvers.map { it::class }
 
-        assertTrue(resolverClasses.first() == CustomTypeFactoryResolver::class)
+        assertTrue(resolverClasses.first() == CustomFactoryResolver::class)
         assertTrue(resolverClasses.last() == ClassResolver::class)
-        assertTrue(TestTypeResolver::class in resolverClasses)
+        assertTrue(TestResolver::class in resolverClasses)
 
         val nullableResolverIndex = resolverClasses.indexOf(NullableResolver::class)
         val objectResolverIndex = resolverClasses.indexOf(ObjectResolver::class)
         val stringResolverIndex = resolverClasses.indexOf(StringResolver::class)
         val classResolverIndex = resolverClasses.indexOf(ClassResolver::class)
-        val discoveredIndex = resolverClasses.indexOf(TestTypeResolver::class)
+        val discoveredIndex = resolverClasses.indexOf(TestResolver::class)
 
         assertTrue(nullableResolverIndex < discoveredIndex)
         assertTrue(discoveredIndex < objectResolverIndex)

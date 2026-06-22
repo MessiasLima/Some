@@ -1,7 +1,7 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Year
@@ -12,7 +12,7 @@ import kotlin.reflect.typeOf
 private const val HOURS_IN_DAY = 24
 private const val MINUTES_IN_HOUR = 60
 
-class LocalDateTimeResolver(val random: Random) : TypeResolver {
+class LocalDateTimeResolver(val random: Random) : Resolver {
     override fun canResolve(type: KType): Boolean {
         return type == typeOf<LocalDateTime>()
     }

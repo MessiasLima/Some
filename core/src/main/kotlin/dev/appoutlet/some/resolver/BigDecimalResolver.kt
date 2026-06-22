@@ -1,13 +1,13 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
 import java.math.BigDecimal
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-class BigDecimalResolver(val random: Random) : TypeResolver {
+class BigDecimalResolver(val random: Random) : Resolver {
     override fun canResolve(type: KType): Boolean {
         return type == typeOf<BigDecimal>()
     }

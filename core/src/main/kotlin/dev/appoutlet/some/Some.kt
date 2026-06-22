@@ -4,8 +4,8 @@ import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.config.SomeConfigBuilder
 import dev.appoutlet.some.config.buildSomeConfig
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 
@@ -19,7 +19,7 @@ import kotlin.reflect.typeOf
  * @param config Configuration used by this generator.
  */
 class Some(
-    val resolvers: List<TypeResolver>,
+    val resolvers: List<Resolver>,
     val random: Random,
     val config: SomeConfig
 ) {
@@ -83,7 +83,7 @@ val defaultConfig: SomeConfig by lazy { SomeConfig() }
 /**
  * Lazily-created default resolver chain used by top-level [some].
  */
-val defaultResolvers: List<TypeResolver> by lazy { defaultConfig.buildResolvers() }
+val defaultResolvers: List<Resolver> by lazy { defaultConfig.buildResolvers() }
 
 /**
  * Generates a fixture value using the default configuration.

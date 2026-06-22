@@ -5,7 +5,7 @@ import kotlin.reflect.KType
 /**
  * Resolves a requested [KType] into a generated value.
  */
-interface TypeResolver {
+interface Resolver {
     /**
      * Returns whether this resolver can generate a value for [type].
      */

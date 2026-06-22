@@ -1,20 +1,20 @@
 package dev.appoutlet.some.test
 
 import com.fueledbycaffeine.autoservice.AutoService
+import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverProvider
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
-import dev.appoutlet.some.core.TypeResolverProvider
 import kotlin.random.Random
 
 /**
- * Test [TypeResolverProvider] that throws during resolver creation.
+ * Test [ResolverProvider] that throws during resolver creation.
  *
  * Used to verify that `SomeConfig.buildResolvers()` gracefully skips misbehaving providers.
  */
 @AutoService
-class FailingTypeResolverProvider : TypeResolverProvider {
+class FailingResolverProvider : ResolverProvider {
     override fun createResolvers(
         strategyProvider: StrategyProvider,
         random: Random,
-    ): List<TypeResolver> = error("Simulated provider failure")
+    ): List<Resolver> = error("Simulated provider failure")
 }

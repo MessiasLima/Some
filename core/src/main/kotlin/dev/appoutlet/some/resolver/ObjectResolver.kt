@@ -1,11 +1,11 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
-class ObjectResolver : TypeResolver {
+class ObjectResolver : Resolver {
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         return kClass.objectInstance != null
