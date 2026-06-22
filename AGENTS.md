@@ -4,7 +4,7 @@
 
 "some" is a Kotlin test data generation library that creates random instances of data classes,
 sealed classes/interfaces, collections, and primitive types. It uses a resolver chain pattern
-where each TypeResolver handles specific types.
+where each Resolver handles specific types.
 
 **Tech Stack:**
 - Kotlin (JVM)

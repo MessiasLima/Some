@@ -3,19 +3,19 @@ icon: lucide/puzzle
 ---
 # Custom Resolvers
 
-Some discovers custom `TypeResolver` implementations at runtime through Java's `ServiceLoader` mechanism. This lets you extend Some with support for domain-specific, third-party, or internal application types **without requiring every consumer to write configuration code**.
+Some discovers custom `Resolver` implementations at runtime through Java's `ServiceLoader` mechanism. This lets you extend Some with support for domain-specific, third-party, or internal application types **without requiring every consumer to write configuration code**.
 
 If you only need to override how a single type is generated in your own tests, a [custom factory](custom-factories.md) is simpler. Use a custom resolver when you are **building a library** that others will depend on, **adding support for internal types in your own application**, or when the type needs its own resolution logic that delegates to the resolver chain.
 
 ## How it works
 
-Some defines a service-provider interface called `TypeResolverProvider`. When fixture generation starts, Some calls `ServiceLoader.load(TypeResolverProvider::class.java)` to discover all implementations on the classpath. Each provider returns a list of [TypeResolver] instances that are inserted into the resolver chain.
+Some defines a service-provider interface called `ResolverProvider`. When fixture generation starts, Some calls `ServiceLoader.load(ResolverProvider::class.java)` to discover all implementations on the classpath. Each provider returns a list of [Resolver] instances that are inserted into the resolver chain.
 
 The resolver chain order is:
 
 1. **Custom type factories** — explicit user factories registered with `factory()`.
 2. **Nullable resolver** — handles nullable wrappers before concrete types.
-3. **Discovered resolvers** — contributed by `TypeResolverProvider` implementations.
+3. **Discovered resolvers** — contributed by `ResolverProvider` implementations.
 4. **Built-in resolvers** — standard types like `String`, `Int`, `List`, etc.
 5. **Class resolver** — fallback for data classes and other constructable types.
 
@@ -23,19 +23,19 @@ Because discovered resolvers sit between nullable handling and built-in resolver
 
 Misbehaving providers are silently skipped. If a provider throws during discovery or resolver creation, Some continues with the remaining providers and built-in chain.
 
-## Implementing a TypeResolverProvider
+## Implementing a ResolverProvider
 
 ### 1. Create a resolver
 
-A resolver implements the `TypeResolver` interface with two methods:
+A resolver implements the `Resolver` interface with two methods:
 
 ```kotlin
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.Resolver
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-class UrlResolver : TypeResolver {
+class UrlResolver : Resolver {
 
     override fun canResolve(type: KType): Boolean = type == typeOf<java.net.URL>()
 
@@ -55,14 +55,14 @@ Resolvers that need strategies receive a `StrategyProvider` via the provider. Re
 ```kotlin
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.get
 import kotlin.random.Random
 
 class UrlResolver(
     strategyProvider: StrategyProvider,
     private val random: Random,
-) : TypeResolver {
+) : Resolver {
     private val stringStrategy = strategyProvider.get<StringStrategy>() ?: StringStrategy.default
 
     // ...
@@ -75,15 +75,15 @@ The provider is the entry point that Some discovers via `ServiceLoader`. It rece
 
 ```kotlin
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
-import dev.appoutlet.some.core.TypeResolverProvider
+import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverProvider
 import kotlin.random.Random
 
-class UrlResolverProvider : TypeResolverProvider {
+class UrlResolverProvider : ResolverProvider {
     override fun createResolvers(
         strategyProvider: StrategyProvider,
         random: Random,
-    ): List<TypeResolver> = listOf(UrlResolver(strategyProvider, random))
+    ): List<Resolver> = listOf(UrlResolver(strategyProvider, random))
 }
 ```
 
@@ -92,7 +92,7 @@ class UrlResolverProvider : TypeResolverProvider {
 Create a file at:
 
 ```
-META-INF/services/dev.appoutlet.some.core.TypeResolverProvider
+META-INF/services/dev.appoutlet.some.core.ResolverProvider
 ```
 
 containing the fully qualified class name of your provider:
@@ -109,10 +109,10 @@ If you use the [autoservice-ir](https://github.com/joshfriend/autoservice-ir) co
 
 ```kotlin
 import com.fueledbycaffeine.autoservice.AutoService
-import dev.appoutlet.some.core.TypeResolverProvider
+import dev.appoutlet.some.core.ResolverProvider
 
 @AutoService
-class UrlResolverProvider : TypeResolverProvider {
+class UrlResolverProvider : ResolverProvider {
     // ...
 }
 ```
@@ -135,7 +135,7 @@ package com.example.some
 
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.get
 import kotlin.random.Random
@@ -145,7 +145,7 @@ import kotlin.reflect.typeOf
 class UrlResolver(
     private val strategyProvider: StrategyProvider,
     private val random: Random,
-) : TypeResolver {
+) : Resolver {
     private val stringStrategy = strategyProvider.get<StringStrategy>() ?: StringStrategy.default
 
     override fun canResolve(type: KType): Boolean = type == typeOf<java.net.URL>()
@@ -165,15 +165,15 @@ class UrlResolver(
 package com.example.some
 
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
-import dev.appoutlet.some.core.TypeResolverProvider
+import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverProvider
 import kotlin.random.Random
 
-class UrlResolverProvider : TypeResolverProvider {
+class UrlResolverProvider : ResolverProvider {
     override fun createResolvers(
         strategyProvider: StrategyProvider,
         random: Random,
-    ): List<TypeResolver> = listOf(UrlResolver(strategyProvider, random))
+    ): List<Resolver> = listOf(UrlResolver(strategyProvider, random))
 }
 ```
 
@@ -191,7 +191,7 @@ Resolvers can delegate nested type resolution to `chain.resolve(type)`. This is 
 ```kotlin
 data class Email(val address: String)
 
-class EmailResolver : TypeResolver {
+class EmailResolver : Resolver {
     override fun canResolve(type: KType): Boolean = type == typeOf<Email>()
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
@@ -235,7 +235,7 @@ Then retrieve it in your resolver through the `StrategyProvider`:
 class UrlResolver(
     strategyProvider: StrategyProvider,
     private val random: Random,
-) : TypeResolver {
+) : Resolver {
     private val urlStrategy = strategyProvider.get<UrlStrategy>() ?: UrlStrategy.default
 
     override fun canResolve(type: KType): Boolean = type == typeOf<java.net.URL>()
@@ -264,6 +264,6 @@ When no strategy is registered, the resolver falls back to `UrlStrategy.default`
 
 ## Error handling
 
-If a `TypeResolverProvider` throws during discovery or resolver creation, Some catches the error and continues with the remaining providers. The built-in resolver chain is always available as a fallback. This means your application will still work even if an extension fails to load.
+If a `ResolverProvider` throws during discovery or resolver creation, Some catches the error and continues with the remaining providers. The built-in resolver chain is always available as a fallback. This means your application will still work even if an extension fails to load.
 
-[TypeResolver]: ../reference/latest/index.html
+[Resolver]: ../reference/latest/index.html
