@@ -15,7 +15,7 @@ import kotlin.reflect.KType
  * @param nullableStrategy Strategy used when a circular reference is detected for a nullable type.
  */
 class ResolverChain(
-    val resolvers: List<TypeResolver>,
+    val resolvers: List<Resolver>,
     nullableStrategy: NullableStrategy?,
 ) {
     private val nullableStrategy = nullableStrategy ?: NullableStrategy.default

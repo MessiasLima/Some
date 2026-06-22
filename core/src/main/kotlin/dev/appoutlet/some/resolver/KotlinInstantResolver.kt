@@ -1,13 +1,13 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.Resolver
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 import kotlin.time.Instant
 
-class KotlinInstantResolver(val random: Random) : TypeResolver {
+class KotlinInstantResolver(val random: Random) : Resolver {
     override fun canResolve(type: KType): Boolean {
         return type == typeOf<Instant>()
     }

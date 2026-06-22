@@ -3,7 +3,7 @@ package dev.appoutlet.some.resolver
 import dev.appoutlet.some.config.CollectionStrategy
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.get
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -21,7 +21,7 @@ import kotlin.reflect.typeOf
 class MapResolver(
     strategyProvider: StrategyProvider,
     private val random: Random
-) : TypeResolver {
+) : Resolver {
     private val collectionStrategy = strategyProvider.get<CollectionStrategy>() ?: CollectionStrategy.default
 
     override fun canResolve(type: KType): Boolean {

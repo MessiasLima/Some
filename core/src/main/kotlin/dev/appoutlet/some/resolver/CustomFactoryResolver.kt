@@ -3,7 +3,7 @@ package dev.appoutlet.some.resolver
 import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.Resolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -22,11 +22,11 @@ import kotlin.reflect.KType
  * @param typeFactories Map of classes to user-provided type factory functions.
  * @param random Random source exposed to type factories through [FixtureContext].
  */
-class CustomTypeFactoryResolver(
+class CustomFactoryResolver(
     private val strategyProvider: StrategyProvider,
     private val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?>,
     private val random: Random,
-) : TypeResolver {
+) : Resolver {
     /**
      * Returns whether [type] has a registered type factory.
      *

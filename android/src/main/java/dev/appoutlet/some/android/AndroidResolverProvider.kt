@@ -1,15 +1,15 @@
 package dev.appoutlet.some.android
 
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
-import dev.appoutlet.some.core.TypeResolverProvider
+import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverProvider
 import kotlin.random.Random
 
-class AndroidTypeResolverProvider : TypeResolverProvider {
+class AndroidResolverProvider : ResolverProvider {
     override fun createResolvers(
         strategyProvider: StrategyProvider,
         random: Random
-    ): List<TypeResolver> {
+    ): List<Resolver> {
         return emptyList()
     }
 }

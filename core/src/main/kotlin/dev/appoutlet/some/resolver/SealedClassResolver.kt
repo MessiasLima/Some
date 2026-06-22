@@ -1,13 +1,13 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.Resolver
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
-class SealedClassResolver(val random: Random) : TypeResolver {
+class SealedClassResolver(val random: Random) : Resolver {
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
         return kClass.isSealed

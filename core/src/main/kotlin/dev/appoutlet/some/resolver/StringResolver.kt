@@ -3,7 +3,7 @@ package dev.appoutlet.some.resolver
 import dev.appoutlet.some.config.StringStrategy
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.get
 import kotlin.random.Random
 import kotlin.reflect.KType
@@ -21,7 +21,7 @@ import kotlin.uuid.Uuid
 class StringResolver(
     strategyProvider: StrategyProvider,
     private val random: Random
-) : TypeResolver {
+) : Resolver {
     private val stringStrategy = strategyProvider.get<StringStrategy>() ?: StringStrategy.default
 
     override fun canResolve(type: KType): Boolean = type == typeOf<String>()

@@ -2,8 +2,8 @@ package dev.appoutlet.some.config
 
 import dev.appoutlet.some.core.FixtureContext
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.TypeResolver
-import dev.appoutlet.some.core.TypeResolverProvider
+import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverProvider
 import dev.appoutlet.some.logging.logger
 import dev.appoutlet.some.resolver.ArrayResolver
 import dev.appoutlet.some.resolver.BigDecimalResolver
@@ -12,7 +12,7 @@ import dev.appoutlet.some.resolver.BooleanResolver
 import dev.appoutlet.some.resolver.ByteResolver
 import dev.appoutlet.some.resolver.CharResolver
 import dev.appoutlet.some.resolver.ClassResolver
-import dev.appoutlet.some.resolver.CustomTypeFactoryResolver
+import dev.appoutlet.some.resolver.CustomFactoryResolver
 import dev.appoutlet.some.resolver.DoubleResolver
 import dev.appoutlet.some.resolver.EnumResolver
 import dev.appoutlet.some.resolver.FloatResolver
@@ -92,7 +92,7 @@ data class SomeConfig(
      *
      * Resolver order defines precedence: the first resolver that supports a type is used.
      *
-     * 1. [CustomTypeFactoryResolver] is first so explicit user factories override everything.
+     * 1. [CustomFactoryResolver] is first so explicit user factories override everything.
      * 2. [NullableResolver] handles nullable wrappers before any concrete type resolver.
      * 3. Third-party resolvers discovered via [java.util.ServiceLoader] come next, allowing external libraries to
      *    override built-in behavior for basic types.
@@ -104,9 +104,9 @@ data class SomeConfig(
      * This keeps resolver construction free of strategy-specific knowledge.
      *
      * @param random Random source shared by resolvers that generate randomized values.
-     * @return The ordered [TypeResolver] list for this configuration.
+     * @return The ordered [Resolver] list for this configuration.
      */
-    fun buildResolvers(random: Random = buildRandom()): List<TypeResolver> {
+    fun buildResolvers(random: Random = buildRandom()): List<Resolver> {
         val builtInResolvers = listOf(
             ObjectResolver(),
             EnumResolver(random),
@@ -143,13 +143,13 @@ data class SomeConfig(
         val discoveredResolvers = discoverResolvers(strategyProvider, random)
 
         return listOf(
-            CustomTypeFactoryResolver(strategyProvider, typeFactories, random),
+            CustomFactoryResolver(strategyProvider, typeFactories, random),
             NullableResolver(strategyProvider, random),
         ) + discoveredResolvers + builtInResolvers + ClassResolver(strategyProvider, propertyFactories, random)
     }
 
     /**
-     * Discovers additional [TypeResolver]s from third-party libraries via [java.util.ServiceLoader].
+     * Discovers additional [Resolver]s from third-party libraries via [java.util.ServiceLoader].
      *
      * Failures during discovery or provider instantiation are swallowed so the library always falls back to the
      * built-in resolver chain.
@@ -162,9 +162,9 @@ data class SomeConfig(
     private fun discoverResolvers(
         strategyProvider: StrategyProvider,
         random: Random,
-    ): List<TypeResolver> {
-        val loader = ServiceLoader.load(TypeResolverProvider::class.java)
-        val providers = mutableListOf<TypeResolverProvider>()
+    ): List<Resolver> {
+        val loader = ServiceLoader.load(ResolverProvider::class.java)
+        val providers = mutableListOf<ResolverProvider>()
         val iterator = loader.iterator()
 
         while (iterator.hasNext()) {
