@@ -16,7 +16,7 @@ For types not listed here, register a [custom factory](custom-factories.md) or s
 | `Int` | `some<Int>()` | |
 | `Long` | `some<Long>()` | |
 | `Double` | `some<Double>()` | |
-| `Float` | `some<Float>()` | |
+| `Float` | `some<Float>()` | See [FloatStrategy](configuration/float-strategy.md) |
 | `Boolean` | `some<Boolean>()` | |
 | `Char` | `some<Char>()` | |
 | `Byte` | `some<Byte>()` | |

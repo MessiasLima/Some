@@ -71,6 +71,7 @@ val stillNeverNull: Person = baseSome()
 | `NullableStrategy` | `NullableStrategy.NullOnCircularReference` | Emits `null` for nullable circular references | [NullableStrategy](nullable-strategy.md) |
 | `StringStrategy` | `StringStrategy.Random()` | Random lowercase alphabetic strings | [StringStrategy](string-strategy.md) |
 | `CollectionStrategy` | `CollectionStrategy()` | Collections with 1 to 5 elements | [CollectionStrategy](collection-strategy.md) |
+| `FloatStrategy` | `FloatStrategy()` | Floats in the range `0.0f..1.0f` | [FloatStrategy](float-strategy.md) |
 | `DefaultValueStrategy` | `DefaultValueStrategy.UseDefault` | Uses Kotlin defaults for optional parameters | [DefaultValueStrategy](default-value-strategy.md) |
 | `seed` | `null` | Uses non-deterministic `Random.Default` | — |
 
