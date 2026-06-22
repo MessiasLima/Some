@@ -17,6 +17,6 @@ data class FloatStrategy(
         /**
          * The default float strategy.
          */
-        val default: FloatStrategy get() = FloatStrategy()
+        val default = FloatStrategy()
     }
 }
