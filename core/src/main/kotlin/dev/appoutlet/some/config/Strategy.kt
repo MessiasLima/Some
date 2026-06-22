@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
  * Marker interface for strategy objects that configure fixture generation behavior.
  *
  * All built-in strategies ([NullableStrategy], [StringStrategy], [CollectionStrategy],
- * and [DefaultValueStrategy]) implement this interface. Custom strategies can also be
+ * [FloatStrategy], and [DefaultValueStrategy]) implement this interface. Custom strategies can also be
  * created by implementing [Strategy] and registering them via [SomeConfigBuilder.strategy].
  *
  * The [key] property determines the registration bucket for the strategy. For sealed interface

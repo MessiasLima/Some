@@ -116,7 +116,7 @@ data class SomeConfig(
             IntResolver(random),
             LongResolver(random),
             DoubleResolver(random),
-            FloatResolver(random),
+            FloatResolver(strategyProvider, random),
             BooleanResolver(random),
             CharResolver(random),
             ByteResolver(random),

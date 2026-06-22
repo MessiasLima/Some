@@ -21,6 +21,7 @@ import kotlin.reflect.full.instanceParameter
  *     strategy(NullableStrategy.NeverNull)
  *     strategy(StringStrategy.Uuid)
  *     strategy(CollectionStrategy(5..10))
+ *     strategy(FloatStrategy(0.0f..10.0f))
  * }
  * ```
  *
