@@ -1,7 +1,7 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverChain
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime

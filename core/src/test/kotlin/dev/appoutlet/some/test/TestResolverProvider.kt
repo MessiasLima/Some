@@ -1,10 +1,10 @@
 package dev.appoutlet.some.test
 
 import com.fueledbycaffeine.autoservice.AutoService
-import dev.appoutlet.some.core.ResolverChain
-import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.ResolverProvider
+import dev.appoutlet.some.core.StrategyProvider
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf

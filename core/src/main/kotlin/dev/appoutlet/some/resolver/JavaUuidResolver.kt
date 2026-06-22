@@ -1,7 +1,7 @@
 package dev.appoutlet.some.resolver
 
-import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverChain
 import java.util.UUID
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf

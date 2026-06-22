@@ -1,9 +1,9 @@
 package dev.appoutlet.some.config
 
 import dev.appoutlet.some.core.FixtureContext
-import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverProvider
+import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.logging.logger
 import dev.appoutlet.some.resolver.ArrayResolver
 import dev.appoutlet.some.resolver.BigDecimalResolver

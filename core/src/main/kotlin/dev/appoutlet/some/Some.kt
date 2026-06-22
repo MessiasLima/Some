@@ -4,8 +4,8 @@ import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.SomeConfig
 import dev.appoutlet.some.config.SomeConfigBuilder
 import dev.appoutlet.some.config.buildSomeConfig
-import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.Resolver
+import dev.appoutlet.some.core.ResolverChain
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 

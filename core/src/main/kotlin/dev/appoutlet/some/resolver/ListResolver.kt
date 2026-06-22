@@ -1,9 +1,9 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.CollectionStrategy
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.get
 import kotlin.random.Random
 import kotlin.reflect.KClass

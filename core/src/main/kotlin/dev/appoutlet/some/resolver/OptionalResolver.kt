@@ -1,9 +1,9 @@
 package dev.appoutlet.some.resolver
 
 import dev.appoutlet.some.config.NullableStrategy
+import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
-import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.get
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.logging.logger
