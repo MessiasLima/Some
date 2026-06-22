@@ -22,7 +22,10 @@ class FloatResolver(
         return if (range.start == range.endInclusive) {
             range.start
         } else {
-            range.start + random.nextFloat() * (range.endInclusive - range.start)
+            random.nextDouble(
+                from = range.start.toDouble(),
+                until = range.endInclusive.toDouble(),
+            ).toFloat()
         }
     }
 }
