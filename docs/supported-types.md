@@ -38,7 +38,7 @@ For types not listed here, register a [custom factory](custom-factories.md) or s
 | `java.math.BigInteger` | `some<BigInteger>()` | |
 | `java.time.LocalDate` | `some<LocalDate>()` | |
 | `java.time.LocalDateTime` | `some<LocalDateTime>()` | |
-| `java.time.ZonedDateTime` | `some<ZonedDateTime>()` | |
+| `java.time.ZonedDateTime` | `some<ZonedDateTime>()` | See [ZonedDateTime Strategy](strategies/zoned-date-time-strategy.md) |
 | **Collections** | | |
 | `List<T>` | `some<List<String>>()` | See [Collection Strategy](strategies/collection-strategy.md) |
 | `MutableList<T>` | `some<MutableList<Int>>()` | |

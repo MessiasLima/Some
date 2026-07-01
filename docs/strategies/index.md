@@ -24,6 +24,7 @@ val user = some<User> {
 | `CollectionStrategy` | `CollectionStrategy()` | Collections with 1 to 5 elements |
 | `FloatStrategy` | `FloatStrategy()` | Floats in the range `0.0f..1.0f` |
 | `DefaultValueStrategy` | `DefaultValueStrategy.UseDefault` | Uses Kotlin defaults for optional constructor parameters |
+| `ZonedDateTimeStrategy` | `ZonedDateTimeStrategy.Default` | `ZonedDateTime` values across the full `Instant` range with a random `ZoneId` |
 
 ## Available strategies
 
@@ -32,3 +33,4 @@ val user = some<User> {
 - [Collection Strategy](collection-strategy.md)
 - [Float Strategy](float-strategy.md)
 - [Default Value Strategy](default-value-strategy.md)
+- [ZonedDateTime Strategy](zoned-date-time-strategy.md)
