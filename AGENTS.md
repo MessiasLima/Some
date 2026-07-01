@@ -43,16 +43,13 @@ The project is split into Gradle modules:
 - `android` — Android integration (`some-android`)
 - `kotest` — Kotest property-based testing integration (`some-kotest`)
 
+Published artifacts are intended to be used as follows:
+
+- `some-core` — Base `some` / `someSetup` API for Java and Kotlin/JVM projects
+- `some-android` — Android artifact that re-exports the core API, so consumers should not add `some-core` separately
+- `some-kotest` — Kotest `Arb` integration that should be added alongside either `some-core` or `some-android`
+
 Documentation pages are under `docs/` and the site config is in `zensical.toml`.
-
-```
-core/src/main/kotlin/dev/appoutlet/some/
-├── config/          # Configuration, strategies, and builder
-├── core/            # Core abstractions and resolver chain
-├── exception/       # Custom exceptions
-└── resolver/        # Type resolvers
-```
-
 ---
 
 ## Code Style Guidelines
