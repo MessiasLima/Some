@@ -9,14 +9,27 @@ repo_url = "https://github.com/MessiasLima/Some"
 nav = [
   "index.md",
   "getting-started.md",
+  { "Migration" = [
+      "migration/index.md",
+      "migration/0.2.1-to-0.2.2.md"
+    ] },
   { "Configuration" = [
-      "configuration/index.md" ,
-      "configuration/nullable-strategy.md",
-      "configuration/string-strategy.md",
-      "configuration/collection-strategy.md",
-      "configuration/float-strategy.md"
+      "configuration/index.md"
+    ] },
+  { "Strategies" = [
+      "strategies/index.md",
+      "strategies/nullable-strategy.md",
+      "strategies/string-strategy.md",
+      "strategies/collection-strategy.md",
+      "strategies/float-strategy.md",
+      "strategies/default-value-strategy.md"
     ] },
   "supported-types.md",
+  { "Artifacts" = [
+      "artifacts/some-core.md",
+      "artifacts/some-android.md",
+      "artifacts/some-kotest.md"
+    ] },
   "custom-factories.md",
   "custom-resolvers.md",
   { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }

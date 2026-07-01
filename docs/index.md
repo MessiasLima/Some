@@ -6,9 +6,7 @@ icon: lucide/package-open
 
 # Some
 
-![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some?style=for-the-badge)
-
-A Kotlin JVM library that generates populated instances of any Kotlin class for testing. Zero configuration required.
+A Kotlin test data generation library for JVM and Android tests, with optional Kotest `Arb` integration.
 
 ## The Problem
 
@@ -65,6 +63,23 @@ Writing tests means creating test data — lots of it. Constructing data classes
 - **Fine-grained control** — Override how specific fields are generated: control nullable probability, string format, collection sizes, register custom type factories for types, or use property factories for individual fields.
 - **Extensible** — Ship custom `ResolverProvider` implementations discovered via `ServiceLoader` to add support for domain-specific, third-party, or internal application types — with custom strategies and no consumer configuration required.
 - **Deterministic by choice** — Set a seed for reproducible test data across runs, or default to random for variation.
+
+## Modules
+
+Some is published as three user-facing artifacts:
+
+- `some-core` for Java and Kotlin/JVM projects.
+- `some-android` for Android projects. It re-exports the shared core API, so you do not need to add `some-core` separately.
+- `some-kotest` for Kotest `Arb` integration. Add it alongside either `some-core` or `some-android`.
+
+Use [Getting Started](getting-started.md) to install Some and learn the shared API, and the [artifact guides](artifacts/some-core.md) when you need artifact-specific details.
+
+## Artifact rename
+
+!!! info "Artifact rename"
+
+    We renamed the JVM artifact from `dev.appoutlet:some` to `dev.appoutlet:some-core`.
+    See the [0.2.1 to 0.2.2 migration guide](migration/0.2.1-to-0.2.2.md) for the upgrade steps.
 
 ## Quick start
 

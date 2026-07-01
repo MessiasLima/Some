@@ -5,6 +5,8 @@ Controls whether nullable types produce `null` or a concrete value during fixtur
 The default is `NullableStrategy.NullOnCircularReference`, which prefers concrete values and only returns `null`
 when a nullable type would otherwise create a circular reference.
 
+This strategy is part of the shared API available through both `some-core` and `some-android`.
+
 ## Variants
 
 ### `NullOnCircularReference`
@@ -52,7 +54,7 @@ Always produces a non-null concrete value for nullable types.
 some { strategy(NullableStrategy.NeverNull) }
 ```
 
-Use this strategy when you want to ensure all nullable fields are populated, which is useful for testing the "happy path" scenarios.
+Use this strategy when you want to ensure all nullable fields are populated, which is useful for testing happy-path scenarios.
 
 ### `Random`
 
