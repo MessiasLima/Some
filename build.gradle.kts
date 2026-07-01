@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "dev.appoutlet"
-version = "0.2.2"
+version = "0.3.1"
 
 repositories {
     mavenCentral()
