@@ -28,7 +28,7 @@ tasks.named("prepareKotlinBuildScriptModel") {
 dokka {
     dokkaPublications.html {
         outputDirectory.set(rootDir.resolve("docs/reference/version/${project.version}"))
-        includes.from("$rootDir/docs/reference/configuration.md")
+        includes.from("$rootDir/docs/reference/index.md")
     }
 
     pluginsConfiguration {
