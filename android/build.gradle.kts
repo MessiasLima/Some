@@ -36,6 +36,7 @@ dependencies {
     testImplementation(libs.androidx.compose.ui)
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.robolectric)
 
     detektPlugins(libs.detekt.formatting)
 }
