@@ -23,7 +23,10 @@ nav = [
         "strategies/default-value-strategy.md"
     ] },
     "supported-types.md",
-    "android.md",
+    { "Android" = [
+        "android/index.md",
+        "android/uri.md"
+    ] },
     "kotest.md",
     "custom-factories.md",
     "custom-resolvers.md",
