@@ -20,7 +20,8 @@ nav = [
         "strategies/string-strategy.md",
         "strategies/collection-strategy.md",
         "strategies/float-strategy.md",
-        "strategies/default-value-strategy.md"
+        "strategies/default-value-strategy.md",
+        "strategies/zoned-date-time-strategy.md"
     ] },
     "supported-types.md",
     { "Android" = [
