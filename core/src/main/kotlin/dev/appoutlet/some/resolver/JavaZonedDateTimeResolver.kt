@@ -23,12 +23,10 @@ import kotlin.reflect.typeOf
  *
  * @param strategyProvider Provider of configured strategies.
  * @param random The random source used for generation.
- * @param clock Clock used to determine "now" for time-window strategies.
  */
 class JavaZonedDateTimeResolver(
     private val strategyProvider: StrategyProvider,
     private val random: Random,
-    private val clock: Clock = Clock.systemUTC(),
 ) : Resolver {
     private val zoneIds by lazy { ZoneId.getAvailableZoneIds().toList() }
 
@@ -38,38 +36,29 @@ class JavaZonedDateTimeResolver(
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
         val strategy = strategyProvider.get<ZonedDateTimeStrategy>() ?: ZonedDateTimeStrategy.default
-        val now = Instant.now(clock)
+        val now = Instant.now()
 
-        val (minInstant, maxInstant, inclusive) = when (strategy) {
-            ZonedDateTimeStrategy.Default -> Triple(Instant.MIN, Instant.MAX, false)
-            ZonedDateTimeStrategy.NearPast -> Triple(now.minusYears(10), now, true)
-            ZonedDateTimeStrategy.NearFuture -> Triple(now, now.plusYears(10), true)
-            ZonedDateTimeStrategy.DistantPast -> Triple(Instant.MIN, now, true)
-            ZonedDateTimeStrategy.DistantFuture -> Triple(now, Instant.MAX, true)
-            is ZonedDateTimeStrategy.Range -> Triple(strategy.min, strategy.max, true)
+        val (minInstant, maxInstant) = when (strategy) {
+            ZonedDateTimeStrategy.Default -> Instant.MIN to Instant.MAX
+            ZonedDateTimeStrategy.NearPast -> now.minusYears(10) to now
+            ZonedDateTimeStrategy.NearFuture -> now to now.plusYears(10)
+            ZonedDateTimeStrategy.DistantPast -> Instant.MIN to now
+            ZonedDateTimeStrategy.DistantFuture -> now to Instant.MAX
+            is ZonedDateTimeStrategy.Range -> strategy.min to strategy.max
         }
 
-        val epochSecond = randomEpochSecond(minInstant, maxInstant, inclusive)
+        val epochSecond = randomEpochSecond(minInstant, maxInstant)
+
         val zoneId = when (strategy) {
-            is ZonedDateTimeStrategy.Range -> strategy.zoneId ?: randomZoneId()
-            else -> randomZoneId()
+            is ZonedDateTimeStrategy.Range -> strategy.zoneId ?: ZoneId.of(zoneIds.random())
+            else -> ZoneId.of(zoneIds.random())
         }
 
         return ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), zoneId)
     }
 
-    private fun randomEpochSecond(min: Instant, max: Instant, inclusive: Boolean): Long {
-        val until = if (inclusive) max.epochSecond + 1 else max.epochSecond
-        return if (min.epochSecond < until) {
-            random.nextLong(min.epochSecond, until)
-        } else {
-            min.epochSecond
-        }
-    }
-
-    private fun randomZoneId(): ZoneId {
-        val zoneId = zoneIds[random.nextInt(zoneIds.size)]
-        return ZoneId.of(zoneId)
+    private fun randomEpochSecond(min: Instant, max: Instant): Long {
+        return random.nextLong(min.epochSecond, max.epochSecond)
     }
 
     private fun Instant.minusYears(years: Long): Instant =
