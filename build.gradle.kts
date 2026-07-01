@@ -17,6 +17,7 @@ dependencies {
     dokkaHtmlPlugin(libs.dokka.versioning)
     dokka(projects.android)
     dokka(projects.core)
+    dokka(projects.kotest)
 }
 
 tasks.named("prepareKotlinBuildScriptModel") {

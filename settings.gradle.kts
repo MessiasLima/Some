@@ -27,6 +27,7 @@ rootProject.name = "Some"
 
 include(":core")
 include(":android")
+include(":kotest")
 
 kover {
     enableCoverage()
