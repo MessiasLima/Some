@@ -31,7 +31,7 @@ android {
 detekt { autoCorrect = true }
 
 dependencies {
-    implementation(projects.core)
+    api(projects.core)
 
     testImplementation(libs.androidx.compose.ui)
     testImplementation(libs.junit)
