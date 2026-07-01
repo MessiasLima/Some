@@ -13,6 +13,8 @@ import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
+private const val TEN_YEARS = 10L
+
 /**
  * Resolves [ZonedDateTime] instances.
  *
@@ -39,8 +41,8 @@ class JavaZonedDateTimeResolver(
 
         val (minInstant, maxInstant) = when (strategy) {
             ZonedDateTimeStrategy.Default -> Instant.MIN to Instant.MAX
-            ZonedDateTimeStrategy.NearPast -> now.minusYears(10) to now
-            ZonedDateTimeStrategy.NearFuture -> now to now.plusYears(10)
+            ZonedDateTimeStrategy.NearPast -> now.minusYears(TEN_YEARS) to now
+            ZonedDateTimeStrategy.NearFuture -> now to now.plusYears(TEN_YEARS)
             ZonedDateTimeStrategy.DistantPast -> Instant.MIN to now
             ZonedDateTimeStrategy.DistantFuture -> now to Instant.MAX
             is ZonedDateTimeStrategy.Range -> strategy.min to strategy.max
