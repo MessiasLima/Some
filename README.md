@@ -3,8 +3,8 @@
 </p>
 
 # Some
-![Kotlin JVM](https://img.shields.io/badge/jvm-kotlin?style=for-the-badge&label=kotlin)
-![Kotlin Android](https://img.shields.io/badge/android-kotlin?style=for-the-badge&label=kotlin)
+![Kotlin JVM](https://img.shields.io/badge/jvm-kotlin?style=for-the-badge&logo=kotlin&label=kotlin&color=%237F52FF)
+![Kotlin Android](https://img.shields.io/badge/android-kotlin?style=for-the-badge&logo=android&label=kotlin&color=%231FA95C)
 ![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some-core?style=for-the-badge)
 
 A Kotlin test data generation library for JVM and Android tests, with optional Kotest `Arb` integration.
