@@ -36,11 +36,12 @@ Use `dev.appoutlet:some-android` in Android projects when you want the shared So
 
 All shared types from [Supported Types](../supported-types.md) are available here too.
 
-Today, the Android module adds one Android-specific type:
+Today, the Android module adds support for the following Android-specific types:
 
 | Type | Usage | Notes |
 |------|-------|-------|
 | `android.net.Uri` | `some<Uri>()` | See [Uri](uri.md) and [Uri Strategy](uri.md#uri-strategy) |
+| `android.os.Bundle` | `BundleResolver` | See [Bundle](bundle.md) |
 
 ## Platform constraints
 
