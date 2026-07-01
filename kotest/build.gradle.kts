@@ -1,54 +1,44 @@
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.autoservice.ir)
     alias(libs.plugins.detekt)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.mavenPublish)
 }
 
 group = rootProject.group
 version = rootProject.version
 
-android {
-    namespace = "dev.appoutlet.some.android"
-
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
-
-    defaultConfig {
-        minSdk = 24
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+repositories {
+    mavenCentral()
 }
 
-detekt { autoCorrect = true }
-
 dependencies {
-    api(projects.core)
+    implementation(projects.core)
+    implementation(libs.kotest.property)
 
-    testImplementation(libs.androidx.compose.ui)
-    testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
 
     detektPlugins(libs.detekt.formatting)
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 
-    coordinates(artifactId = "some-android")
+    coordinates(artifactId = "some-kotest")
 
     pom {
-        name.set("Some Android")
-        description.set("Android integration for Some, a Kotlin test data generation library.")
+        name.set("Some Kotest")
+        description.set("Kotest property-based testing integration for Some.")
         inceptionYear.set("2026")
         url.set("https://github.com/MessiasLima/Some")
 
@@ -75,3 +65,5 @@ mavenPublishing {
         }
     }
 }
+
+detekt { autoCorrect = true }

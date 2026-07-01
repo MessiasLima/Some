@@ -3,7 +3,7 @@ icon: lucide/settings
 ---
 # Configuration
 
-Some works with no configuration, but each generation call can be customized when a test needs deterministic output, different null behavior, readable strings, fixed collection sizes, or custom factories.
+Some works with no configuration, but every generation call can be customized when a test needs deterministic output, different null behavior, constrained collections, or custom factories.
 
 Configuration is written inside `some {}` or `someSetup {}` blocks. Register strategies or factories in the block:
 
@@ -12,7 +12,7 @@ val user = some<User> {
     seed = 12345L
     strategy(StringStrategy.Readable)
     strategy(NullableStrategy.NeverNull)
-    strategy(CollectionStrategy(3..7))
+    factory(Email::class) { Email("test@example.com") }
 }
 ```
 
@@ -46,6 +46,17 @@ val order = some<Order>()
 
 This is useful in test suites where several fixtures should follow the same rules.
 
+## Building blocks
+
+The configuration DSL is intentionally small:
+
+| Setting | Purpose |
+|---------|---------|
+| `seed = ...` | Reproduce the same generated values across runs |
+| `strategy(...)` | Override how a built-in type is generated |
+| `factory(...)` | Override generation for an entire type |
+| `property(...)` | Override generation for one constructor property |
+
 ## Per-Call Overrides
 
 Reusable configurations can be overridden for a single call. The base instance is copied before the override is applied, so later calls still use the original setup.
@@ -64,17 +75,6 @@ val result: Person = baseSome {
 val stillNeverNull: Person = baseSome()
 ```
 
-## Defaults
-
-| Strategy | Default | Description | More |
-|----------|---------|-------------|------|
-| `NullableStrategy` | `NullableStrategy.NullOnCircularReference` | Emits `null` for nullable circular references | [NullableStrategy](nullable-strategy.md) |
-| `StringStrategy` | `StringStrategy.Random()` | Random lowercase alphabetic strings | [StringStrategy](string-strategy.md) |
-| `CollectionStrategy` | `CollectionStrategy()` | Collections with 1 to 5 elements | [CollectionStrategy](collection-strategy.md) |
-| `FloatStrategy` | `FloatStrategy()` | Floats in the range `0.0f..1.0f` | [FloatStrategy](float-strategy.md) |
-| `DefaultValueStrategy` | `DefaultValueStrategy.UseDefault` | Uses Kotlin defaults for optional parameters | [DefaultValueStrategy](default-value-strategy.md) |
-| `seed` | `null` | Uses non-deterministic `Random.Default` | — |
-
 ## Reproducible Data
 
 Set `seed` when a test should produce the same values every run.
@@ -88,49 +88,9 @@ some1<User>() == some2<User>()  // true
 
 Without a seed, values can vary between runs.
 
-## Common Recipes
+## Related Docs
 
-### No Null Values
-
-```kotlin
-val user = some<User> {
-    strategy(NullableStrategy.NeverNull)
-}
-```
-
-### Readable Strings
-
-```kotlin
-val user = some<User> {
-    strategy(StringStrategy.Readable)
-}
-```
-
-### Small Collection Sizes
-
-```kotlin
-val order = some<Order> {
-    strategy(CollectionStrategy(2..3))
-}
-```
-
-### Generate All Optional Values
-
-```kotlin
-val user = some<User> {
-    strategy(DefaultValueStrategy.Generate)
-}
-```
-
-### Custom Factories
-
-Use `factory` to customize a whole type, and `property` to customize one constructor property.
-
-```kotlin
-val some = someSetup {
-    factory(Email::class) { Email("user${random.nextInt(1000)}@example.com") }
-    property(User::role) { "Admin" }
-}
-```
-
-See [Type and Property Factories](../custom-factories.md) for detailed documentation.
+- Use [Strategies](../strategies/index.md) for the built-in defaults and strategy behavior.
+- Use [Supported Types](../supported-types.md) for the shared type coverage.
+- Use [Type and Property Factories](../custom-factories.md) for custom generation rules.
+- Use [Artifact guides](../artifacts/some-core.md) when you need platform-specific dependency guidance.

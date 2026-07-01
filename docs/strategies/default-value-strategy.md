@@ -2,6 +2,8 @@
 
 Controls whether data class constructor parameters with default values should use their Kotlin default or be replaced with a generated fixture value.
 
+This strategy is part of the shared API available through both `some-core` and `some-android`.
+
 The default is `DefaultValueStrategy.UseDefault`, which preserves Kotlin default values.
 
 ## Variants

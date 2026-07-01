@@ -4,9 +4,8 @@
 
 # Some
 ![Kotlin JVM](https://img.shields.io/badge/jvm-kotlin?style=for-the-badge&label=kotlin)
-![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some?style=for-the-badge)
 
-A Kotlin JVM library that generates populated instances of any Kotlin class for testing purposes, with zero configuration required.
+A Kotlin test data generation library for JVM and Android tests, with optional Kotest `Arb` integration.
 
 ## The Problem
 
@@ -38,15 +37,31 @@ val user = some<User>()
 
 ## Installation
 
-Add Some to your Gradle dependencies:
+Some is published as three artifacts:
+
+- `some-core` for Java and Kotlin/JVM projects
+- `some-android` for Android projects. It re-exports the core API, so you do not need to add `some-core` separately.
+- `some-kotest` for Kotest `Arb` integration. Add it alongside either `some-core` or `some-android`.
 
 ```kotlin
-testImplementation("dev.appoutlet:some:<latest-version>")
+dependencies {
+    // Kotlin/JVM or Java tests
+    testImplementation("dev.appoutlet:some-core:{version}")
+
+    // Android tests. Includes the shared Some API, so do not also add some-core.
+    testImplementation("dev.appoutlet:some-android:{version}")
+
+    // Optional: Kotest property testing integration.
+    // Add this alongside either some-core or some-android.
+    testImplementation("dev.appoutlet:some-kotest:{version}")
+}
 ```
 
 ## Documentation
 
 📖 Read the full documentation at **[some.appoutlet.dev](https://some.appoutlet.dev)** for installation, configuration, and advanced usage.
+
+If you are upgrading from `0.2.1`, start with the [0.2.1 to 0.2.2 migration notes](docs/migration/0.2.1-to-0.2.2.md).
 
 ## Contributing
 
