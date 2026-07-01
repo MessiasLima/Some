@@ -7,6 +7,8 @@ Some resolves common Kotlin and Java types with zero configuration. Nullable var
 
 These supported types are part of the shared API consumed through both `some-core` and `some-android`.
 
+For Android-specific support, see [Android](android/index.md).
+
 For types not listed here, register a [custom factory](custom-factories.md) or ship a [custom resolver](custom-resolvers.md).
 
 ## Reference

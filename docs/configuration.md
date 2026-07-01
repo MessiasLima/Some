@@ -93,4 +93,4 @@ Without a seed, values can vary between runs.
 - Use [Strategies](strategies/index.md) for the built-in defaults and strategy behavior.
 - Use [Supported Types](supported-types.md) for the shared type coverage.
 - Use [Type and Property Factories](custom-factories.md) for custom generation rules.
-- Use [Android apps](android.md) or [Kotest integration](kotest.md) when you need platform-specific dependency guidance.
+- Use [Android](android/index.md) or [Kotest integration](kotest.md) when you need platform-specific dependency guidance.
