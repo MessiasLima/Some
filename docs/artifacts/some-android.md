@@ -1,7 +1,7 @@
 ---
 icon: lucide/smartphone
 ---
-# some-android
+# Android apps
 
 Use `dev.appoutlet:some-android` in Android projects.
 

@@ -72,7 +72,7 @@ Some is published as three user-facing artifacts:
 - `some-android` for Android projects. It re-exports the shared core API, so you do not need to add `some-core` separately.
 - `some-kotest` for Kotest `Arb` integration. Add it alongside either `some-core` or `some-android`.
 
-Use [Getting Started](getting-started.md) to install Some and learn the shared API, and the [artifact guides](artifacts/some-core.md) when you need artifact-specific details.
+Use [Getting Started](getting-started.md) to install Some and learn the shared API.
 
 ## Artifact rename
 

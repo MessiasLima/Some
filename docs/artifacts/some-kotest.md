@@ -1,7 +1,7 @@
 ---
 icon: lucide/flask-conical
 ---
-# some-kotest
+# Kotest integration
 
 Use `dev.appoutlet:some-kotest` when you want Kotest `Arb` integration for Some.
 
@@ -61,5 +61,26 @@ checkAll(
     // assertions
 }
 ```
+
+## Coordinating with Kotest randomness
+
+`Arb.some<T>()` creates one reusable `Some` generator for the lifetime of the arb.
+That generator uses `Some`'s own random source and does not consume Kotest's active
+per-sample `RandomSource`.
+
+If you want to coordinate `Some` with a Kotest `RandomSource`, create or reuse a
+seed and pass it into the `Some` DSL:
+
+```kotlin
+import io.kotest.property.RandomSource
+
+val randomSource = RandomSource.default()
+
+val arb = Arb.some<User> {
+    seed = randomSource.seed
+}
+```
+
+This makes `Some` use a random stream derived from the same seed value.
 
 For the shared configuration model, see [Configuration](../configuration/index.md) and [Strategies](../strategies/index.md).
