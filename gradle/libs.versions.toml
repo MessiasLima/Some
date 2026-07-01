@@ -9,6 +9,7 @@ junit = "4.13.2"
 kotlin = "2.4.0"
 kotest = "6.2.1"
 mavenPublish = "0.37.0"
+robolectric = "4.14.1"
 
 [libraries]
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
@@ -19,7 +20,7 @@ kermit = { module = "co.touchlab:kermit", version = "2.1.0" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
-
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
