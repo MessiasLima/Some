@@ -9,7 +9,7 @@ junit = "4.13.2"
 kotlin = "2.4.0"
 kotest = "6.2.1"
 mavenPublish = "0.37.0"
-robolectric = "4.14.1"
+robolectric = "4.16.1"
 
 [libraries]
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }

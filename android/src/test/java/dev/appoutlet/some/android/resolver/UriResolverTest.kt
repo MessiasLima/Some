@@ -57,7 +57,10 @@ class UriResolverTest {
         repeat(10) {
             val result = resolver.resolve(typeOf<Uri>(), testChain) as Uri
             assertEquals("https", result.scheme)
-            assertUriShape(result)
+            assertTrue(
+                "Generated URL $result does not match expected URL shape",
+                HTTPS_URL_REGEX.matches(result.toString())
+            )
         }
     }
 
@@ -120,5 +123,13 @@ class UriResolverTest {
 
     companion object {
         private val testChain = ResolverChain(emptyList(), NullableStrategy.NullOnCircularReference)
+
+        private val HTTPS_URL_REGEX = (
+            "^https://" +
+                "[a-z0-9]{3,8}\\.[a-z0-9]{2,3}" +
+                "(/[a-z0-9]{2,6})+" +
+                "(\\?[a-z0-9]{2,5}=[a-z0-9]{2,5}(&[a-z0-9]{2,5}=[a-z0-9]{2,5})*)?" +
+                "(#[a-z0-9]{2,6})?$"
+            ).toRegex()
     }
 }

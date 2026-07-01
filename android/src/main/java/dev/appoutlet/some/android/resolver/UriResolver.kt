@@ -10,6 +10,36 @@ import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
+private const val CONTENT_SCHEME = "content"
+private const val FILE_SCHEME = "file"
+private const val HTTPS_SCHEME = "https"
+private const val SCHEME_SEPARATOR = "://"
+private const val PATH_PREFIX = "/"
+private const val QUERY_PREFIX = "?"
+private const val QUERY_PAIR_SEPARATOR = "&"
+private const val FRAGMENT_PREFIX = "#"
+
+private val ALLOWED_SCHEMES = listOf(CONTENT_SCHEME, FILE_SCHEME, HTTPS_SCHEME)
+
+private val URL_COMPATIBLE_CHARS = ('a'..'z') + ('0'..'9')
+
+private const val MIN_HOST_LENGTH = 3
+private const val MAX_HOST_LENGTH = 8
+private const val MIN_TLD_LENGTH = 2
+private const val MAX_TLD_LENGTH = 3
+private const val MIN_PATH_SEGMENTS = 1
+private const val MAX_PATH_SEGMENTS = 4
+private const val MIN_SEGMENT_LENGTH = 2
+private const val MAX_SEGMENT_LENGTH = 6
+private const val MIN_QUERY_PAIRS = 1
+private const val MAX_QUERY_PAIRS = 3
+private const val MIN_QUERY_KEY_LENGTH = 2
+private const val MAX_QUERY_KEY_LENGTH = 5
+private const val MIN_QUERY_VALUE_LENGTH = 2
+private const val MAX_QUERY_VALUE_LENGTH = 5
+private const val MIN_FRAGMENT_LENGTH = 2
+private const val MAX_FRAGMENT_LENGTH = 6
+
 /**
  * Resolves [Uri] types using the active [UriStrategy].
  *
@@ -55,70 +85,37 @@ class UriResolver(
     }
 
     private fun generateHost(): String {
-        val length = random.nextInt(MIN_HOST_LENGTH, MAX_HOST_LENGTH)
-        return (1..length).map {
-            ('a'..'z').random(random)
-        }.joinToString("")
+        return if (uriStrategy is UriStrategy.Url) {
+            val host = urlCompatibleString(MIN_HOST_LENGTH, MAX_HOST_LENGTH)
+            val tld = urlCompatibleString(MIN_TLD_LENGTH, MAX_TLD_LENGTH)
+            "$host.$tld"
+        } else {
+            urlCompatibleString(MIN_HOST_LENGTH, MAX_HOST_LENGTH)
+        }
     }
 
     private fun generatePath(): String {
         val segments = random.nextInt(MIN_PATH_SEGMENTS, MAX_PATH_SEGMENTS)
-        return (1..segments).joinToString("", prefix = PATH_PREFIX) {
-            val length = random.nextInt(MIN_SEGMENT_LENGTH, MAX_SEGMENT_LENGTH)
-            val segment = (1..length).map { _ ->
-                ('a'..'z').random(random)
-            }.joinToString("")
-            "$PATH_PREFIX$segment"
-        }
+        return List(segments) { urlCompatibleString(MIN_SEGMENT_LENGTH, MAX_SEGMENT_LENGTH) }
+            .joinToString(prefix = PATH_PREFIX, separator = PATH_PREFIX)
     }
 
     private fun generateQuery(): String {
         val pairs = random.nextInt(MIN_QUERY_PAIRS, MAX_QUERY_PAIRS)
-        return (1..pairs).joinToString(QUERY_PAIR_SEPARATOR) {
-            val keyLength = random.nextInt(MIN_QUERY_KEY_LENGTH, MAX_QUERY_KEY_LENGTH)
-            val valueLength = random.nextInt(MIN_QUERY_VALUE_LENGTH, MAX_QUERY_VALUE_LENGTH)
-            val key = (1..keyLength).map { _ ->
-                ('a'..'z').random(random)
-            }.joinToString("")
-            val value = (1..valueLength).map { _ ->
-                ('a'..'z').random(random)
-            }.joinToString("")
+
+        return List(pairs) {
+            val key = urlCompatibleString(MIN_QUERY_KEY_LENGTH, MAX_QUERY_KEY_LENGTH)
+            val value = urlCompatibleString(MIN_QUERY_VALUE_LENGTH, MAX_QUERY_VALUE_LENGTH)
             "$key=$value"
-        }
+        }.joinToString(QUERY_PAIR_SEPARATOR)
     }
 
     private fun generateFragment(): String {
-        val length = random.nextInt(MIN_FRAGMENT_LENGTH, MAX_FRAGMENT_LENGTH)
-        return (1..length).map {
-            ('a'..'z').random(random)
-        }.joinToString("")
+        return urlCompatibleString(MIN_FRAGMENT_LENGTH, MAX_FRAGMENT_LENGTH)
     }
 
-    companion object {
-        private const val CONTENT_SCHEME = "content"
-        private const val FILE_SCHEME = "file"
-        private const val HTTPS_SCHEME = "https"
-        private const val SCHEME_SEPARATOR = "://"
-        private const val PATH_PREFIX = "/"
-        private const val QUERY_PREFIX = "?"
-        private const val QUERY_PAIR_SEPARATOR = "&"
-        private const val FRAGMENT_PREFIX = "#"
-
-        private val ALLOWED_SCHEMES = listOf(CONTENT_SCHEME, FILE_SCHEME, HTTPS_SCHEME)
-
-        private const val MIN_HOST_LENGTH = 3
-        private const val MAX_HOST_LENGTH = 8
-        private const val MIN_PATH_SEGMENTS = 1
-        private const val MAX_PATH_SEGMENTS = 4
-        private const val MIN_SEGMENT_LENGTH = 2
-        private const val MAX_SEGMENT_LENGTH = 6
-        private const val MIN_QUERY_PAIRS = 1
-        private const val MAX_QUERY_PAIRS = 3
-        private const val MIN_QUERY_KEY_LENGTH = 2
-        private const val MAX_QUERY_KEY_LENGTH = 5
-        private const val MIN_QUERY_VALUE_LENGTH = 2
-        private const val MAX_QUERY_VALUE_LENGTH = 5
-        private const val MIN_FRAGMENT_LENGTH = 2
-        private const val MAX_FRAGMENT_LENGTH = 6
+    private fun urlCompatibleString(minLength: Int, maxLength: Int): String {
+        val length = random.nextInt(minLength, maxLength)
+        return List(length) { URL_COMPATIBLE_CHARS.random(random) }.joinToString("")
     }
 }
