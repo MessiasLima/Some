@@ -37,10 +37,16 @@ where each Resolver handles specific types.
 
 ## Project Structure
 
+The project is split into Gradle modules:
+
+- `core` — Main library (`some-core`)
+- `android` — Android integration (`some-android`)
+- `kotest` — Kotest property-based testing integration (`some-kotest`)
+
 Documentation pages are under `docs/` and the site config is in `zensical.toml`.
 
 ```
-src/main/kotlin/dev/appoutlet/some/
+core/src/main/kotlin/dev/appoutlet/some/
 ├── config/          # Configuration, strategies, and builder
 ├── core/            # Core abstractions and resolver chain
 ├── exception/       # Custom exceptions
