@@ -14,7 +14,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
 
@@ -71,7 +71,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           ref: main

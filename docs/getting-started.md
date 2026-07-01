@@ -5,36 +5,28 @@ icon: lucide/graduation-cap
 
 ## Installation
 
-Add the `some` library to your test dependencies. It is available on Maven Central.
+Some is published as three artifacts. Pick one base artifact for your platform. Add `some-kotest` only if you use Kotest property testing.
 
-![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some?style=for-the-badge)
+!!! info "Upgrading from an older version?"
 
-Replace `{version}` with the latest release shown in the badge above.
+    If you are migrating from `0.2.1`, see the
+    [0.2.1 to 0.2.2 migration guide](migration/0.2.1-to-0.2.2.md).
 
-=== "Gradle (Kotlin DSL)"
+```kotlin
+dependencies {
+    // Kotlin/JVM or Java tests
+    testImplementation("dev.appoutlet:some-core:{version}")
 
-    ```kotlin
-    testImplementation("dev.appoutlet:some:{version}")
-    ```
+    // Android tests. Includes the shared Some API, so do not also add some-core.
+    testImplementation("dev.appoutlet:some-android:{version}")
 
-=== "Gradle (Groovy)"
+    // Optional: Kotest property testing integration.
+    // Add this alongside either some-core or some-android.
+    testImplementation("dev.appoutlet:some-kotest:{version}")
+}
+```
 
-    ```groovy
-    testImplementation 'dev.appoutlet:some:{version}'
-    ```
-
-=== "Maven"
-
-    ```xml
-    <dependency>
-      <groupId>dev.appoutlet</groupId>
-      <artifactId>some</artifactId>
-      <version>{version}</version>
-      <scope>test</scope>
-    </dependency>
-    ```
-
-`kotlin-reflect` is included as a transitive dependency — you don't need to declare it separately.
+Do not add both `some-core` and `some-android`. Android projects should use `some-android` only.
 
 ## Usage
 
@@ -110,9 +102,10 @@ val users = some<List<User>> {
 // [User(name=string-1234, age=17), User(name=string-5678, age=23)]
 ```
 
-For more configuration use cases and details, see the [Configuration overview](configuration/index.md).
+For more configuration use cases and details, see the [Configuration overview](configuration/index.md), [Strategies](strategies/index.md), and [Supported Types](supported-types.md).
 
 ## Requirements
 
 - **Kotlin 2.3.0+** — required for `typeOf<T>()` and other type introspection APIs
-- **JVM 17+** — Some is JVM-only; Android and Kotlin/Native are not currently supported
+- **JVM 17+** — `some-core` targets JVM 17+
+- **Android minSdk 24** — use `some-android` for Android projects

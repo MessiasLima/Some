@@ -43,4 +43,5 @@ bin/
 .DS_Store
 
 ### OpenCode ###
-.opencode
+.opencode/*
+!.opencode/agents

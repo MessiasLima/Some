@@ -3,7 +3,9 @@ icon: lucide/file-type
 ---
 # Supported Types
 
-Some resolves common Kotlin and Java types with zero configuration. Nullable variants (`T?`) are supported everywhere — [NullableStrategy](configuration/nullable-strategy.md) controls whether `null` is emitted.
+Some resolves common Kotlin and Java types with zero configuration. Nullable variants (`T?`) are supported everywhere. Use [Nullable Strategy](strategies/nullable-strategy.md) to control when `null` is emitted.
+
+These supported types are part of the shared API consumed through both `some-core` and `some-android`.
 
 For types not listed here, register a [custom factory](custom-factories.md) or ship a [custom resolver](custom-resolvers.md).
 
@@ -12,11 +14,11 @@ For types not listed here, register a [custom factory](custom-factories.md) or s
 | Type | Usage | Notes |
 |------|-------|-------|
 | **Primitives** | | |
-| `String` | `some<String>()` | See [StringStrategy](configuration/string-strategy.md) |
+| `String` | `some<String>()` | See [String Strategy](strategies/string-strategy.md) |
 | `Int` | `some<Int>()` | |
 | `Long` | `some<Long>()` | |
 | `Double` | `some<Double>()` | |
-| `Float` | `some<Float>()` | See [FloatStrategy](configuration/float-strategy.md) |
+| `Float` | `some<Float>()` | See [Float Strategy](strategies/float-strategy.md) |
 | `Boolean` | `some<Boolean>()` | |
 | `Char` | `some<Char>()` | |
 | `Byte` | `some<Byte>()` | |
@@ -25,7 +27,7 @@ For types not listed here, register a [custom factory](custom-factories.md) or s
 | **Standard Library** | | |
 | `kotlin.uuid.Uuid` | `some<Uuid>()` | Requires `@OptIn(ExperimentalUuidApi::class)` |
 | `java.util.UUID` | `some<UUID>()` | |
-| `java.util.Optional<T>` | `some<Optional<String>>()` | See [NullableStrategy](configuration/nullable-strategy.md) |
+| `java.util.Optional<T>` | `some<Optional<String>>()` | See [Nullable Strategy](strategies/nullable-strategy.md) |
 | `kotlin.time.Duration` | `some<Duration>()` | |
 | `java.time.Duration` | `some<java.time.Duration>()` | |
 | `kotlin.time.Instant` | `some<Instant>()` | |
@@ -36,7 +38,7 @@ For types not listed here, register a [custom factory](custom-factories.md) or s
 | `java.time.LocalDateTime` | `some<LocalDateTime>()` | |
 | `java.time.ZonedDateTime` | `some<ZonedDateTime>()` | |
 | **Collections** | | |
-| `List<T>` | `some<List<String>>()` | See [CollectionStrategy](configuration/collection-strategy.md) |
+| `List<T>` | `some<List<String>>()` | See [Collection Strategy](strategies/collection-strategy.md) |
 | `MutableList<T>` | `some<MutableList<Int>>()` | |
 | `Set<T>` | `some<Set<String>>()` | |
 | `MutableSet<T>` | `some<MutableSet<String>>()` | |

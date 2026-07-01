@@ -2,9 +2,11 @@
 
 Controls the size range of generated collections during fixture generation.
 
+This strategy is part of the shared API available through both `some-core` and `some-android`.
+
 ## Configuration
 
-The `CollectionStrategy` takes a single `sizeRange` parameter — an `IntRange` specifying the minimum and maximum number of elements in generated collections.
+The `CollectionStrategy` takes a single `sizeRange` parameter - an `IntRange` specifying the minimum and maximum number of elements in generated collections.
 
 ```kotlin
 // Default: 1 to 5 elements
@@ -51,18 +53,18 @@ The `CollectionStrategy` constructor enforces two constraints on the `sizeRange`
 
 ```kotlin
 CollectionStrategy(-1..5)  // IllegalArgumentException: sizeRange.start must be positive
-CollectionStrategy(0..5)   // OK — empty collections are allowed
+CollectionStrategy(0..5)   // OK - empty collections are allowed
 CollectionStrategy(1..5)   // OK
 ```
 
 ### End must be strictly greater than start
 
-`sizeRange.last` (the end of the range) must be strictly greater than `sizeRange.first`. This means a range with equal bounds (e.g. `3..3`) is **not** valid — there must be at least one possible size.
+`sizeRange.last` (the end of the range) must be strictly greater than `sizeRange.first`. This means a range with equal bounds (e.g. `3..3`) is not valid - there must be at least one possible size.
 
 ```kotlin
 CollectionStrategy(5..3)  // IllegalArgumentException: sizeRange.end must be greater than or equal to sizeRange.start
 CollectionStrategy(3..3)  // IllegalArgumentException: end is not greater than start
-CollectionStrategy(3..4)  // OK — produces collections of size 3 or 4
+CollectionStrategy(3..4)  // OK - produces collections of size 3 or 4
 ```
 
-Note that the error message says "greater than or equal to" but the actual check is strict (`last > first`). Equal bounds are rejected.
+Note that the error message says greater than or equal to but the actual check is strict (`last > first`). Equal bounds are rejected.
