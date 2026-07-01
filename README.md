@@ -2,11 +2,10 @@
   <img src="docs/logo-icon.svg" alt="Some logo" width="128" />
   <h1>Some</h1>
   
-  ![Kotlin JVM](https://img.shields.io/badge/jvm-kotlin?style=for-the-badge&logo=kotlin&label=kotlin&color=%237F52FF)
-  ![Kotlin Android](https://img.shields.io/badge/android-kotlin?style=for-the-badge&logo=android&label=kotlin&color=%231FA95C)
-  ![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some-core?style=for-the-badge)
+  [![Kotlin JVM](https://img.shields.io/badge/jvm-kotlin?style=for-the-badge&logo=kotlin&label=kotlin&color=%237F52FF)](https://some.appoutlet.dev/)
+  [![Kotlin Android](https://img.shields.io/badge/android-kotlin?style=for-the-badge&logo=android&label=kotlin&color=%231FA95C)](https://some.appoutlet.dev/android/)
+  [![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some-core?style=for-the-badge)](https://central.sonatype.com/artifact/dev.appoutlet/some-core)
 
-  
   <p>A Kotlin library to generate testing objects</p>
 </div>
 
