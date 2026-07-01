@@ -4,6 +4,8 @@
 
 # Some
 ![Kotlin JVM](https://img.shields.io/badge/jvm-kotlin?style=for-the-badge&label=kotlin)
+![Kotlin Android](https://img.shields.io/badge/android-kotlin?style=for-the-badge&label=kotlin)
+![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some-core?style=for-the-badge)
 
 A Kotlin test data generation library for JVM and Android tests, with optional Kotest `Arb` integration.
 
