@@ -15,7 +15,7 @@ androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androi
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-kermit = { module = "co.touchlab:kermit", version = "2.0.4" }
+kermit = { module = "co.touchlab:kermit", version = "2.1.0" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
