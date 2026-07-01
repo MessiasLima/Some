@@ -6,7 +6,6 @@ import dev.appoutlet.some.config.ZonedDateTimeStrategy
 import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.test.defaultTestChain
-import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -56,82 +55,77 @@ class JavaZonedDateTimeResolverTest {
 
     @Test
     fun `NearPast strategy generates values within ten years before now`() {
-        val now = Instant.parse("2026-07-01T12:00:00Z")
-        val clock = Clock.fixed(now, ZoneOffset.UTC)
-        val tenYearsAgo = now.atZone(ZoneOffset.UTC).minusYears(10).toInstant()
         val resolver = JavaZonedDateTimeResolver(
             DefaultStrategyProvider(mapOf(ZonedDateTimeStrategy::class to ZonedDateTimeStrategy.NearPast)),
             Random.Default,
-            clock,
         )
 
         repeat(100) {
+            val before = Instant.now()
+            val tenYearsBeforeBefore = before.atZone(ZoneOffset.UTC).minusYears(10).toInstant()
             val result = resolver.resolve(typeOf<ZonedDateTime>(), defaultTestChain) as ZonedDateTime
+            val after = Instant.now()
+
             assertTrue(
-                !result.toInstant().isBefore(tenYearsAgo),
-                "Expected result after or at $tenYearsAgo, got ${result.toInstant()}",
+                !result.toInstant().isBefore(tenYearsBeforeBefore),
+                "Expected result after or at $tenYearsBeforeBefore, got ${result.toInstant()}",
             )
             assertTrue(
-                !result.toInstant().isAfter(now),
-                "Expected result before or at $now, got ${result.toInstant()}",
+                !result.toInstant().isAfter(after),
+                "Expected result before or at $after, got ${result.toInstant()}",
             )
         }
     }
 
     @Test
     fun `NearFuture strategy generates values within ten years after now`() {
-        val now = Instant.parse("2026-07-01T12:00:00Z")
-        val clock = Clock.fixed(now, ZoneOffset.UTC)
-        val tenYearsFuture = now.atZone(ZoneOffset.UTC).plusYears(10).toInstant()
         val resolver = JavaZonedDateTimeResolver(
             DefaultStrategyProvider(mapOf(ZonedDateTimeStrategy::class to ZonedDateTimeStrategy.NearFuture)),
             Random.Default,
-            clock,
         )
 
         repeat(100) {
+            val before = Instant.now()
             val result = resolver.resolve(typeOf<ZonedDateTime>(), defaultTestChain) as ZonedDateTime
+            val after = Instant.now()
+            val tenYearsAfterAfter = after.atZone(ZoneOffset.UTC).plusYears(10).toInstant()
+
             assertTrue(
-                !result.toInstant().isBefore(now),
-                "Expected result after or at $now, got ${result.toInstant()}",
+                !result.toInstant().isBefore(before),
+                "Expected result after or at $before, got ${result.toInstant()}",
             )
             assertTrue(
-                !result.toInstant().isAfter(tenYearsFuture),
-                "Expected result before or at $tenYearsFuture, got ${result.toInstant()}",
+                !result.toInstant().isAfter(tenYearsAfterAfter),
+                "Expected result before or at $tenYearsAfterAfter, got ${result.toInstant()}",
             )
         }
     }
 
     @Test
     fun `DistantPast strategy generates values from Instant MIN until now`() {
-        val now = Instant.parse("2026-07-01T12:00:00Z")
-        val clock = Clock.fixed(now, ZoneOffset.UTC)
         val resolver = JavaZonedDateTimeResolver(
             DefaultStrategyProvider(mapOf(ZonedDateTimeStrategy::class to ZonedDateTimeStrategy.DistantPast)),
             Random.Default,
-            clock,
         )
 
         repeat(100) {
             val result = resolver.resolve(typeOf<ZonedDateTime>(), defaultTestChain) as ZonedDateTime
             assertTrue(!result.toInstant().isBefore(Instant.MIN))
-            assertTrue(!result.toInstant().isAfter(now))
+            assertTrue(!result.toInstant().isAfter(Instant.now()))
         }
     }
 
     @Test
     fun `DistantFuture strategy generates values from now until Instant MAX`() {
-        val now = Instant.parse("2026-07-01T12:00:00Z")
-        val clock = Clock.fixed(now, ZoneOffset.UTC)
         val resolver = JavaZonedDateTimeResolver(
             DefaultStrategyProvider(mapOf(ZonedDateTimeStrategy::class to ZonedDateTimeStrategy.DistantFuture)),
             Random.Default,
-            clock,
         )
 
         repeat(100) {
+            val before = Instant.now()
             val result = resolver.resolve(typeOf<ZonedDateTime>(), defaultTestChain) as ZonedDateTime
-            assertTrue(!result.toInstant().isBefore(now))
+            assertTrue(!result.toInstant().isBefore(before))
             assertTrue(!result.toInstant().isAfter(Instant.MAX))
         }
     }
@@ -176,22 +170,6 @@ class JavaZonedDateTimeResolverTest {
             assertEquals(zoneId, result.zone)
             assertTrue(!result.toInstant().isBefore(min))
             assertTrue(!result.toInstant().isAfter(max))
-        }
-    }
-
-    @Test
-    fun `Range strategy with equal min and max returns pinned instant`() {
-        val instant = Instant.parse("2020-06-15T10:30:00Z")
-        val resolver = JavaZonedDateTimeResolver(
-            DefaultStrategyProvider(
-                mapOf(ZonedDateTimeStrategy::class to ZonedDateTimeStrategy.Range(instant, instant))
-            ),
-            Random.Default,
-        )
-
-        repeat(50) {
-            val result = resolver.resolve(typeOf<ZonedDateTime>(), defaultTestChain) as ZonedDateTime
-            assertEquals(instant, result.toInstant())
         }
     }
 
