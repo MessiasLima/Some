@@ -83,4 +83,4 @@ val arb = Arb.some<User> {
 
 This makes `Some` use a random stream derived from the same seed value.
 
-For the shared configuration model, see [Configuration](../configuration/index.md) and [Strategies](../strategies/index.md).
+For the shared configuration model, see [Configuration](configuration.md) and [Strategies](strategies/index.md).

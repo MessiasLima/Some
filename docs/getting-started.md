@@ -102,7 +102,7 @@ val users = some<List<User>> {
 // [User(name=string-1234, age=17), User(name=string-5678, age=23)]
 ```
 
-For more configuration use cases and details, see the [Configuration overview](configuration/index.md), [Strategies](strategies/index.md), and [Supported Types](supported-types.md).
+For more configuration use cases and details, see the [Configuration overview](configuration.md), [Strategies](strategies/index.md), and [Supported Types](supported-types.md).
 
 ## Requirements
 

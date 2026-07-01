@@ -41,8 +41,8 @@ Use `dev.appoutlet:some-android` in Android projects.
 
 The main Some documentation applies here as well:
 
-- [Getting Started](../getting-started.md)
-- [Strategies](../strategies/index.md)
-- [Supported Types](../supported-types.md)
-- [Type and Property Factories](../custom-factories.md)
-- [Custom Resolvers](../custom-resolvers.md)
+- [Getting Started](getting-started.md)
+- [Strategies](strategies/index.md)
+- [Supported Types](supported-types.md)
+- [Type and Property Factories](custom-factories.md)
+- [Custom Resolvers](custom-resolvers.md)

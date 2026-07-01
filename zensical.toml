@@ -7,46 +7,41 @@ copyright = "© 2026 AppOutlet, Lda"
 repo_url = "https://github.com/MessiasLima/Some"
 
 nav = [
-  "index.md",
-  "getting-started.md",
-  { "Migration" = [
-      "migration/index.md",
-      "migration/0.2.1-to-0.2.2.md"
+    "index.md",
+    "getting-started.md",
+    { "Migration" = [
+        "migration/index.md",
+        "migration/0.2.1-to-0.2.2.md"
     ] },
-  { "Configuration" = [
-      "configuration/index.md"
+    "configuration.md",
+    { "Strategies" = [
+        "strategies/index.md",
+        "strategies/nullable-strategy.md",
+        "strategies/string-strategy.md",
+        "strategies/collection-strategy.md",
+        "strategies/float-strategy.md",
+        "strategies/default-value-strategy.md"
     ] },
-  { "Strategies" = [
-      "strategies/index.md",
-      "strategies/nullable-strategy.md",
-      "strategies/string-strategy.md",
-      "strategies/collection-strategy.md",
-      "strategies/float-strategy.md",
-      "strategies/default-value-strategy.md"
-    ] },
-  "supported-types.md",
-  { "Artifacts" = [
-      "artifacts/some-core.md",
-      "artifacts/some-android.md",
-      "artifacts/some-kotest.md"
-    ] },
-  "custom-factories.md",
-  "custom-resolvers.md",
-  { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }
+    "supported-types.md",
+    "android.md",
+    "kotest.md",
+    "custom-factories.md",
+    "custom-resolvers.md",
+    { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }
 ]
 
 [project.theme]
 logo = "logo-icon.svg"
 favicon = "logo-icon.svg"
 features = [
-  "navigation.instant",
-  "navigation.instant.prefetch",
-  "navigation.instant.progress",
-  "navigation.path",
-  "navigation.top",
-  "navigation.indexes",
-  "search.highlight",
-  "toc.follow",
+    "navigation.instant",
+    "navigation.instant.prefetch",
+    "navigation.instant.progress",
+    "navigation.path",
+    "navigation.top",
+    "navigation.indexes",
+    "search.highlight",
+    "toc.follow",
 ]
 custom_dir = "docs/overrides"
 
