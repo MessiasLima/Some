@@ -128,7 +128,7 @@ data class SomeConfig(
             JavaUuidResolver(),
             JavaInstantResolver(random),
             JavaDurationResolver(random),
-            JavaZonedDateTimeResolver(random),
+            JavaZonedDateTimeResolver(strategyProvider, random),
             OptionalResolver(strategyProvider, random),
             BigDecimalResolver(random),
             BigIntegerResolver(random),
