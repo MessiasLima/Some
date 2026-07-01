@@ -9,10 +9,11 @@ import io.kotest.property.Sample
 /**
  * Creates a Kotest [Arb] that generates values of type [T] using `Some`.
  *
- * Each call to [sample][Arb.sample] builds a fresh `Some` generator seeded with the
- * Kotest [RandomSource.seed], applies the supplied [config] block, and produces a value.
- * This keeps the arb reproducible and lets callers customize strategies or factories
- * per property test.
+ * Each call to [some] creates one reusable `Some` generator, applies the supplied [config]
+ * block once, and returns an arb that produces values from that generator.
+ *
+ * This avoids rebuilding `Some` for every property sample. Generated values follow the
+ * configured `Some` seed when one is provided in [config].
  *
  * Usage:
  * ```kotlin
@@ -22,20 +23,17 @@ import io.kotest.property.Sample
  * ```
  *
  * @param T Type to generate.
- * @param config Configuration applied to each `Some` instance before generating a value.
+ * @param config Configuration applied once when the underlying `Some` generator is created.
  * @return An [Arb] producing random values of type [T].
  */
 inline fun <reified T> Arb.Companion.some(
     crossinline config: SomeConfigBuilder.() -> Unit = {},
-): Arb<T> = object : Arb<T>() {
-    override fun edgecase(rs: RandomSource): Sample<T>? = null
+): Arb<T> {
+    return object : Arb<T>() {
+        private val some = someSetup { config() }
 
-    override fun sample(rs: RandomSource): Sample<T> {
-        val someGenerator = someSetup {
-            seed = rs.seed
-            config()
-        }
+        override fun edgecase(rs: RandomSource): Sample<T>? = null
 
-        return Sample(someGenerator<T>())
+        override fun sample(rs: RandomSource) = Sample(some<T>())
     }
 }

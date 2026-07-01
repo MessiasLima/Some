@@ -39,12 +39,13 @@ class SomeArbExtensionsTest {
     }
 
     @Test
-    fun `Arb companion some extension is reproducible for the same seed`() {
-        val arb = Arb.some<String>()
+    fun `Arb companion some extension is reproducible for the same configured seed`() {
         val seed = 12345L
+        val arb1 = Arb.some<String> { this.seed = seed }
+        val arb2 = Arb.some<String> { this.seed = seed }
 
-        val sample1 = arb.sample(RandomSource.seeded(seed))
-        val sample2 = arb.sample(RandomSource.seeded(seed))
+        val sample1 = arb1.sample(RandomSource.default())
+        val sample2 = arb2.sample(RandomSource.default())
 
         assertEquals(sample1.value, sample2.value)
     }

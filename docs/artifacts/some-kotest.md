@@ -32,7 +32,8 @@ testImplementation("dev.appoutlet:some-kotest:{version}")
 
 - Adds `Arb.some<T>()`
 - Accepts the same configuration DSL used by `some<T>()` and `someSetup {}`
-- Uses Kotest's `RandomSource` to keep generated values reproducible
+- Creates one reusable `Some` generator per `Arb.some<T>()` call
+- Uses `Some`'s configured seed for reproducibility when `seed = ...` is set in the DSL
 
 ## Usage
 
@@ -45,6 +46,9 @@ checkAll(Arb.some<User>(), Arb.some<Order>()) { user, order ->
     // assertions
 }
 ```
+
+`Arb.some<T>()` reuses a single configured `Some` generator for the lifetime of the arb.
+If you need reproducible values across runs, configure `Some` with an explicit seed.
 
 ```kotlin
 checkAll(
