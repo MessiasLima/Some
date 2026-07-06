@@ -29,7 +29,7 @@ Use `dev.appoutlet:some-android` in Android projects when you want the shared So
 ## When to use it
 
 - Android unit tests and Robolectric tests
-- Android libraries and apps that need generated `Uri`, `Rect`, `Point`, `Size`, or similar Android framework values
+- Android libraries and apps that need generated `Uri`, `Rect`, `Point`, `Size`, Compose `Color`, or similar platform values
 - Projects that want one dependency for both the shared Some API and Android-specific support
 
 ## Supported Android types
@@ -52,6 +52,7 @@ Today, the Android module adds these Android-specific types:
 | `android.os.UserHandle` | `some<UserHandle>()` | API 24+; generated from a random non-system UID |
 | `android.graphics.Color` | `some<Color>()` | API 26+; generated from random RGB channel values |
 | `androidx.compose.ui.text.AnnotatedString` | `some<AnnotatedString>()` | Non-blank plain text without span styles |
+| `androidx.compose.ui.graphics.Color` | `some<ComposeColor>()` | See [Compose Color](color.md) and [Color Strategy](color.md#color-strategy) |
 
 ## Platform constraints
 
