@@ -11,6 +11,7 @@ import dev.appoutlet.some.android.resolver.SizeFResolver
 import dev.appoutlet.some.android.resolver.SizeResolver
 import dev.appoutlet.some.android.resolver.UriResolver
 import dev.appoutlet.some.android.resolver.UserHandleResolver
+import dev.appoutlet.some.android.resolver.compose.AnnotatedStringResolver
 import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverProvider
 import dev.appoutlet.some.core.StrategyProvider
@@ -19,8 +20,7 @@ import kotlin.random.Random
 /**
  * Contributes Android-specific resolvers discovered through `ServiceLoader`.
  *
- * The returned resolvers extend the shared `some-core` chain with support for common Android framework
- * value types such as `Uri`, geometry classes, `Bundle`, `Pair`, `UserHandle`, and `Color`.
+ * The returned resolvers extend the shared `some-core` chain with Android-specific type support.
  */
 class AndroidResolverProvider : ResolverProvider {
     /**
@@ -44,7 +44,8 @@ class AndroidResolverProvider : ResolverProvider {
             SizeFResolver(random),
             PairResolver(random),
             UserHandleResolver(random),
-            ColorResolver(random)
+            ColorResolver(random),
+            AnnotatedStringResolver(random)
         )
     }
 }
