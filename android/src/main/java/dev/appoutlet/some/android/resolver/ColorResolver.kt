@@ -7,6 +7,8 @@ import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
+private const val COLOR_MAX_VALUE = 255
+
 /**
  * Resolves [Color] values when the runtime API level supports [Color.valueOf].
  *
@@ -19,9 +21,9 @@ class ColorResolver(
 
     override fun resolve(type: KType, chain: ResolverChain): Color {
         return Color.valueOf(
-            random.nextInt(0, 255).toFloat(),
-            random.nextInt(0, 255).toFloat(),
-            random.nextInt(0, 255).toFloat(),
+            random.nextInt(0, COLOR_MAX_VALUE).toFloat(),
+            random.nextInt(0, COLOR_MAX_VALUE).toFloat(),
+            random.nextInt(0, COLOR_MAX_VALUE).toFloat(),
         )
     }
 }
