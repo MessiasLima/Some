@@ -108,4 +108,4 @@ For more configuration use cases and details, see the [Configuration overview](c
 
 - **Kotlin 2.3.0+** — required for `typeOf<T>()` and other type introspection APIs
 - **JVM 17+** — `some-core` targets JVM 17+
-- **Android minSdk 24** — use `some-android` for Android projects
+- **Android minSdk 26** — use `some-android` for Android projects

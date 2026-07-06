@@ -47,9 +47,12 @@ Today, the Android module adds these Android-specific types:
 | `android.graphics.PointF` | `some<PointF>()` | Random float `x` and `y` |
 | `android.util.Size` | `some<Size>()`   | Random positive integer `width` and `height` |
 | `android.util.SizeF` | `some<SizeF>()`  | Random positive float `width` and `height` |
+| `android.util.Pair<F, S>` | `some<Pair<String, Int>>()` | Resolves `first` and `second` by delegating both generic type arguments through the resolver chain |
 | `android.os.Bundle` | `some<Bundle>()` | One random value each for `String`, `Int`, `Long`, `Float`, `Double`, and `Boolean` |
+| `android.os.UserHandle` | `some<UserHandle>()` | API 24+; generated from a random non-system UID |
+| `android.graphics.Color` | `some<Color>()` | API 26+; generated from random RGB channel values |
 
 ## Platform constraints
 
-- Android `minSdk 24`
+- Android `minSdk 26`
 - Shared API behavior follows the same Kotlin/JVM constraints as `some-core`
