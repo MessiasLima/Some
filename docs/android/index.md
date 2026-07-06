@@ -29,19 +29,25 @@ Use `dev.appoutlet:some-android` in Android projects when you want the shared So
 ## When to use it
 
 - Android unit tests and Robolectric tests
-- Android libraries and apps that need generated `android.net.Uri` values
+- Android libraries and apps that need generated `Uri`, `Rect`, `Point`, `Size`, or similar Android framework values
 - Projects that want one dependency for both the shared Some API and Android-specific support
 
 ## Supported Android types
 
 All shared types from [Supported Types](../supported-types.md) are available here too.
 
-Today, the Android module adds support for the following Android-specific types:
+Today, the Android module adds these Android-specific types:
 
-| Type | Usage | Notes |
-|------|-------|-------|
-| `android.net.Uri` | `some<Uri>()` | See [Uri](uri.md) and [Uri Strategy](uri.md#uri-strategy) |
-| `android.os.Bundle` | `BundleResolver` | See [Bundle](bundle.md) |
+| Type | Usage            | Notes |
+|------|------------------|-------|
+| `android.net.Uri` | `some<Uri>()`    | See [Uri](uri.md) and [Uri Strategy](uri.md#uri-strategy) |
+| `android.graphics.Rect` | `some<Rect>()`   | Random integer bounds with `left < right` and `top < bottom` |
+| `android.graphics.RectF` | `some<RectF>()`  | Random float bounds with `left < right` and `top < bottom` |
+| `android.graphics.Point` | `some<Point>()`  | Random integer `x` and `y` |
+| `android.graphics.PointF` | `some<PointF>()` | Random float `x` and `y` |
+| `android.util.Size` | `some<Size>()`   | Random positive integer `width` and `height` |
+| `android.util.SizeF` | `some<SizeF>()`  | Random positive float `width` and `height` |
+| `android.os.Bundle` | `some<Bundle>`   | See [Bundle](bundle.md) |
 
 ## Platform constraints
 
