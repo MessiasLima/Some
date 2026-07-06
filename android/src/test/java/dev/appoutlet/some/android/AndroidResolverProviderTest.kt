@@ -16,6 +16,7 @@ import dev.appoutlet.some.config.DefaultStrategyProvider
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.random.Random
+import dev.appoutlet.some.android.resolver.compose.ColorResolver as ComposeColorResolver
 
 class AndroidResolverProviderTest {
     @Test
@@ -35,7 +36,8 @@ class AndroidResolverProviderTest {
                 PairResolver::class,
                 UserHandleResolver::class,
                 ColorResolver::class,
-                AnnotatedStringResolver::class
+                AnnotatedStringResolver::class,
+                ComposeColorResolver::class,
             ),
             resolvers.map { it::class }
         )

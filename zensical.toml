@@ -26,7 +26,8 @@ nav = [
     "supported-types.md",
     { "Android" = [
         "android/index.md",
-        "android/uri.md"
+        "android/uri.md",
+        "android/color.md"
     ] },
     "kotest.md",
     "custom-factories.md",

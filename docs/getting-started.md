@@ -17,7 +17,8 @@ dependencies {
     // Kotlin/JVM or Java tests
     testImplementation("dev.appoutlet:some-core:{version}")
 
-    // Android tests. Includes the shared Some API, so do not also add some-core.
+    // Android tests, including Android framework and Compose UI types.
+    // Includes the shared Some API, so do not also add some-core.
     testImplementation("dev.appoutlet:some-android:{version}")
 
     // Optional: Kotest property testing integration.
