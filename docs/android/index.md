@@ -38,15 +38,16 @@ All shared types from [Supported Types](../supported-types.md) are available her
 
 Today, the Android module adds these Android-specific types:
 
-| Type | Usage | Notes |
-|------|-------|-------|
-| `android.net.Uri` | `some<Uri>()` | See [Uri](uri.md) and [Uri Strategy](uri.md#uri-strategy) |
-| `android.graphics.Rect` | `some<Rect>()` | Random integer bounds with `left < right` and `top < bottom` |
-| `android.graphics.RectF` | `some<RectF>()` | Random float bounds with `left < right` and `top < bottom` |
-| `android.graphics.Point` | `some<Point>()` | Random integer `x` and `y` |
+| Type | Usage            | Notes |
+|------|------------------|-------|
+| `android.net.Uri` | `some<Uri>()`    | See [Uri](uri.md) and [Uri Strategy](uri.md#uri-strategy) |
+| `android.graphics.Rect` | `some<Rect>()`   | Random integer bounds with `left < right` and `top < bottom` |
+| `android.graphics.RectF` | `some<RectF>()`  | Random float bounds with `left < right` and `top < bottom` |
+| `android.graphics.Point` | `some<Point>()`  | Random integer `x` and `y` |
 | `android.graphics.PointF` | `some<PointF>()` | Random float `x` and `y` |
-| `android.util.Size` | `some<Size>()` | Random positive integer `width` and `height` |
-| `android.util.SizeF` | `some<SizeF>()` | Random positive float `width` and `height` |
+| `android.util.Size` | `some<Size>()`   | Random positive integer `width` and `height` |
+| `android.util.SizeF` | `some<SizeF>()`  | Random positive float `width` and `height` |
+| `android.os.Bundle` | `some<Bundle>()` | One random value each for `String`, `Int`, `Long`, `Float`, `Double`, and `Boolean` |
 
 ## Platform constraints
 
