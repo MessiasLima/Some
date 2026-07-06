@@ -33,7 +33,7 @@ detekt { autoCorrect = true }
 dependencies {
     api(projects.core)
 
-    testImplementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui)
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.robolectric)
