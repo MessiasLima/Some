@@ -51,7 +51,12 @@ Today, the Android module adds these Android-specific types:
 | `android.os.Bundle` | `some<Bundle>()` | One random value each for `String`, `Int`, `Long`, `Float`, `Double`, and `Boolean` |
 | `android.os.UserHandle` | `some<UserHandle>()` | API 24+; generated from a random non-system UID |
 | `android.graphics.Color` | `some<Color>()` | API 26+; generated from random RGB channel values |
-| `androidx.compose.ui.text.AnnotatedString` | `some<AnnotatedString>()` | Non-blank plain text without span styles |
+
+## Compose support
+
+`some-android` includes specialized support for Jetpack Compose types, including units and geometry.
+
+See [Compose](compose.md) for the full list of supported Compose types.
 
 ## Platform constraints
 
