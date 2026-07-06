@@ -49,10 +49,10 @@ class ColorResolver(
         val lightness = random.nextFloat()
         val alpha = random.nextFloat()
 
-        return Color.hsv(
+        return Color.hsl(
             hue = hue,
             saturation = saturation,
-            value = lightness,
+            lightness = lightness,
             alpha = alpha
         )
     }
