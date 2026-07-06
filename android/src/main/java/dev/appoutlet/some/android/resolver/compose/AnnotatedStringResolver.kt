@@ -26,6 +26,7 @@ class AnnotatedStringResolver(
 
     private fun generateText(): String {
         val length = random.nextInt(MIN_TEXT_LENGTH, MAX_TEXT_LENGTH + 1)
-        return List(length) { ('a'..'z').random(random) }.joinToString("")
+        val chars = CharArray(length) { ('a'..'z').random(random) }
+        return String(chars)
     }
 }
