@@ -7,67 +7,36 @@ import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-private const val MIN_ENTRIES = 0
-private const val MAX_ENTRIES = 5
-private const val MIN_KEY_LENGTH = 1
-private const val MAX_KEY_LENGTH = 10
+private const val MIN_STRING_LENGTH = 1
+private const val MAX_STRING_LENGTH = 10
 
 /**
  * Resolves [Bundle] types by creating a new [Bundle] and populating it with
- * random entries.
+ * one entry for each supported primitive value type.
  *
- * Generated bundles contain 0 to 5 entries. Each entry has a non-empty string
- * key and a value of type [String], [Int], [Long], [Float], [Double], or
- * [Boolean].
+ * Generated bundles always contain one [String], [Int], [Long], [Float],
+ * [Double], and [Boolean] entry with random values.
  *
- * @param random Random source used when generating entry count, keys, and
- * values.
+ * @param random Random source used when generating values.
  */
 class BundleResolver(
     private val random: Random
 ) : Resolver {
-    private val valueGenerators: List<() -> Any> = listOf(
-        { generateString() },
-        { random.nextInt() },
-        { random.nextLong() },
-        { random.nextFloat() },
-        { random.nextDouble() },
-        { random.nextBoolean() }
-    )
-
     override fun canResolve(type: KType): Boolean = type == typeOf<Bundle>()
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
-        val bundle = Bundle()
-        val entryCount = random.nextInt(MIN_ENTRIES, MAX_ENTRIES + 1)
-
-        repeat(entryCount) {
-            val key = generateKey()
-            val value = valueGenerators.random(random).invoke()
-            putValue(bundle, key, value)
+        return Bundle().apply {
+            putString("string", generateString())
+            putInt("int", random.nextInt())
+            putLong("long", random.nextLong())
+            putFloat("float", random.nextFloat())
+            putDouble("double", random.nextDouble())
+            putBoolean("boolean", random.nextBoolean())
         }
-
-        return bundle
-    }
-
-    private fun generateKey(): String {
-        val length = random.nextInt(MIN_KEY_LENGTH, MAX_KEY_LENGTH + 1)
-        return List(length) { ('a'..'z').random(random) }.joinToString("")
     }
 
     private fun generateString(): String {
-        val length = random.nextInt(MIN_KEY_LENGTH, MAX_KEY_LENGTH + 1)
+        val length = random.nextInt(MIN_STRING_LENGTH, MAX_STRING_LENGTH + 1)
         return List(length) { ('a'..'z').random(random) }.joinToString("")
-    }
-
-    private fun putValue(bundle: Bundle, key: String, value: Any) {
-        when (value) {
-            is String -> bundle.putString(key, value)
-            is Int -> bundle.putInt(key, value)
-            is Long -> bundle.putLong(key, value)
-            is Float -> bundle.putFloat(key, value)
-            is Double -> bundle.putDouble(key, value)
-            is Boolean -> bundle.putBoolean(key, value)
-        }
     }
 }

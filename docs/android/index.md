@@ -47,7 +47,7 @@ Today, the Android module adds these Android-specific types:
 | `android.graphics.PointF` | `some<PointF>()` | Random float `x` and `y` |
 | `android.util.Size` | `some<Size>()`   | Random positive integer `width` and `height` |
 | `android.util.SizeF` | `some<SizeF>()`  | Random positive float `width` and `height` |
-| `android.os.Bundle` | `some<Bundle>`   | See [Bundle](bundle.md) |
+| `android.os.Bundle` | `some<Bundle>()` | One random value each for `String`, `Int`, `Long`, `Float`, `Double`, and `Boolean` |
 
 ## Platform constraints
 
