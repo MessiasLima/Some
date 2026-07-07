@@ -47,6 +47,9 @@ For types not listed here, register a [custom factory](custom-factories.md) or s
 | `Map<K, V>` | `some<Map<String, Int>>()` | |
 | `MutableMap<K, V>` | `some<MutableMap<String, Int>>()` | |
 | `Array<T>` | `some<Array<String>>()` | |
+| **Android & Compose** | | |
+| Android framework | `some<Uri>()`, `some<Rect>()`, ... | See [Android](android/index.md) |
+| Jetpack Compose | `some<Dp>()`, `some<Offset>()`, ... | See [Compose](android/compose.md) |
 | **Kotlin constructs** | | |
 | Data classes | `some<MyDataClass>()` | |
 | Sealed classes/interfaces | `some<MySealed>()` | Random subclass, including `object` variants |

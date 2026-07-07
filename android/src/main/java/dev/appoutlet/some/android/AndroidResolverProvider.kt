@@ -12,11 +12,18 @@ import dev.appoutlet.some.android.resolver.SizeResolver
 import dev.appoutlet.some.android.resolver.UriResolver
 import dev.appoutlet.some.android.resolver.UserHandleResolver
 import dev.appoutlet.some.android.resolver.compose.AnnotatedStringResolver
+import dev.appoutlet.some.android.resolver.compose.DpResolver
+import dev.appoutlet.some.android.resolver.compose.IntOffsetResolver
+import dev.appoutlet.some.android.resolver.compose.IntSizeResolver
+import dev.appoutlet.some.android.resolver.compose.OffsetResolver
+import dev.appoutlet.some.android.resolver.compose.SpResolver
 import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverProvider
 import dev.appoutlet.some.core.StrategyProvider
 import kotlin.random.Random
 import dev.appoutlet.some.android.resolver.compose.ColorResolver as ComposeColorResolver
+import dev.appoutlet.some.android.resolver.compose.RectResolver as ComposeRectResolver
+import dev.appoutlet.some.android.resolver.compose.SizeResolver as ComposeSizeResolver
 
 /**
  * Contributes Android-specific resolvers discovered through `ServiceLoader`.
@@ -35,19 +42,26 @@ class AndroidResolverProvider : ResolverProvider {
         random: Random
     ): List<Resolver> {
         return listOf(
-            UriResolver(strategyProvider, random),
             BundleResolver(random),
-            RectResolver(random),
-            RectFResolver(random),
-            PointResolver(random),
-            PointFResolver(random),
-            SizeResolver(random),
-            SizeFResolver(random),
-            PairResolver(random),
-            UserHandleResolver(random),
             ColorResolver(random),
+            PairResolver(random),
+            PointFResolver(random),
+            PointResolver(random),
+            RectFResolver(random),
+            RectResolver(random),
+            SizeFResolver(random),
+            SizeResolver(random),
+            UriResolver(strategyProvider, random),
+            UserHandleResolver(random),
             AnnotatedStringResolver(random),
             ComposeColorResolver(strategyProvider, random),
+            DpResolver(random),
+            IntOffsetResolver(random),
+            IntSizeResolver(random),
+            OffsetResolver(random),
+            ComposeRectResolver(random),
+            ComposeSizeResolver(random),
+            SpResolver(random),
         )
     }
 }

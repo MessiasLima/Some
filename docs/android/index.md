@@ -36,7 +36,7 @@ Use `dev.appoutlet:some-android` in Android projects when you want the shared So
 
 All shared types from [Supported Types](../supported-types.md) are available here too.
 
-Today, the Android module adds these Android-specific types:
+Today, the Android module adds these Android platform types:
 
 | Type | Usage            | Notes |
 |------|------------------|-------|
@@ -51,8 +51,12 @@ Today, the Android module adds these Android-specific types:
 | `android.os.Bundle` | `some<Bundle>()` | One random value each for `String`, `Int`, `Long`, `Float`, `Double`, and `Boolean` |
 | `android.os.UserHandle` | `some<UserHandle>()` | API 24+; generated from a random non-system UID |
 | `android.graphics.Color` | `some<Color>()` | API 26+; generated from random RGB channel values |
-| `androidx.compose.ui.text.AnnotatedString` | `some<AnnotatedString>()` | Non-blank plain text without span styles |
-| `androidx.compose.ui.graphics.Color` | `some<ComposeColor>()` | See [Compose Color](color.md) and [Color Strategy](color.md#color-strategy) |
+
+## Compose support
+
+`some-android` includes specialized support for Jetpack Compose types, including units, geometry, text, and color.
+
+See [Compose](compose.md) for the full list of supported Compose types, including `AnnotatedString` and Compose `Color`.
 
 ## Platform constraints
 
