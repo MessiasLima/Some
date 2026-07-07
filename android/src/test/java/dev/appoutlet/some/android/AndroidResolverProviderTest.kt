@@ -32,27 +32,28 @@ class AndroidResolverProviderTest {
 
         assertEquals(
             listOf(
-                UriResolver::class,
                 BundleResolver::class,
-                RectResolver::class,
-                RectFResolver::class,
-                PointResolver::class,
-                PointFResolver::class,
-                SizeResolver::class,
-                SizeFResolver::class,
-                PairResolver::class,
-                UserHandleResolver::class,
                 ColorResolver::class,
+                PairResolver::class,
+                PointFResolver::class,
+                PointResolver::class,
+                RectFResolver::class,
+                RectResolver::class,
+                SizeFResolver::class,
+                SizeResolver::class,
+                UriResolver::class,
+                UserHandleResolver::class,
                 AnnotatedStringResolver::class,
+                ComposeColorResolver::class,
                 DpResolver::class,
-                SpResolver::class,
-                OffsetResolver::class,
-                ComposeSizeResolver::class,
-                ComposeRectResolver::class,
                 IntOffsetResolver::class,
                 IntSizeResolver::class,
-                ComposeColorResolver::class,
+                OffsetResolver::class,
+                ComposeRectResolver::class,
+                ComposeSizeResolver::class,
+                SpResolver::class,
             ),
+
             resolvers.map { it::class }
         )
     }

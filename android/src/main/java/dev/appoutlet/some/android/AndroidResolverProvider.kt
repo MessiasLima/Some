@@ -42,26 +42,26 @@ class AndroidResolverProvider : ResolverProvider {
         random: Random
     ): List<Resolver> {
         return listOf(
-            UriResolver(strategyProvider, random),
             BundleResolver(random),
-            RectResolver(random),
-            RectFResolver(random),
-            PointResolver(random),
-            PointFResolver(random),
-            SizeResolver(random),
-            SizeFResolver(random),
-            PairResolver(random),
-            UserHandleResolver(random),
             ColorResolver(random),
+            PairResolver(random),
+            PointFResolver(random),
+            PointResolver(random),
+            RectFResolver(random),
+            RectResolver(random),
+            SizeFResolver(random),
+            SizeResolver(random),
+            UriResolver(strategyProvider, random),
+            UserHandleResolver(random),
             AnnotatedStringResolver(random),
             ComposeColorResolver(strategyProvider, random),
             DpResolver(random),
-            SpResolver(random),
-            OffsetResolver(random),
-            ComposeSizeResolver(random),
-            ComposeRectResolver(random),
             IntOffsetResolver(random),
-            IntSizeResolver(random)
+            IntSizeResolver(random),
+            OffsetResolver(random),
+            ComposeRectResolver(random),
+            ComposeSizeResolver(random),
+            SpResolver(random),
         )
     }
 }
