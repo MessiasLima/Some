@@ -1,6 +1,6 @@
 # Compose
 
-Support for Jetpack Compose unit and geometry types is available in the `some-android` module.
+Support for Jetpack Compose unit, geometry, text, and color types is available in the `some-android` module.
 
 ## Supported Compose types
 
@@ -14,3 +14,6 @@ Support for Jetpack Compose unit and geometry types is available in the `some-an
 | `androidx.compose.ui.unit.IntOffset` | `some<IntOffset>()` | Random integer `x` and `y` |
 | `androidx.compose.ui.unit.IntSize` | `some<IntSize>()` | Random positive integer `width` and `height` |
 | `androidx.compose.ui.text.AnnotatedString` | `some<AnnotatedString>()` | Non-blank plain text without span styles |
+| `androidx.compose.ui.graphics.Color` | `some<ComposeColor>()` | See [Compose Color](color.md) and [Color Strategy](color.md#color-strategy) |
+
+See [Android](index.md) for installation and the rest of the Android-specific supported types.

@@ -27,7 +27,8 @@ nav = [
     { "Android" = [
         "android/index.md",
         "android/uri.md",
-        "android/compose.md"
+        "android/compose.md",
+        "android/color.md"
     ] },
     "kotest.md",
     "custom-factories.md",

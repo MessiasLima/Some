@@ -1,7 +1,6 @@
 package dev.appoutlet.some.android.resolver.compose
 
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.sp
 import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.core.ResolverChain
 import org.junit.Assert.assertFalse

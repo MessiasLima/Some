@@ -16,18 +16,19 @@ import dev.appoutlet.some.android.resolver.compose.DpResolver
 import dev.appoutlet.some.android.resolver.compose.IntOffsetResolver
 import dev.appoutlet.some.android.resolver.compose.IntSizeResolver
 import dev.appoutlet.some.android.resolver.compose.OffsetResolver
-import dev.appoutlet.some.android.resolver.compose.RectResolver as ComposeRectResolver
-import dev.appoutlet.some.android.resolver.compose.SizeResolver as ComposeSizeResolver
 import dev.appoutlet.some.android.resolver.compose.SpResolver
 import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverProvider
 import dev.appoutlet.some.core.StrategyProvider
 import kotlin.random.Random
+import dev.appoutlet.some.android.resolver.compose.ColorResolver as ComposeColorResolver
+import dev.appoutlet.some.android.resolver.compose.RectResolver as ComposeRectResolver
+import dev.appoutlet.some.android.resolver.compose.SizeResolver as ComposeSizeResolver
 
 /**
  * Contributes Android-specific resolvers discovered through `ServiceLoader`.
  *
- * The returned resolvers extend the shared `some-core` chain with Android-specific type support.
+ * The returned resolvers extend the shared `some-core` chain with Android framework and Compose type support.
  */
 class AndroidResolverProvider : ResolverProvider {
     /**
@@ -53,6 +54,7 @@ class AndroidResolverProvider : ResolverProvider {
             UserHandleResolver(random),
             ColorResolver(random),
             AnnotatedStringResolver(random),
+            ComposeColorResolver(strategyProvider, random),
             DpResolver(random),
             SpResolver(random),
             OffsetResolver(random),

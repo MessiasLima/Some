@@ -16,13 +16,14 @@ import dev.appoutlet.some.android.resolver.compose.DpResolver
 import dev.appoutlet.some.android.resolver.compose.IntOffsetResolver
 import dev.appoutlet.some.android.resolver.compose.IntSizeResolver
 import dev.appoutlet.some.android.resolver.compose.OffsetResolver
-import dev.appoutlet.some.android.resolver.compose.RectResolver as ComposeRectResolver
-import dev.appoutlet.some.android.resolver.compose.SizeResolver as ComposeSizeResolver
 import dev.appoutlet.some.android.resolver.compose.SpResolver
 import dev.appoutlet.some.config.DefaultStrategyProvider
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.random.Random
+import dev.appoutlet.some.android.resolver.compose.ColorResolver as ComposeColorResolver
+import dev.appoutlet.some.android.resolver.compose.RectResolver as ComposeRectResolver
+import dev.appoutlet.some.android.resolver.compose.SizeResolver as ComposeSizeResolver
 
 class AndroidResolverProviderTest {
     @Test
@@ -49,7 +50,8 @@ class AndroidResolverProviderTest {
                 ComposeSizeResolver::class,
                 ComposeRectResolver::class,
                 IntOffsetResolver::class,
-                IntSizeResolver::class
+                IntSizeResolver::class,
+                ComposeColorResolver::class,
             ),
             resolvers.map { it::class }
         )
