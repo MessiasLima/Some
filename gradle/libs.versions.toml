@@ -1,5 +1,5 @@
 [versions]
-agp = "9.2.1"
+agp = "9.3.1"
 androidxCompose = "1.11.3"
 autoserviceIr = "0.1.5"
 detekt = "1.23.8"
