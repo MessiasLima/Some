@@ -31,6 +31,7 @@ nav = [
         "android/color.md"
     ] },
     "kotest.md",
+    "retrofit.md",
     "custom-factories.md",
     "custom-resolvers.md",
     { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }

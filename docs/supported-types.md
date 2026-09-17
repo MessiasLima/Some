@@ -9,6 +9,8 @@ These supported types are part of the shared API consumed through both `some-cor
 
 For Android-specific support, see [Android](android/index.md).
 
+For Retrofit response support, see [Retrofit2 Integration](retrofit.md).
+
 For types not listed here, register a [custom factory](custom-factories.md) or ship a [custom resolver](custom-resolvers.md).
 
 ## Reference
@@ -47,6 +49,8 @@ For types not listed here, register a [custom factory](custom-factories.md) or s
 | `Map<K, V>` | `some<Map<String, Int>>()` | |
 | `MutableMap<K, V>` | `some<MutableMap<String, Int>>()` | |
 | `Array<T>` | `some<Array<String>>()` | |
+| **Retrofit** | | |
+| `retrofit2.Response<T>` | `some<Response<User>>()` | Requires `some-retrofit` and Retrofit |
 | **Android & Compose** | | |
 | Android framework | `some<Uri>()`, `some<Rect>()`, ... | See [Android](android/index.md) |
 | Jetpack Compose | `some<Dp>()`, `some<Offset>()`, ... | See [Compose](android/compose.md) |

@@ -39,11 +39,12 @@ val user = some<User>()
 
 ## Installation
 
-Some is published as three artifacts:
+Some is published as four artifacts:
 
 - `some-core` for Java and Kotlin/JVM projects
 - `some-android` for Android projects. It re-exports the core API, so you do not need to add `some-core` separately.
 - `some-kotest` for Kotest `Arb` integration. Add it alongside either `some-core` or `some-android`.
+- `some-retrofit` for Retrofit response fixtures. Add it alongside `some-core` and Retrofit.
 
 ```kotlin
 dependencies {
@@ -56,6 +57,10 @@ dependencies {
     // Optional: Kotest property testing integration.
     // Add this alongside either some-core or some-android.
     testImplementation("dev.appoutlet:some-kotest:{version}")
+
+    // Optional: Retrofit response integration.
+    // Retrofit must be declared directly by the consuming project.
+    testImplementation("dev.appoutlet:some-retrofit:{version}")
 }
 ```
 

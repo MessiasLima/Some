@@ -10,7 +10,7 @@ icon: lucide/package-open
 ![Kotlin Android](https://img.shields.io/badge/android-kotlin?style=for-the-badge&logo=android&label=kotlin&color=%231FA95C)
 ![Maven Central Version](https://img.shields.io/maven-central/v/dev.appoutlet/some-core?style=for-the-badge)
 
-A Kotlin test data generation library for JVM and Android tests, with optional Kotest `Arb` integration.
+A Kotlin test data generation library for JVM and Android tests, with optional Kotest `Arb` and Retrofit integrations.
 
 ## The Problem
 
@@ -70,11 +70,12 @@ Writing tests means creating test data — lots of it. Constructing data classes
 
 ## Modules
 
-Some is published as three user-facing artifacts:
+Some is published as four user-facing artifacts:
 
 - `some-core` for Java and Kotlin/JVM projects.
 - `some-android` for Android projects. It re-exports the shared core API, so you do not need to add `some-core` separately.
 - `some-kotest` for Kotest `Arb` integration. Add it alongside either `some-core` or `some-android`.
+- `some-retrofit` for Retrofit response fixtures. Add it alongside `some-core` and Retrofit.
 
 Use [Getting Started](getting-started.md) to install Some and learn the shared API.
 

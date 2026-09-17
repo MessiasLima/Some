@@ -10,6 +10,7 @@ kotlin = "2.4.10"
 kotest = "6.2.4"
 mavenPublish = "0.37.0"
 robolectric = "4.16.1"
+retrofit = "3.0.0"
 
 [libraries]
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
@@ -21,6 +22,7 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref =
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
