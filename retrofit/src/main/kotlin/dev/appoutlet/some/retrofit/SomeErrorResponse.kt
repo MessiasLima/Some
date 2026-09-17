@@ -1,9 +1,9 @@
 package dev.appoutlet.some.retrofit
 
+import dev.appoutlet.some.some
 import okhttp3.Headers
 import okhttp3.Protocol
 import okhttp3.Request
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 
@@ -20,7 +20,7 @@ import retrofit2.Response
  * @throws IllegalArgumentException If the generated response is successful.
  */
 @JvmOverloads
-fun <T> someErrorResponse(
+inline fun <reified T> someErrorResponse(
     code: Int = 400,
     message: String = "Bad Request",
     protocol: Protocol = Protocol.HTTP_1_1,
@@ -35,11 +35,7 @@ fun <T> someErrorResponse(
         .request(request)
         .build()
 
-    if (rawResponse.isSuccessful) {
-        throw IllegalArgumentException("rawResponse must be an error response")
-    }
-
-    return Response.error(emptyErrorBody(), rawResponse)
+    return someErrorResponse(rawResponse)
 }
 
 /**
@@ -50,12 +46,7 @@ fun <T> someErrorResponse(
  * @return An error Retrofit response with a `null` body and empty error body.
  * @throws IllegalArgumentException If [rawResponse] is successful.
  */
-fun <T> someErrorResponse(rawResponse: okhttp3.Response): Response<T> {
-    if (rawResponse.isSuccessful) {
-        throw IllegalArgumentException("rawResponse must be an error response")
-    }
-
-    return Response.error(emptyErrorBody(), rawResponse)
+inline fun <reified T> someErrorResponse(rawResponse: okhttp3.Response): Response<T> {
+    require(rawResponse.isSuccessful.not()) { "rawResponse must be an error response" }
+    return Response.error(some<T>().toString().toResponseBody(), rawResponse)
 }
-
-private fun emptyErrorBody(): ResponseBody = ByteArray(0).toResponseBody()
