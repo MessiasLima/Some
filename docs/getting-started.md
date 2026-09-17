@@ -5,7 +5,7 @@ icon: lucide/graduation-cap
 
 ## Installation
 
-Some is published as three artifacts. Pick one base artifact for your platform. Add `some-kotest` only if you use Kotest property testing.
+Some is published as four artifacts. Pick one base artifact for your platform. Add `some-kotest` only if you use Kotest property testing and `some-retrofit` only if you use Retrofit.
 
 !!! info "Upgrading from an older version?"
 
@@ -24,6 +24,10 @@ dependencies {
     // Optional: Kotest property testing integration.
     // Add this alongside either some-core or some-android.
     testImplementation("dev.appoutlet:some-kotest:{version}")
+
+    // Optional: Retrofit response integration.
+    // Retrofit must be declared directly by the consuming project.
+    testImplementation("dev.appoutlet:some-retrofit:{version}")
 }
 ```
 
@@ -104,6 +108,8 @@ val users = some<List<User>> {
 ```
 
 For more configuration use cases and details, see the [Configuration overview](configuration.md), [Strategies](strategies/index.md), and [Supported Types](supported-types.md).
+
+For Retrofit response fixtures, see the [Retrofit2 Integration](retrofit.md) guide.
 
 ## Requirements
 

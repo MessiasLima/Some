@@ -20,6 +20,7 @@ dependencies {
     dokka(projects.android)
     dokka(projects.core)
     dokka(projects.kotest)
+    dokka(projects.retrofit)
 }
 
 tasks.named("prepareKotlinBuildScriptModel") {
