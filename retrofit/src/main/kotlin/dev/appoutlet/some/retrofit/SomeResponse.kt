@@ -20,6 +20,7 @@ private const val DEFAULT_URL = "http://localhost/"
  * @return A successful Retrofit response containing a generated body.
  * @throws IllegalArgumentException If [code] is outside the successful HTTP status range.
  */
+@JvmOverloads
 inline fun <reified T> someResponse(
     code: Int = 200,
     message: String = "OK",
