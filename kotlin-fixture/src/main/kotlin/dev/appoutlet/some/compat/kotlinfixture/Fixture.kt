@@ -3,12 +3,11 @@ package dev.appoutlet.some.compat.kotlinfixture
 import dev.appoutlet.some.config.SomeConfigBuilder
 import dev.appoutlet.some.some
 
-
 /**
  * Main compatibility generator instance.
  */
 class Fixture @JvmOverloads constructor(val someConfig: SomeConfigBuilder.() -> Unit = {}) {
-    
+
     inline operator fun <reified T> invoke(
         range: Iterable<T> = emptyList(),
         noinline configuration: SomeConfigBuilder.() -> Unit = {}
@@ -34,13 +33,13 @@ class Fixture @JvmOverloads constructor(val someConfig: SomeConfigBuilder.() -> 
     ): Sequence<T> {
         return sequence {
             val value = {
-                 some<T> {
+                some<T> {
                     this.apply(someConfig)
                     this.apply(configuration)
                 }
             }
 
-            when(sequenceStrategy) {
+            when (sequenceStrategy) {
                 is SequenceStrategy.Bounded -> {
                     repeat(times = sequenceStrategy.numberOfElements) {
                         yield(value())
@@ -57,7 +56,7 @@ class Fixture @JvmOverloads constructor(val someConfig: SomeConfigBuilder.() -> 
     }
 
     @JvmOverloads
-    inline fun <reified T> create(noinline configuration:  SomeConfigBuilder.() -> Unit = {}): T {
+    inline fun <reified T> create(noinline configuration: SomeConfigBuilder.() -> Unit = {}): T {
         return some(configuration)
     }
 

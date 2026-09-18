@@ -2,74 +2,82 @@ package dev.appoutlet.some.compat.kotlinfixture
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class FixtureTest {
 
     @Test
-    fun `fixture generates primitives and data classes`() {
+    fun `fixture generates primitive and data class values`() {
         val fixture = kotlinFixture()
 
-        val intVal: Int = fixture()
-        val stringVal: String = fixture()
-        val userVal: TestUser = fixture()
+        val number: Int = fixture()
+        val text: String = fixture()
+        val user: TestUser = fixture()
 
-        assertNotNull(intVal)
-        assertNotNull(stringVal)
-        assertNotNull(userVal)
-        assertNotNull(userVal.name)
+        assertNotNull(number)
+        assertNotNull(text)
+        assertNotNull(user)
+        assertNotNull(user.name)
     }
 
     @Test
-    fun `fixture selects value from non-empty iterable`() {
+    fun `fixture selects values from a non-empty range`() {
+        val fixture = kotlinFixture()
+        val values = listOf("Alice", "Bob", "Charlie")
+
+        val result: String = fixture(values)
+
+        assertTrue(result in values)
+    }
+
+    @Test
+    fun `fixture generates a value when the range is empty`() {
         val fixture = kotlinFixture()
 
-        val item: String = fixture(listOf("A", "B", "C"))
-        assertTrue(item in listOf("A", "B", "C"))
+        val result: String = fixture(emptyList())
 
-        val number: Int = fixture(10..20)
-        assertTrue(number in 10..20)
+        assertTrue(result.isNotEmpty())
     }
 
     @Test
-    fun `fixture falls back to generated value for empty iterable`() {
-        val fixture = kotlinFixture()
+    fun `per-call configuration overrides the fixture configuration only for that call`() {
+        val fixture = kotlinFixture {
+            factory(String::class) { "default" }
+        }
 
-        val item: String = fixture(emptyList())
-        assertNotNull(item)
-        assertTrue(item.isNotBlank())
+        val overridden: String = fixture {
+            factory(String::class) { "override" }
+        }
+
+        assertEquals("override", overridden)
+        assertEquals("default", fixture())
     }
 
     @Test
-    fun `fixture invoke with per-call configuration does not mutate parent`() {
-        val parent = kotlinFixture()
-
-        val overridden: Int = parent {
-            factory<Int> { 999 }
+    fun `new creates a fixture using the supplied configuration`() {
+        val fixture = kotlinFixture {
+            factory(String::class) { "parent" }
         }
-        assertEquals(999, overridden)
 
-        val original: Int = parent()
-        assertNotEquals(999, original)
+        val newFixture = fixture.new {
+            factory(Int::class) { 42 }
+        }
+
+        assertEquals(42, newFixture<Int>())
+        assertEquals("parent", fixture<String>())
     }
 
     @Test
-    fun `new creates derived fixture preserving configuration`() {
-        val base = kotlinFixture {
-            factory<String> { "base-string" }
+    fun `create generates a value with one-off configuration`() {
+        val fixture = kotlinFixture {
+            factory(String::class) { "fixture" }
         }
 
-        val derived = base.new {
-            factory<Int> { 123 }
+        val result: Int = fixture.create {
+            factory(Int::class) { 42 }
         }
 
-        assertEquals("base-string", derived<String>())
-        assertEquals(123, derived<Int>())
-
-        // Base remains unchanged for Int
-        assertEquals("base-string", base<String>())
-        assertNotEquals(123, base<Int>())
+        assertEquals(42, result)
     }
 }

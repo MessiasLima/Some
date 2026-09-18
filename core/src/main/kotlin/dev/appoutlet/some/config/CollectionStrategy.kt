@@ -14,7 +14,7 @@ data class CollectionStrategy(
         require(sizeRange.last >= sizeRange.first) { "sizeRange.end must be greater than or equal to sizeRange.start" }
     }
 
-    constructor(size: Int): this(size..size)
+    constructor(size: Int) : this(size..size)
 
     companion object {
         /**
