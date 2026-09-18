@@ -41,15 +41,15 @@ class NullableResolver(
      * @return `null` or a generated non-null value for [type].
      */
     override fun resolve(type: KType, chain: ResolverChain): Any? {
-        val isCircular = chain.stack.dropLast(1).any {
-            it.withNullability(false) == type.withNullability(false)
-        }
-
         return when (nullableStrategy) {
             is NullableStrategy.NullOnCircularReference -> {
                 try {
                     createNonNullInstance(type, chain)
                 } catch (e: SomeCircularReferenceException) {
+                    val isCircular = chain.stack.dropLast(1).any {
+                        it.withNullability(false) == type.withNullability(false)
+                    }
+
                     if (isCircular) {
                         null
                     } else {
