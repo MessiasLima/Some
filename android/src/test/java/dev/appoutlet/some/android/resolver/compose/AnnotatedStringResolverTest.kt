@@ -12,7 +12,7 @@ class AnnotatedStringResolverTest {
     @Test
     fun `AnnotatedStringResolver generates AnnotatedString values`() {
         val resolver = AnnotatedStringResolver(Random.Default)
-        val result = resolver.resolve(typeOf<AnnotatedString>(), testChain)
+        val result = resolver.resolve(typeOf<AnnotatedString>(), emptyTestChain)
         assertTrue(result is AnnotatedString)
     }
 
@@ -21,7 +21,7 @@ class AnnotatedStringResolverTest {
         val resolver = AnnotatedStringResolver(Random.Default)
 
         repeat(20) {
-            val result = resolver.resolve(typeOf<AnnotatedString>(), testChain) as AnnotatedString
+            val result = resolver.resolve(typeOf<AnnotatedString>(), emptyTestChain) as AnnotatedString
             assertTrue("Generated AnnotatedString text should not be blank", result.text.isNotBlank())
         }
     }
@@ -37,9 +37,5 @@ class AnnotatedStringResolverTest {
         val resolver = AnnotatedStringResolver(Random.Default)
         assertFalse(resolver.canResolve(typeOf<String>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

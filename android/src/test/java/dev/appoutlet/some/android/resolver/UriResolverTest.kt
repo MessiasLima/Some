@@ -37,7 +37,7 @@ class UriResolverTest {
         )
 
         repeat(20) {
-            val result = resolver.resolve(typeOf<Uri>(), testChain) as Uri
+            val result = resolver.resolve(typeOf<Uri>(), emptyTestChain) as Uri
             assertTrue(
                 "Expected scheme in [content, file, https] but got ${result.scheme}",
                 result.scheme in setOf("content", "file", "https")
@@ -54,11 +54,11 @@ class UriResolverTest {
         )
 
         repeat(10) {
-            val result = resolver.resolve(typeOf<Uri>(), testChain) as Uri
+            val result = resolver.resolve(typeOf<Uri>(), emptyTestChain) as Uri
             assertEquals("https", result.scheme)
             assertTrue(
                 "Generated URL $result does not match expected URL shape",
-                HTTPS_URL_REGEX.matches(result.toString())
+                httpsUrlRegex.matches(result.toString())
             )
         }
     }
@@ -71,7 +71,7 @@ class UriResolverTest {
         )
 
         repeat(10) {
-            val result = resolver.resolve(typeOf<Uri>(), testChain) as Uri
+            val result = resolver.resolve(typeOf<Uri>(), emptyTestChain) as Uri
             assertEquals("content", result.scheme)
             assertUriShape(result)
         }
@@ -85,7 +85,7 @@ class UriResolverTest {
         )
 
         repeat(10) {
-            val result = resolver.resolve(typeOf<Uri>(), testChain) as Uri
+            val result = resolver.resolve(typeOf<Uri>(), emptyTestChain) as Uri
             assertEquals("file", result.scheme)
             assertUriShape(result)
         }
@@ -96,7 +96,7 @@ class UriResolverTest {
         val resolver = UriResolver(DefaultStrategyProvider(), Random.Default)
 
         repeat(20) {
-            val result = resolver.resolve(typeOf<Uri>(), testChain) as Uri
+            val result = resolver.resolve(typeOf<Uri>(), emptyTestChain) as Uri
             val reparsed = Uri.parse(result.toString())
             assertNotNull(reparsed)
             assertEquals(result.scheme, reparsed.scheme)
@@ -106,7 +106,7 @@ class UriResolverTest {
     @Test
     fun `Default strategy is Random`() {
         val resolver = UriResolver(DefaultStrategyProvider(), Random.Default)
-        val result = resolver.resolve(typeOf<Uri>(), testChain) as Uri
+        val result = resolver.resolve(typeOf<Uri>(), emptyTestChain) as Uri
         assertTrue(
             "Expected scheme in [content, file, https] but got ${result.scheme}",
             result.scheme in setOf("content", "file", "https")
@@ -120,15 +120,11 @@ class UriResolverTest {
         assertTrue("Path should not be empty", uri.path?.isNotEmpty() == true)
     }
 
-    companion object {
-        private val testChain = emptyTestChain
-
-        private val HTTPS_URL_REGEX = (
-            "^https://" +
-                "[a-z0-9]{3,8}\\.[a-z0-9]{2,3}" +
-                "(/[a-z0-9]{2,6})+" +
-                "(\\?[a-z0-9]{2,5}=[a-z0-9]{2,5}(&[a-z0-9]{2,5}=[a-z0-9]{2,5})*)?" +
-                "(#[a-z0-9]{2,6})?$"
-            ).toRegex()
-    }
+    private val httpsUrlRegex = (
+        "^https://" +
+            "[a-z0-9]{3,8}\\.[a-z0-9]{2,3}" +
+            "(/[a-z0-9]{2,6})+" +
+            "(\\?[a-z0-9]{2,5}=[a-z0-9]{2,5}(&[a-z0-9]{2,5}=[a-z0-9]{2,5})*)?" +
+            "(#[a-z0-9]{2,6})?$"
+        ).toRegex()
 }

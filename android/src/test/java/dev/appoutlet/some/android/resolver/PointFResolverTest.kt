@@ -20,7 +20,7 @@ class PointFResolverTest {
     @Test
     fun `PointFResolver generates PointF values`() {
         val resolver = PointFResolver(Random.Default)
-        val result = resolver.resolve(typeOf<PointF>(), testChain)
+        val result = resolver.resolve(typeOf<PointF>(), emptyTestChain)
         assertTrue(result is PointF)
     }
 
@@ -40,9 +40,5 @@ class PointFResolverTest {
         assertFalse(resolver.canResolve(typeOf<Point>()))
         assertFalse(resolver.canResolve(typeOf<Size>()))
         assertFalse(resolver.canResolve(typeOf<SizeF>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

@@ -30,7 +30,7 @@ class BundleResolverTest {
     @Test
     fun `BundleResolver generates non-null Bundle`() {
         val resolver = BundleResolver(Random.Default)
-        val result = resolver.resolve(typeOf<Bundle>(), testChain)
+        val result = resolver.resolve(typeOf<Bundle>(), emptyTestChain)
         assertNotNull(result)
         assertTrue(result is Bundle)
     }
@@ -40,7 +40,7 @@ class BundleResolverTest {
         val resolver = BundleResolver(Random.Default)
 
         repeat(20) {
-            val result = resolver.resolve(typeOf<Bundle>(), testChain) as Bundle
+            val result = resolver.resolve(typeOf<Bundle>(), emptyTestChain) as Bundle
 
             assertEquals(6, result.size())
             assertEquals(setOf("string", "int", "long", "float", "double", "boolean"), result.keySet())
@@ -57,8 +57,4 @@ class BundleResolverTest {
 
     @Suppress("DEPRECATION")
     private fun Bundle.getValue(key: String): Any? = get(key)
-
-    companion object {
-        private val testChain = emptyTestChain
-    }
 }

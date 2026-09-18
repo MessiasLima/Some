@@ -15,7 +15,7 @@ class SpResolverTest {
     @Test
     fun `SpResolver generates TextUnit values`() {
         val resolver = SpResolver(Random.Default)
-        val result = resolver.resolve(typeOf<TextUnit>(), testChain)
+        val result = resolver.resolve(typeOf<TextUnit>(), emptyTestChain)
         assertTrue(result is TextUnit)
         assertTrue((result as TextUnit).isSp)
     }
@@ -24,7 +24,7 @@ class SpResolverTest {
     fun `SpResolver generates values within range`() {
         val resolver = SpResolver(Random.Default)
         repeat(100) {
-            val result = resolver.resolve(typeOf<TextUnit>(), testChain) as TextUnit
+            val result = resolver.resolve(typeOf<TextUnit>(), emptyTestChain) as TextUnit
             assertTrue(result.value in 0f..100f)
         }
     }
@@ -40,9 +40,5 @@ class SpResolverTest {
         val resolver = SpResolver(Random.Default)
         assertFalse(resolver.canResolve(typeOf<Float>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

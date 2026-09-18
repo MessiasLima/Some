@@ -15,7 +15,7 @@ class DpResolverTest {
     @Test
     fun `DpResolver generates Dp values`() {
         val resolver = DpResolver(Random.Default)
-        val result = resolver.resolve(typeOf<Dp>(), testChain)
+        val result = resolver.resolve(typeOf<Dp>(), emptyTestChain)
         assertTrue(result is Dp)
     }
 
@@ -23,7 +23,7 @@ class DpResolverTest {
     fun `DpResolver generates values within range`() {
         val resolver = DpResolver(Random.Default)
         repeat(100) {
-            val result = resolver.resolve(typeOf<Dp>(), testChain) as Dp
+            val result = resolver.resolve(typeOf<Dp>(), emptyTestChain) as Dp
             assertTrue(result.value in 0f..1000f)
         }
     }
@@ -39,9 +39,5 @@ class DpResolverTest {
         val resolver = DpResolver(Random.Default)
         assertFalse(resolver.canResolve(typeOf<Float>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

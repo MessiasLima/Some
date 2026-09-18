@@ -19,7 +19,7 @@ class UserHandleResolverTest {
     @Config(sdk = [26])
     fun `UserHandleResolver generates UserHandle values when API level is supported`() {
         val resolver = UserHandleResolver(Random.Default)
-        val result = resolver.resolve(typeOf<UserHandle>(), testChain)
+        val result = resolver.resolve(typeOf<UserHandle>(), emptyTestChain)
         assertTrue(result is UserHandle)
     }
 
@@ -36,9 +36,5 @@ class UserHandleResolverTest {
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<Color>()))
         assertFalse(resolver.canResolve(typeOf<Pair<String, Int>>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

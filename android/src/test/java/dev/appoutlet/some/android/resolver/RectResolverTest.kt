@@ -20,7 +20,7 @@ class RectResolverTest {
     @Test
     fun `RectResolver generates Rect values`() {
         val resolver = RectResolver(Random.Default)
-        val result = resolver.resolve(typeOf<Rect>(), testChain)
+        val result = resolver.resolve(typeOf<Rect>(), emptyTestChain)
         assertTrue(result is Rect)
     }
 
@@ -46,13 +46,9 @@ class RectResolverTest {
     fun `RectResolver generates rects with valid bounds`() {
         val resolver = RectResolver(Random.Default)
         repeat(20) {
-            val result = resolver.resolve(typeOf<Rect>(), testChain) as Rect
+            val result = resolver.resolve(typeOf<Rect>(), emptyTestChain) as Rect
             assertTrue("left should be less than right", result.left < result.right)
             assertTrue("top should be less than bottom", result.top < result.bottom)
         }
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

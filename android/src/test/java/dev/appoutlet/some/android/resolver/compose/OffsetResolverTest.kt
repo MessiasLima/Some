@@ -15,7 +15,7 @@ class OffsetResolverTest {
     @Test
     fun `OffsetResolver generates Offset values`() {
         val resolver = OffsetResolver(Random.Default)
-        val result = resolver.resolve(typeOf<Offset>(), testChain)
+        val result = resolver.resolve(typeOf<Offset>(), emptyTestChain)
         assertTrue(result is Offset)
     }
 
@@ -30,9 +30,5 @@ class OffsetResolverTest {
         val resolver = OffsetResolver(Random.Default)
         assertFalse(resolver.canResolve(typeOf<Float>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

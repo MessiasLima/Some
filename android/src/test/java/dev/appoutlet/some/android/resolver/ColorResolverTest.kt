@@ -19,7 +19,7 @@ class ColorResolverTest {
     @Config(sdk = [26])
     fun `ColorResolver generates Color values`() {
         val resolver = ColorResolver(Random.Default)
-        val result = resolver.resolve(typeOf<Color>(), testChain)
+        val result = resolver.resolve(typeOf<Color>(), emptyTestChain)
         assertTrue(result is Color)
     }
 
@@ -36,9 +36,5 @@ class ColorResolverTest {
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<UserHandle>()))
         assertFalse(resolver.canResolve(typeOf<Pair<String, Int>>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

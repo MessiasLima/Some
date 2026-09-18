@@ -15,7 +15,7 @@ class RectResolverTest {
     @Test
     fun `RectResolver generates Rect values`() {
         val resolver = RectResolver(Random.Default)
-        val result = resolver.resolve(typeOf<Rect>(), testChain)
+        val result = resolver.resolve(typeOf<Rect>(), emptyTestChain)
         assertTrue(result is Rect)
     }
 
@@ -23,7 +23,7 @@ class RectResolverTest {
     fun `RectResolver generates valid bounds`() {
         val resolver = RectResolver(Random.Default)
         repeat(100) {
-            val result = resolver.resolve(typeOf<Rect>(), testChain) as Rect
+            val result = resolver.resolve(typeOf<Rect>(), emptyTestChain) as Rect
             assertTrue(result.left < result.right)
             assertTrue(result.top < result.bottom)
         }
@@ -40,9 +40,5 @@ class RectResolverTest {
         val resolver = RectResolver(Random.Default)
         assertFalse(resolver.canResolve(typeOf<Float>()))
         assertFalse(resolver.canResolve(typeOf<Int>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

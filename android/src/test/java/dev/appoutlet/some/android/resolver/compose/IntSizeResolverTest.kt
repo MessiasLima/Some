@@ -15,7 +15,7 @@ class IntSizeResolverTest {
     @Test
     fun `IntSizeResolver generates IntSize values`() {
         val resolver = IntSizeResolver(Random.Default)
-        val result = resolver.resolve(typeOf<IntSize>(), testChain)
+        val result = resolver.resolve(typeOf<IntSize>(), emptyTestChain)
         assertTrue(result is IntSize)
     }
 
@@ -23,7 +23,7 @@ class IntSizeResolverTest {
     fun `IntSizeResolver generates positive dimensions`() {
         val resolver = IntSizeResolver(Random.Default)
         repeat(100) {
-            val result = resolver.resolve(typeOf<IntSize>(), testChain) as IntSize
+            val result = resolver.resolve(typeOf<IntSize>(), emptyTestChain) as IntSize
             assertTrue(result.width >= 0)
             assertTrue(result.height >= 0)
         }
@@ -40,9 +40,5 @@ class IntSizeResolverTest {
         val resolver = IntSizeResolver(Random.Default)
         assertFalse(resolver.canResolve(typeOf<Int>()))
         assertFalse(resolver.canResolve(typeOf<Float>()))
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }

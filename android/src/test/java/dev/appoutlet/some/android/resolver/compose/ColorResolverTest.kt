@@ -17,7 +17,7 @@ class ColorResolverTest {
     fun `ColorResolver generates Compose Color values in default RandomArgb mode`() {
         val resolver = ColorResolver(DefaultStrategyProvider(), FloatSequenceRandom(0.1f, 0.2f, 0.3f, 0.4f))
 
-        val result = resolver.resolve(typeOf<Color>(), testChain) as Color
+        val result = resolver.resolve(typeOf<Color>(), emptyTestChain) as Color
 
         assertEquals(Color(0.1f, 0.2f, 0.3f, 0.4f), result)
     }
@@ -29,7 +29,7 @@ class ColorResolverTest {
             Random.Default
         )
 
-        val result = resolver.resolve(typeOf<Color>(), testChain) as Color
+        val result = resolver.resolve(typeOf<Color>(), emptyTestChain) as Color
 
         assertNotNull(result)
     }
@@ -43,7 +43,7 @@ class ColorResolverTest {
         )
 
         repeat(10) {
-            val result = resolver.resolve(typeOf<Color>(), testChain) as Color
+            val result = resolver.resolve(typeOf<Color>(), emptyTestChain) as Color
             assertEquals(expected, result)
         }
     }
@@ -71,9 +71,5 @@ class ColorResolverTest {
         override fun nextFloat(): Float {
             return values.getOrElse(index++) { error("No more float values configured for test random") }
         }
-    }
-
-    companion object {
-        private val testChain = emptyTestChain
     }
 }
