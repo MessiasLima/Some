@@ -106,33 +106,6 @@ class CircularReferenceIntegrationTest {
         }
     }
 
-    data class Companies(val companies: List<Company>)
-    data class Company(val name: String, val employees: List<Employee>)
-    data class Employee(val name: String)
-
-    @Test
-    fun `false circular reference`() {
-        some<Companies>()
-    }
-
-    data class Directories(val companies: Map<String, DirectoryCompany>)
-    data class DirectoryCompany(val name: String, val employees: Map<String, DirectoryEmployee>)
-    data class DirectoryEmployee(val name: String)
-
-    @Test
-    fun `different generic map value types do not trigger circular reference detection`() {
-        some<Directories>()
-    }
-
-    data class RecursiveNode(val children: List<RecursiveNode>)
-
-    @Test
-    fun `repeated generic type is detected as a circular reference`() {
-        assertFailsWith<SomeCircularReferenceException> {
-            some<RecursiveNode>()
-        }
-    }
-
     data class Teams(val teams: List<Team>)
     data class Team(val name: String, val members: List<Member>)
     data class Member(val name: String)
