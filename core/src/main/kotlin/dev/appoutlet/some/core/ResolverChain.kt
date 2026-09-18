@@ -4,6 +4,7 @@ import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeUnresolvableTypeException
 import kotlin.reflect.KType
+import kotlin.reflect.full.withNullability
 
 /**
  * Resolution session that manages the type resolution chain and tracks circular dependencies.
@@ -61,20 +62,22 @@ class ResolverChain(
     }
 
     /**
-     * Returns whether [type] would repeat a classifier already on the resolution stack.
+     * Returns whether [type] would repeat a type already on the resolution stack.
      *
-     * Classifier comparison treats `T` and `T?` as the same logical type, which is required to detect recursive
-     * fields such as `data class Node(val next: Node?)`. The non-nullable case immediately after a nullable stack
-     * entry is not circular: that is the expected path where [dev.appoutlet.some.resolver.NullableResolver]
-     * unwraps `T?` into `T` before resolving the concrete value.
+     * Full type comparison ignoring only outer nullability treats `T` and `T?` as the same logical type, which is
+     * required to detect recursive fields such as `data class Node(val next: Node?)`. The non-nullable case
+     * immediately after a nullable stack entry is not circular: that is the expected path where
+     * [dev.appoutlet.some.resolver.NullableResolver] unwraps `T?` into `T` before resolving the concrete value.
      */
     private fun detectCircularReference(type: KType): Boolean {
-        val sameClassifierDetected = resolutionStack.any { it.classifier == type.classifier }
+        val normalizedType = type.withNullability(false)
+        val sameTypeDetected = resolutionStack.any { it.withNullability(false) == normalizedType }
 
         return when {
-            sameClassifierDetected.not() -> false
+            sameTypeDetected.not() -> false
             type.isMarkedNullable -> true
-            resolutionStack.last().isMarkedNullable -> false
+            resolutionStack.last().isMarkedNullable &&
+                resolutionStack.last().withNullability(false) == normalizedType -> false
             else -> true
         }
     }

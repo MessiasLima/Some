@@ -105,4 +105,13 @@ class CircularReferenceIntegrationTest {
             }
         }
     }
+
+    data class Teams(val teams: List<Team>)
+    data class Team(val name: String, val members: List<Member>)
+    data class Member(val name: String)
+
+    @Test
+    fun `different generic collection element types do not trigger circular reference detection`() {
+        some<Teams>()
+    }
 }
