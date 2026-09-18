@@ -9,6 +9,7 @@ package dev.appoutlet.some.config
  *
  * - [UseDefault] – (Default) Uses the Kotlin default value for optional parameters.
  * - [Generate] – Generates a value for optional parameters through the resolver chain.
+ * - [Random] – Randomly uses the Kotlin default or generates a value according to a probability.
  *
  * ## Example Usage
  *
