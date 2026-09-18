@@ -2,9 +2,8 @@ package dev.appoutlet.some.android.resolver.compose
 
 import androidx.compose.ui.graphics.Color
 import dev.appoutlet.some.android.strategy.ColorStrategy
+import dev.appoutlet.some.android.test.emptyTestChain
 import dev.appoutlet.some.config.DefaultStrategyProvider
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.core.ResolverChain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -12,7 +11,6 @@ import org.junit.Test
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.assertNotNull
-import dev.appoutlet.some.android.test.emptyTestChain
 
 class ColorResolverTest {
     @Test

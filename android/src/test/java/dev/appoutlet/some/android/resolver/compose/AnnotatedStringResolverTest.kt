@@ -1,14 +1,12 @@
 package dev.appoutlet.some.android.resolver.compose
 
 import androidx.compose.ui.text.AnnotatedString
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.android.test.emptyTestChain
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.random.Random
 import kotlin.reflect.typeOf
-import dev.appoutlet.some.android.test.emptyTestChain
 
 class AnnotatedStringResolverTest {
     @Test

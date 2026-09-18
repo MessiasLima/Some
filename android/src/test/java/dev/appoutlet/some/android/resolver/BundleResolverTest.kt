@@ -1,8 +1,7 @@
 package dev.appoutlet.some.android.resolver
 
 import android.os.Bundle
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.android.test.emptyTestChain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -12,7 +11,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
 import kotlin.reflect.typeOf
-import dev.appoutlet.some.android.test.emptyTestChain
 
 @RunWith(RobolectricTestRunner::class)
 class BundleResolverTest {

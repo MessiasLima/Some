@@ -6,8 +6,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.util.Size
 import android.util.SizeF
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.android.test.emptyTestChain
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -15,7 +14,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
 import kotlin.reflect.typeOf
-import dev.appoutlet.some.android.test.emptyTestChain
 
 @RunWith(RobolectricTestRunner::class)
 class PointResolverTest {

@@ -2,9 +2,8 @@ package dev.appoutlet.some.android.resolver
 
 import android.net.Uri
 import dev.appoutlet.some.android.strategy.UriStrategy
+import dev.appoutlet.some.android.test.emptyTestChain
 import dev.appoutlet.some.config.DefaultStrategyProvider
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.core.ResolverChain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
 import kotlin.reflect.typeOf
-import dev.appoutlet.some.android.test.emptyTestChain
 
 @RunWith(RobolectricTestRunner::class)
 class UriResolverTest {

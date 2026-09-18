@@ -3,8 +3,7 @@ package dev.appoutlet.some.android.resolver
 import android.graphics.Color
 import android.os.UserHandle
 import android.util.Pair
-import dev.appoutlet.some.config.NullableStrategy
-import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.android.test.emptyTestChain
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -13,7 +12,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.random.Random
 import kotlin.reflect.typeOf
-import dev.appoutlet.some.android.test.emptyTestChain
 
 @RunWith(RobolectricTestRunner::class)
 class UserHandleResolverTest {

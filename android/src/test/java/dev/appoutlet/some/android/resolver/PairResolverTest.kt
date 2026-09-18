@@ -3,7 +3,6 @@ package dev.appoutlet.some.android.resolver
 import android.graphics.Color
 import android.os.UserHandle
 import android.util.Pair
-import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
 import org.junit.Assert.assertEquals
