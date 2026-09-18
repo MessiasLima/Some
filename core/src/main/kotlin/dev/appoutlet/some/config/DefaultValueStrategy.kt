@@ -38,6 +38,17 @@ sealed interface DefaultValueStrategy : Strategy {
      */
     data object Generate : DefaultValueStrategy
 
+    /**
+     * Generates a value for optional parameters with a specified probability using the shared random source.
+     *
+     * @property probability The probability (between 0.0 and 1.0) that an optional parameter will be generated.
+     */
+    data class Random(val probability: Float = 0.5f) : DefaultValueStrategy {
+        init {
+            require(probability in 0f..1f) { "Probability must be between 0.0 and 1.0" }
+        }
+    }
+
     companion object {
         /**
          * The default default-value strategy.
