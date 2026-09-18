@@ -11,7 +11,8 @@ nav = [
     "getting-started.md",
     { "Migration" = [
         "migration/index.md",
-        "migration/0.2.1-to-0.2.2.md"
+        "migration/0.2.1-to-0.2.2.md",
+        "migration/kotlin-fixture-to-some.md"
     ] },
     "configuration.md",
     { "Strategies" = [

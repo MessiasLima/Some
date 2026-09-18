@@ -9,6 +9,7 @@ package dev.appoutlet.some.config
  *
  * - [UseDefault] – (Default) Uses the Kotlin default value for optional parameters.
  * - [Generate] – Generates a value for optional parameters through the resolver chain.
+ * - [Random] – Randomly uses the Kotlin default or generates a value according to a probability.
  *
  * ## Example Usage
  *
@@ -37,6 +38,17 @@ sealed interface DefaultValueStrategy : Strategy {
      * they have default values in their constructor.
      */
     data object Generate : DefaultValueStrategy
+
+    /**
+     * Generates a value for optional parameters with a specified probability using the shared random source.
+     *
+     * @property probability The probability (between 0.0 and 1.0) that an optional parameter will be generated.
+     */
+    data class Random(val probability: Float = 0.5f) : DefaultValueStrategy {
+        init {
+            require(probability in 0f..1f) { "Probability must be between 0.0 and 1.0" }
+        }
+    }
 
     companion object {
         /**

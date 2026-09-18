@@ -21,6 +21,7 @@ dependencies {
     dokka(projects.core)
     dokka(projects.kotest)
     dokka(projects.retrofit)
+    dokka(projects.kotlinFixture)
 }
 
 tasks.named("prepareKotlinBuildScriptModel") {

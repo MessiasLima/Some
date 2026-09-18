@@ -4,6 +4,7 @@ import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 pluginManagement {
     repositories {
         google()
+        maven("https://maven-central.storage-download.googleapis.com/maven2/")
         mavenCentral()
         maven("https://plugins.gradle.org/m2/")
     }
@@ -12,6 +13,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         google()
+        maven("https://maven-central.storage-download.googleapis.com/maven2/")
         mavenCentral()
     }
 }
@@ -29,6 +31,7 @@ include(":core")
 include(":android")
 include(":kotest")
 include(":retrofit")
+include(":kotlin-fixture")
 
 kover {
     enableCoverage()

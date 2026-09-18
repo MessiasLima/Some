@@ -139,8 +139,13 @@ class ClassResolver(
     ): Any? {
         val args = constructor.parameters.mapNotNull { param ->
             val propertyFactory = propertyFactories[kClass to param.name]
-            val shouldGenerate = !param.isOptional ||
-                defaultValueStrategy == DefaultValueStrategy.Generate
+            val shouldGenerate = when {
+                !param.isOptional -> true
+                defaultValueStrategy == DefaultValueStrategy.Generate -> true
+                defaultValueStrategy is DefaultValueStrategy.Random ->
+                    random.nextFloat() < defaultValueStrategy.probability
+                else -> false
+            }
 
             when {
                 propertyFactory != null -> resolveByPropertyFactory(chain, param, propertyFactory)

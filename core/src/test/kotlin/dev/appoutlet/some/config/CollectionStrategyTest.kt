@@ -35,11 +35,18 @@ class CollectionStrategyTest {
     }
 
     @Test
-    fun `CollectionStrategy rejects range where end equals start`() {
-        val exception = assertFailsWith<IllegalArgumentException> {
-            CollectionStrategy(5..5)
-        }
-        assertEquals("sizeRange.end must be greater than or equal to sizeRange.start", exception.message)
+    fun `CollectionStrategy accepts range where end equals start`() {
+        val strategy = CollectionStrategy(5..5)
+
+        assertEquals(5, strategy.sizeRange.first)
+        assertEquals(5, strategy.sizeRange.last)
+    }
+
+    @Test
+    fun `CollectionStrategy accepts a fixed size`() {
+        val strategy = CollectionStrategy(5)
+
+        assertEquals(5..5, strategy.sizeRange)
     }
 
     @Suppress("InvalidRange")

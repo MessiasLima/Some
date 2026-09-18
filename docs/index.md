@@ -70,12 +70,13 @@ Writing tests means creating test data — lots of it. Constructing data classes
 
 ## Modules
 
-Some is published as four user-facing artifacts:
+Some is published as five user-facing artifacts:
 
 - `some-core` for Java and Kotlin/JVM projects.
 - `some-android` for Android projects. It re-exports the shared core API, so you do not need to add `some-core` separately.
 - `some-kotest` for Kotest `Arb` integration. Add it alongside either `some-core` or `some-android`.
 - `some-retrofit` for Retrofit response fixtures. Add it alongside `some-core` and Retrofit.
+- `some-kotlin-fixture` for Appmattus KotlinFixture compatibility and migration.
 
 Use [Getting Started](getting-started.md) to install Some and learn the shared API.
 
