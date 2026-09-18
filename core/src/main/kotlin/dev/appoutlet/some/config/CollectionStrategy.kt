@@ -11,8 +11,10 @@ data class CollectionStrategy(
 
     init {
         require(sizeRange.first > -1) { "sizeRange.start must be positive" }
-        require(sizeRange.last > sizeRange.first) { "sizeRange.end must be greater than or equal to sizeRange.start" }
+        require(sizeRange.last >= sizeRange.first) { "sizeRange.end must be greater than or equal to sizeRange.start" }
     }
+
+    constructor(size: Int): this(size..size)
 
     companion object {
         /**
