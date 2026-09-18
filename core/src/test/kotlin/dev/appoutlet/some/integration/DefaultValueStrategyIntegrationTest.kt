@@ -39,6 +39,24 @@ class DefaultValueStrategyIntegrationTest {
     }
 
     @Test
+    fun `should use default value when strategy is Random with probability 0_0`() {
+        val result: OptionalData = some {
+            strategy(DefaultValueStrategy.Random(probability = 0.0f))
+        }
+
+        assertEquals("default value", result.optional)
+    }
+
+    @Test
+    fun `should generate value when strategy is Random with probability 1_0`() {
+        val result: OptionalData = some {
+            strategy(DefaultValueStrategy.Random(probability = 1.0f))
+        }
+
+        assertNotEquals("default value", result.optional)
+    }
+
+    @Test
     fun `property factory should take precedence over UseDefault`() {
         val result: OptionalData = some {
             strategy(DefaultValueStrategy.UseDefault)
