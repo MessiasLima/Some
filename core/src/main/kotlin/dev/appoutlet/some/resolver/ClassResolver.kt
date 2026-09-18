@@ -178,7 +178,6 @@ class ClassResolver(
             random = random,
             resolutionStack = chain.stack,
             strategyProvider = strategyProvider,
-            resolver = chain::resolve,
         )
 
         return param to propertyFactory(context)

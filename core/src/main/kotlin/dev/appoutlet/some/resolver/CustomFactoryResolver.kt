@@ -60,7 +60,6 @@ class CustomFactoryResolver(
             random = random,
             resolutionStack = chain.stack,
             strategyProvider = strategyProvider,
-            resolver = chain::resolve,
         )
 
         return typeFactory.invoke(context)

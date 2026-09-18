@@ -2,7 +2,6 @@ package dev.appoutlet.some.core
 
 import kotlin.random.Random
 import kotlin.reflect.KType
-import kotlin.reflect.typeOf
 
 /**
  * Runtime context provided as the receiver for custom factory functions.
@@ -36,17 +35,9 @@ import kotlin.reflect.typeOf
  * @property random Random source for factory-generated values. This respects the configured seed when one is set.
  * @property resolutionStack Types currently being resolved, ordered from the outermost request to the current type.
  * @property strategyProvider Provides access to all registered generation strategies by their base type.
- * @property resolver Optional function allowing custom factories to perform nested resolution via the active chain.
  */
 data class FixtureContext(
     val random: Random,
     val resolutionStack: List<KType>,
     val strategyProvider: StrategyProvider,
-    val resolver: ((KType) -> Any?)? = null,
-) {
-    /**
-     * Generates a fixture value of type [T] through the active resolver chain.
-     */
-    inline fun <reified T> fixture(): T =
-        (resolver?.invoke(typeOf<T>()) ?: error("Resolver is not available in this context")) as T
-}
+)
