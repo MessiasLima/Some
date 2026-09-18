@@ -63,7 +63,7 @@ dependencies {
     // Retrofit must be declared directly by the consuming project.
     testImplementation("dev.appoutlet:some-retrofit:{version}")
 
-    // Optional: Appmattus KotlinFixture compatibility.
+    // Optional: Appmattus KotlinFixture compatibility. For better migration
     testImplementation("dev.appoutlet:some-kotlin-fixture:{version}")
 }
 ```

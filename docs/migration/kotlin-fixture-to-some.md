@@ -44,14 +44,21 @@ Replace the Appmattus `fixture` dependency with `some-kotlin-fixture`:
 
 ## 2. Import Replacement
 
-Update wildcard imports in your test files:
+Replace the Appmattus imports with explicit imports for the compatibility symbols you actually use:
 
 ```kotlin
 // Remove:
 import com.appmattus.kotlinfixture.kotlinFixture
 
-// Replace with:
-import dev.appoutlet.some.compat.kotlinfixture.*
+// Add (import only what you use):
+import dev.appoutlet.some.compat.kotlinfixture.Fixture
+import dev.appoutlet.some.compat.kotlinfixture.NullabilityStrategy
+import dev.appoutlet.some.compat.kotlinfixture.OptionalStrategy
+import dev.appoutlet.some.compat.kotlinfixture.RecursionStrategy
+import dev.appoutlet.some.compat.kotlinfixture.SequenceStrategy
+import dev.appoutlet.some.compat.kotlinfixture.fixture
+import dev.appoutlet.some.compat.kotlinfixture.kotlinFixture
+import dev.appoutlet.some.compat.kotlinfixture.range
 ```
 
 ## 3. Supported Features and API Usage
