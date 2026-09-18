@@ -88,7 +88,7 @@ class StringResolverTest {
             strategy(StringStrategy.Random(length = 20))
         }
         val resolvers = config.buildResolvers()
-        val chain = ResolverChain(resolvers, config[NullableStrategy::class])
+        val chain = ResolverChain(resolvers)
 
         val result = chain.resolve(typeOf<String>())
         assertIs<String>(result)

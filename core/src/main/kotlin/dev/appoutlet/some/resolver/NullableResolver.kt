@@ -5,14 +5,17 @@ import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.get
+import dev.appoutlet.some.exception.SomeCircularReferenceException
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.withNullability
 
 /**
  * Resolves nullable Kotlin types according to the configured [NullableStrategy].
  *
- * - **NullOnCircularReference** – delegates to the chain to resolve normally (might be null if a cycle is detected).
+ * - **NullOnCircularReference** – delegates to the chain to resolve non-null value; returns `null`
+ *   if a circular reference exception occurs for a circular type.
  * - **AlwaysNull** – always returns `null`.
  * - **NeverNull** – always resolves a non-null value.
  * - **Random** – returns `null` based on the strategy's probability.
@@ -38,8 +41,22 @@ class NullableResolver(
      * @return `null` or a generated non-null value for [type].
      */
     override fun resolve(type: KType, chain: ResolverChain): Any? {
+        val isCircular = chain.stack.dropLast(1).any {
+            it.withNullability(false) == type.withNullability(false)
+        }
+
         return when (nullableStrategy) {
-            is NullableStrategy.NullOnCircularReference -> createNonNullInstance(type, chain)
+            is NullableStrategy.NullOnCircularReference -> {
+                try {
+                    createNonNullInstance(type, chain)
+                } catch (e: SomeCircularReferenceException) {
+                    if (isCircular) {
+                        null
+                    } else {
+                        throw e
+                    }
+                }
+            }
             is NullableStrategy.AlwaysNull -> null
             is NullableStrategy.NeverNull -> createNonNullInstance(type, chain)
             is NullableStrategy.Random -> {
@@ -54,9 +71,6 @@ class NullableResolver(
 
     /**
      * Resolves the non-null version of [type] through [chain].
-     *
-     * Circular references are still detected by [ResolverChain], which decides whether the current strategy allows
-     * the circular value to be represented as `null`.
      */
     private fun createNonNullInstance(
         type: KType,

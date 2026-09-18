@@ -12,6 +12,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
 import kotlin.reflect.typeOf
+import dev.appoutlet.some.android.test.emptyTestChain
 
 @RunWith(RobolectricTestRunner::class)
 class BundleResolverTest {
@@ -60,6 +61,6 @@ class BundleResolverTest {
     private fun Bundle.getValue(key: String): Any? = get(key)
 
     companion object {
-        private val testChain = ResolverChain(emptyList(), NullableStrategy.NullOnCircularReference)
+        private val testChain = emptyTestChain
     }
 }

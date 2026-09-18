@@ -92,7 +92,7 @@ class FloatResolverTest {
             strategy(FloatStrategy(0.0f..10.0f))
         }
         val resolvers = config.buildResolvers()
-        val chain = ResolverChain(resolvers, config[NullableStrategy::class])
+        val chain = ResolverChain(resolvers)
 
         repeat(50) {
             val result = chain.resolve(typeOf<Float>()) as Float

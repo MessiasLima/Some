@@ -1,8 +1,8 @@
 package dev.appoutlet.some.retrofit.resolver
 
-import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
+import dev.appoutlet.some.retrofit.test.emptyTestChain
 import retrofit2.Response
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
@@ -20,8 +20,7 @@ class ResponseResolverTest {
     fun `ResponseResolver generates Response by delegating body type to chain`() {
         val resolvedTypes = mutableListOf<KType>()
         val chain = ResolverChain(
-            listOf(TrackingResolver(typeOf<String>(), "body", resolvedTypes)),
-            NullableStrategy.NullOnCircularReference,
+            listOf(TrackingResolver(typeOf<String>(), "body", resolvedTypes))
         )
 
         val result = resolver.resolve(typeOf<Response<String>>(), chain)
@@ -50,10 +49,7 @@ class ResponseResolverTest {
         assertFailsWith<IllegalArgumentException> {
             resolver.resolve(
                 typeOf<Response<*>>(),
-                ResolverChain(
-                    emptyList(),
-                    NullableStrategy.NullOnCircularReference,
-                ),
+                emptyTestChain,
             )
         }
     }

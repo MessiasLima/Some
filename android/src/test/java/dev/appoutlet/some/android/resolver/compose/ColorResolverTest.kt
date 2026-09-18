@@ -12,6 +12,7 @@ import org.junit.Test
 import kotlin.random.Random
 import kotlin.reflect.typeOf
 import kotlin.test.assertNotNull
+import dev.appoutlet.some.android.test.emptyTestChain
 
 class ColorResolverTest {
     @Test
@@ -75,6 +76,6 @@ class ColorResolverTest {
     }
 
     companion object {
-        private val testChain = ResolverChain(emptyList(), NullableStrategy.NullOnCircularReference)
+        private val testChain = emptyTestChain
     }
 }

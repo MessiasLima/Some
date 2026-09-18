@@ -1,6 +1,5 @@
 package dev.appoutlet.some.test
 
-import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.config.buildSomeConfig
 import dev.appoutlet.some.core.ResolverChain
 
@@ -11,5 +10,10 @@ import dev.appoutlet.some.core.ResolverChain
 val defaultTestChain: ResolverChain by lazy {
     val config = buildSomeConfig()
     val resolvers = config.buildResolvers()
-    ResolverChain(resolvers, config[NullableStrategy::class])
+    ResolverChain(resolvers)
 }
+
+/**
+ * An empty resolver chain for testing individual resolvers that do not delegate.
+ */
+val emptyTestChain: ResolverChain by lazy { ResolverChain(emptyList()) }

@@ -9,10 +9,10 @@ class SomeConfigTest {
     @Test
     fun `SomeConfig with seed produces deterministic results`() {
         val config1 = SomeConfig(seed = 42L)
-        val chain1 = ResolverChain(config1.buildResolvers(), config1[NullableStrategy::class])
+        val chain1 = ResolverChain(config1.buildResolvers())
 
         val config2 = SomeConfig(seed = 42L)
-        val chain2 = ResolverChain(config2.buildResolvers(), config2[NullableStrategy::class])
+        val chain2 = ResolverChain(config2.buildResolvers())
 
         val result1 = chain1.resolve(typeOf<Int>())
         val result2 = chain2.resolve(typeOf<Int>())

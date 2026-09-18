@@ -1,6 +1,5 @@
 package dev.appoutlet.some.core
 
-import dev.appoutlet.some.config.NullableStrategy
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeUnresolvableTypeException
 import kotlin.reflect.KType
@@ -13,13 +12,10 @@ import kotlin.reflect.full.withNullability
  * Each call to `some()` creates a new instance of this session to ensure thread safety.
  *
  * @param resolvers Ordered resolver list. The first resolver that supports a type is used.
- * @param nullableStrategy Strategy used when a circular reference is detected for a nullable type.
  */
 class ResolverChain(
     val resolvers: List<Resolver>,
-    nullableStrategy: NullableStrategy?,
 ) {
-    private val nullableStrategy = nullableStrategy ?: NullableStrategy.default
     private val resolutionStack = mutableListOf<KType>()
 
     /**
@@ -33,17 +29,16 @@ class ResolverChain(
      * Resolves a value for [type] using the first matching resolver.
      *
      * The type is added to the resolution stack while it is being resolved and removed even if resolution fails.
-     * If the type would create a circular reference, [handleCircularReference] decides whether to return `null`
-     * or throw based on the configured [NullableStrategy].
+     * If the type would create a circular reference, [SomeCircularReferenceException] is thrown.
      *
      * @param type Type to resolve.
-     * @return A generated value for [type], or `null` when nullable circular references are allowed.
-     * @throws SomeCircularReferenceException when a circular reference cannot be represented as `null`.
+     * @return A generated value for [type].
+     * @throws SomeCircularReferenceException when a circular reference is detected.
      * @throws SomeUnresolvableTypeException when no resolver supports [type].
      */
     fun resolve(type: KType): Any? {
         if (detectCircularReference(type)) {
-            return handleCircularReference(type)
+            throw SomeCircularReferenceException(type, resolutionStack.toList())
         }
 
         resolutionStack.add(type)
@@ -75,31 +70,10 @@ class ResolverChain(
 
         return when {
             sameTypeDetected.not() -> false
-            type.isMarkedNullable -> true
-            resolutionStack.last().isMarkedNullable &&
-                resolutionStack.last().withNullability(false) == normalizedType -> false
+            type.isMarkedNullable -> false
+            resolutionStack.last().withNullability(false) == normalizedType &&
+                resolutionStack.dropLast(1).none { it.withNullability(false) == normalizedType } -> false
             else -> true
         }
-    }
-
-    /**
-     * Handles a circular reference that was detected for [type].
-     *
-     * Nullable circular references can be represented as `null` when the configured strategy allows it. Non-nullable
-     * circular references always throw because there is no finite value that satisfies the type.
-     *
-     * @param type Type that would create a circular reference.
-     * @return `null` when [type] is nullable and the nullable strategy allows null for circular references.
-     * @throws SomeCircularReferenceException when the circular reference cannot be resolved as `null`.
-     */
-    private fun handleCircularReference(type: KType): Nothing? {
-        val strategyAllowsNull = nullableStrategy is NullableStrategy.AlwaysNull ||
-            nullableStrategy is NullableStrategy.NullOnCircularReference
-
-        if (type.isMarkedNullable && strategyAllowsNull) {
-            return null
-        }
-
-        throw SomeCircularReferenceException(type, resolutionStack.toList())
     }
 }

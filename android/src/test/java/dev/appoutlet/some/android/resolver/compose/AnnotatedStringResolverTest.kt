@@ -8,6 +8,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.random.Random
 import kotlin.reflect.typeOf
+import dev.appoutlet.some.android.test.emptyTestChain
 
 class AnnotatedStringResolverTest {
     @Test
@@ -41,6 +42,6 @@ class AnnotatedStringResolverTest {
     }
 
     companion object {
-        private val testChain = ResolverChain(emptyList(), NullableStrategy.NullOnCircularReference)
+        private val testChain = emptyTestChain
     }
 }

@@ -10,6 +10,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
 import kotlin.reflect.typeOf
+import dev.appoutlet.some.android.test.emptyTestChain
 
 @RunWith(RobolectricTestRunner::class)
 class OffsetResolverTest {
@@ -34,6 +35,6 @@ class OffsetResolverTest {
     }
 
     companion object {
-        private val testChain = ResolverChain(emptyList(), NullableStrategy.NullOnCircularReference)
+        private val testChain = emptyTestChain
     }
 }

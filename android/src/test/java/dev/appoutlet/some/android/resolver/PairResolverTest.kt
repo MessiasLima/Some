@@ -27,7 +27,7 @@ class PairResolverTest {
                 TrackingResolver(typeOf<String>(), "first-value", resolvedTypes),
                 TrackingResolver(typeOf<Int>(), 42, resolvedTypes)
             ),
-            NullableStrategy.NullOnCircularReference
+
         )
 
         val result = resolver.resolve(typeOf<Pair<String, Int>>(), chain) as Pair<*, *>

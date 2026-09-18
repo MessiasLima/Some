@@ -182,7 +182,7 @@ class JavaZonedDateTimeResolverTest {
             strategy(ZonedDateTimeStrategy.Range(min, max, zoneId))
         }
         val resolvers = config.buildResolvers()
-        val chain = ResolverChain(resolvers, config[NullableStrategy::class])
+        val chain = ResolverChain(resolvers)
 
         repeat(50) {
             val result = chain.resolve(typeOf<ZonedDateTime>()) as ZonedDateTime
