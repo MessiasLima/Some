@@ -7,6 +7,7 @@ import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 data class CustomFactoryClass(val value: String)
@@ -43,5 +44,16 @@ class CustomTypeFactoryResolverTest {
         val result = resolver.resolve(typeOf<CustomFactoryClass>(), defaultTestChain)
         assertNotNull(result)
         assertTrue(result is CustomFactoryClass)
+    }
+
+    @Test
+    fun `CustomTypeFactoryResolver resolve returns null for an unregistered type`() {
+        val resolver = CustomFactoryResolver(
+            DefaultStrategyProvider(),
+            emptyMap(),
+            Random.Default
+        )
+
+        assertNull(resolver.resolve(typeOf<String>(), defaultTestChain))
     }
 }

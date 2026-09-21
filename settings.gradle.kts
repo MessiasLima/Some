@@ -41,7 +41,7 @@ kover {
                 name = "Minimum coverage"
                 minBound(95, CoverageUnit.LINE)
                 minBound(95, CoverageUnit.INSTRUCTION)
-                minBound(79, CoverageUnit.BRANCH)
+                minBound(90, CoverageUnit.BRANCH)
             }
         }
     }

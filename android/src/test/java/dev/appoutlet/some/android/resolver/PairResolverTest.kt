@@ -15,6 +15,7 @@ import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
+import kotlin.test.assertFailsWith
 
 @RunWith(RobolectricTestRunner::class)
 class PairResolverTest {
@@ -51,6 +52,30 @@ class PairResolverTest {
         assertFalse(resolver.canResolve(typeOf<Color>()))
         assertFalse(resolver.canResolve(typeOf<UserHandle>()))
         assertFalse(resolver.canResolve(typeOf<kotlin.Pair<String, Int>>()))
+    }
+
+    @Test
+    fun `PairResolver rejects star projection in the first type`() {
+        val resolver = PairResolver(Random.Default)
+
+        assertFailsWith<IllegalArgumentException> {
+            resolver.resolve(
+                typeOf<Pair<*, Int>>(),
+                ResolverChain(emptyList(), NullableStrategy.NullOnCircularReference)
+            )
+        }
+    }
+
+    @Test
+    fun `PairResolver rejects star projection in the second type`() {
+        val resolver = PairResolver(Random.Default)
+
+        assertFailsWith<IllegalArgumentException> {
+            resolver.resolve(
+                typeOf<Pair<String, *>>(),
+                ResolverChain(emptyList(), NullableStrategy.NullOnCircularReference)
+            )
+        }
     }
 
     private class TrackingResolver(
