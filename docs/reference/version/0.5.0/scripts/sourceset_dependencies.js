@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":core/main":[],":retrofit/main":[],":android/release":[],":kotest/main":[],":kotlin-fixture/main":[]}'

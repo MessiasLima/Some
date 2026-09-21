@@ -1,0 +1,12 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:android
+dev.appoutlet.some.android
+module:core
+dev.appoutlet.some
+dev.appoutlet.some.config
+dev.appoutlet.some.core
+dev.appoutlet.some.exception
+dev.appoutlet.some.logging
+dev.appoutlet.some.resolver
