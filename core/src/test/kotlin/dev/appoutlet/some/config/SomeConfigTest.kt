@@ -4,6 +4,10 @@ import dev.appoutlet.some.core.ResolverChain
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+
+val String.extensionPropertyForSomeConfigTest: Int
+    get() = length
 
 class SomeConfigTest {
     @Test
@@ -30,5 +34,21 @@ class SomeConfigTest {
         val rebuilt = builder.build()
 
         assertEquals(99L, rebuilt.seed)
+    }
+
+    @Test
+    fun `SomeConfigBuilder rejects properties without an instance parameter`() {
+        val property = String::extensionPropertyForSomeConfigTest
+
+        assertFailsWith<IllegalStateException> {
+            SomeConfigBuilder().property(property) { 1 }
+        }
+    }
+
+    @Test
+    fun `DefaultValueStrategy Random validates probability bounds`() {
+        assertEquals(0.5f, DefaultValueStrategy.Random().probability)
+        assertFailsWith<IllegalArgumentException> { DefaultValueStrategy.Random(-0.1f) }
+        assertFailsWith<IllegalArgumentException> { DefaultValueStrategy.Random(1.1f) }
     }
 }

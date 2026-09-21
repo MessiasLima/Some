@@ -197,6 +197,16 @@ class ClassResolverTest {
     }
 
     @Test
+    fun `ClassResolver canResolve rejects Boolean types`() {
+        assertFalse(resolver.canResolve(typeOf<Boolean>()))
+    }
+
+    @Test
+    fun `ClassResolver canResolve rejects Char types`() {
+        assertFalse(resolver.canResolve(typeOf<Char>()))
+    }
+
+    @Test
     fun `ClassResolver throws SomeInstantiationException with null message constructor exception`() {
         val exception = assertFailsWith<SomeInstantiationException> {
             resolver.resolve(typeOf<ThrowingConstructorClass>(), defaultTestChain)
