@@ -23,6 +23,14 @@ class ResolverChain(
     private val resolutionStack = mutableListOf<KType>()
 
     /**
+     * Maps each requested [KType] to the first resolver that supports it, or to `null` when no resolver does.
+     *
+     * The cache is scoped to this chain, and therefore to the resolver configuration the chain was created for.
+     * Resolver lookups are assumed to be stable for the chain's lifetime, so the same type is never scanned twice.
+     */
+    private val resolverCache = mutableMapOf<KType, Resolver?>()
+
+    /**
      * Returns an immutable snapshot of the current resolution stack.
      * Used by CustomTypeFactoryResolver to provide context to user type factories.
      */
@@ -49,16 +57,29 @@ class ResolverChain(
         resolutionStack.add(type)
 
         try {
-            for (resolver in resolvers) {
-                if (resolver.canResolve(type)) {
-                    return resolver.resolve(type, this)
-                }
-            }
-
-            throw SomeUnresolvableTypeException(type)
+            val resolver = findResolver(type) ?: throw SomeUnresolvableTypeException(type)
+            return resolver.resolve(type, this)
         } finally {
             resolutionStack.removeAt(resolutionStack.lastIndex)
         }
+    }
+
+    /**
+     * Returns the first resolver that supports [type], caching the outcome for later lookups.
+     *
+     * A cached `null` records that no resolver supports [type], so unsupported types are not rescanned on repeated
+     * resolution attempts.
+     *
+     * @param type Type whose resolver should be selected.
+     * @return The first matching resolver, or `null` when none supports [type].
+     */
+    private fun findResolver(type: KType): Resolver? {
+        if (resolverCache.containsKey(type)) {
+            return resolverCache[type]
+        }
+
+        return resolvers.firstOrNull { it.canResolve(type) }
+            .also { resolverCache[type] = it }
     }
 
     /**
