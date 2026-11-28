@@ -5,6 +5,7 @@ import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.get
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
@@ -25,6 +26,7 @@ class NullableResolver(
     private val random: Random
 ) : Resolver {
     private val nullableStrategy = strategyProvider.get<NullableStrategy>() ?: NullableStrategy.default
+    private val nonNullTypeCache = ConcurrentHashMap<KType, KType>()
 
     override fun canResolve(type: KType): Boolean = type.isMarkedNullable
 
@@ -67,9 +69,19 @@ class NullableResolver(
     }
 
     /**
-     * Creates a copy of [type] with the nullable marker removed.
+     * Number of nullable types with a cached non-null counterpart. Intended for tests.
      */
-    private fun createNonNullType(type: KType): KType {
-        return type.classifier?.createType(type.arguments, false) ?: type
+    internal val cachedNonNullTypeCount: Int
+        get() = nonNullTypeCache.size
+
+    /**
+     * Creates a copy of [type] with the nullable marker removed.
+     *
+     * The result is cached per input type. Type arguments and their nested nullability are preserved unchanged.
+     */
+    internal fun createNonNullType(type: KType): KType {
+        return nonNullTypeCache.computeIfAbsent(type) { nullableType ->
+            nullableType.classifier?.createType(nullableType.arguments, false) ?: nullableType
+        }
     }
 }
