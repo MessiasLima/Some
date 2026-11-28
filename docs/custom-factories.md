@@ -9,7 +9,8 @@ Use a **type factory** when every occurrence of a type should be generated in a 
 
 | Factory | API | Scope | Typical use |
 |---------|-----|-------|-------------|
-| Type factory | `factory(MyType::class) { ... }` | Every generated value of `MyType` | Value objects, primitives in a scenario, third-party types |
+| Type factory | `factory(MyType::class) { ... }` | Every generated value of `MyType`, including all generic instantiations | Value objects, primitives in a scenario, third-party types |
+| Type-level factory | `factory<MyType<Arg>>() { ... }` | Only the exact requested type | One generic instantiation such as `List<Number>` |
 | Property factory | `property(User::email) { ... }` | One constructor property on one class | Stable IDs, readable names, one field in a large object |
 
 ## Type factories
@@ -50,6 +51,46 @@ val account = someWithEmail<Account>()
 ```
 
 When `Account` is generated, `Email` is resolved by the type factory while `name` falls through to the built-in `String` resolver.
+
+## Generic-aware type factories
+
+A class-level factory is intentionally broad: `factory(List::class)` replaces every list regardless of its element
+type. When you need to override one generic instantiation, register the factory against the complete type instead:
+
+```kotlin
+val someWithNumbers = someSetup {
+    factory<List<Number>> { listOf(1, 2.5, 3L) }
+}
+
+val numbers: List<Number> = someWithNumbers.some()
+val strings: List<String> = someWithNumbers.some() // normal generation
+```
+
+The reified `factory<T> { ... }` overload registers against `typeOf<T>()`, so generic arguments and nullability are
+part of the match. The lambda result must be assignable to `T` at compile time. You can also pass a `KType`
+explicitly when the type is only known at runtime:
+
+```kotlin
+val elementType = typeOf<String>()
+someSetup {
+    factory(List::class.createType(listOf(KTypeProjection.invariant(elementType)))) {
+        listOf("runtime-type")
+    }
+}
+```
+
+### Type-level matching precedence
+
+For a requested type, Some checks factories in this order:
+
+1. An exact `KType` match from `factory<T> { ... }` or `factory(kType) { ... }`.
+2. If the request is nullable, the same type with only its outer nullability removed. This is why a factory for
+   `List<Number>` also applies to `List<Number>?`.
+3. The existing `KClass` match from `factory(MyType::class) { ... }`.
+
+A type-level factory therefore wins over a class-level factory for the same classifier, while the class-level factory
+continues to apply to every other instantiation. Nullable type-level requests also follow the same outer-nullability
+fallback before the nullable strategy runs, matching the existing class-level factory behavior.
 
 ## Property factories
 

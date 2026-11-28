@@ -54,7 +54,7 @@ The configuration DSL is intentionally small:
 |---------|---------|
 | `seed = ...` | Reproduce the same generated values across runs |
 | `strategy(...)` | Override how a built-in type is generated |
-| `factory(...)` | Override generation for an entire type |
+| `factory(...)` | Override generation for a class or an exact generic type |
 | `property(...)` | Override generation for one constructor property |
 
 ## Per-Call Overrides

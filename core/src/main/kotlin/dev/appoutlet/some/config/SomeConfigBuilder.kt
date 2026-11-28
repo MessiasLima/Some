@@ -3,7 +3,9 @@ package dev.appoutlet.some.config
 import dev.appoutlet.some.core.FixtureContext
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
+import kotlin.reflect.KType
 import kotlin.reflect.full.instanceParameter
+import kotlin.reflect.typeOf
 
 /**
  * Mutable builder for creating immutable [SomeConfig] instances.
@@ -32,8 +34,13 @@ import kotlin.reflect.full.instanceParameter
  * ```kotlin
  * someSetup {
  *     factory(String::class) { "fixed-value" }
+ *     factory<List<Int>> { listOf(1, 2, 3) }
  * }
  * ```
+ *
+ * A class-level factory registered with a [KClass] applies to every generic instantiation and nullable variant of
+ * that class. A type-level factory registered with a [KType] applies only to the requested type, and takes precedence
+ * over a class-level factory for the same classifier.
  */
 class SomeConfigBuilder {
     private val _strategies: MutableMap<KClass<out Strategy>, Strategy> = mutableMapOf()
@@ -45,6 +52,7 @@ class SomeConfigBuilder {
     var seed: Long? = null
 
     private val _typeFactories = mutableMapOf<KClass<*>, FixtureContext.() -> Any?>()
+    private val _kTypeFactories = mutableMapOf<KType, FixtureContext.() -> Any?>()
     private val _propertyFactories = mutableMapOf<Pair<KClass<*>, String>, FixtureContext.() -> Any?>()
 
     /**
@@ -72,6 +80,32 @@ class SomeConfigBuilder {
      */
     fun <T : Any> factory(kClass: KClass<T>, typeFactory: FixtureContext.() -> T) {
         _typeFactories[kClass] = typeFactory
+    }
+
+    /**
+     * Registers a custom type factory function for the exact reified type [T].
+     *
+     * The factory is registered against `typeOf<T>()`, so generic arguments and nullability are part of the match.
+     * A factory registered for `List<Number>` does not apply to `List<String>`; it does apply to `List<Number>?` when
+     * the nullable request resolves to a non-null value. Type-level factories take precedence over class-level
+     * factories registered with [factory].
+     *
+     * @param T The exact type this factory produces.
+     * @param typeFactory Lambda receiving a [FixtureContext] and returning a value of type [T].
+     */
+    inline fun <reified T> factory(noinline typeFactory: FixtureContext.() -> T) {
+        factory(typeOf<T>(), typeFactory)
+    }
+
+    /**
+     * Registers a custom type factory function for the exact [KType].
+     *
+     * @param kType The exact type to override, including generic arguments and nullability.
+     * @param typeFactory Lambda receiving a [FixtureContext] and returning a value assignable to [kType].
+     */
+    fun <T> factory(kType: KType, typeFactory: FixtureContext.() -> T) {
+        @Suppress("UNCHECKED_CAST")
+        _kTypeFactories[kType] = typeFactory as FixtureContext.() -> Any?
     }
 
     /**
@@ -111,6 +145,17 @@ class SomeConfigBuilder {
     }
 
     /**
+     * Populates the builder's type-level factory map with entries from an existing map.
+     *
+     * Used internally by [SomeConfig.toBuilder] to transfer type-level factory registrations.
+     *
+     * @param kTypeFactories Map of type-level factory registrations to copy into this builder.
+     */
+    internal fun populateKTypeFactories(kTypeFactories: Map<KType, FixtureContext.() -> Any?>) {
+        _kTypeFactories.putAll(kTypeFactories)
+    }
+
+    /**
      * Populates the builder's property factory map with entries from an existing map.
      *
      * Used internally by [SomeConfig.toBuilder] to transfer property factory registrations.
@@ -135,7 +180,8 @@ class SomeConfigBuilder {
         strategies = _strategies.toMap(),
         seed = seed,
         typeFactories = _typeFactories.toMap(),
-        propertyFactories = _propertyFactories.toMap()
+        propertyFactories = _propertyFactories.toMap(),
+        kTypeFactories = _kTypeFactories.toMap()
     )
 }
 
