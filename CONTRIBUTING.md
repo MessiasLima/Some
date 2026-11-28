@@ -58,6 +58,8 @@ The project runs [Detekt](https://detekt.dev/) before every push through a pre-p
 ./gradlew installGitHooks
 ```
 
+All Detekt-enabled modules share the configuration in [`config/detekt/detekt.yml`](config/detekt/detekt.yml). The file is applied on top of Detekt's built-in defaults, so add project-wide rule overrides there instead of disabling rule sets.
+
 Every pull request is also checked by CI. The CI pipeline runs Detekt and all unit tests to make sure the code compiles, the minimum coverage requirements are met, and the code style is accepted.
 
 Automated checks are important, but they are not the only review step. A human reviewer will always review the code before it is merged.
