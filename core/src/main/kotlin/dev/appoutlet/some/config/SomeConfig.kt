@@ -41,6 +41,7 @@ import dev.appoutlet.some.resolver.ValueClassResolver
 import java.util.ServiceLoader
 import kotlin.random.Random
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 
 /**
  * Immutable configuration for fixture generation behavior.
@@ -53,12 +54,15 @@ import kotlin.reflect.KClass
  * @param seed Seed for reproducible random generation. When `null`, [Random.Default] is used.
  * @param typeFactories Custom type factories keyed by class.
  * @param propertyFactories Custom property factories keyed by class and property name.
+ * @param kTypeFactories Custom type factories keyed by the complete [KType], including generic arguments and
+ * nullability.
  */
 data class SomeConfig(
     val strategies: Map<KClass<out Strategy>, Strategy> = emptyMap(),
     val seed: Long? = null,
     val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
+    val kTypeFactories: Map<KType, FixtureContext.() -> Any?> = emptyMap(),
 ) : StrategyProvider {
     private val strategyProvider: StrategyProvider = DefaultStrategyProvider(strategies)
     private val logger by logger()
@@ -85,6 +89,7 @@ data class SomeConfig(
         seed = this@SomeConfig.seed
         populateTypeFactories(this@SomeConfig.typeFactories)
         populatePropertyFactories(this@SomeConfig.propertyFactories)
+        populateKTypeFactories(this@SomeConfig.kTypeFactories)
     }
 
     /**
@@ -143,7 +148,7 @@ data class SomeConfig(
         val discoveredResolvers = discoverResolvers(strategyProvider, random)
 
         return listOf(
-            CustomFactoryResolver(strategyProvider, typeFactories, random),
+            CustomFactoryResolver(strategyProvider, typeFactories, random, kTypeFactories),
             NullableResolver(strategyProvider, random),
         ) + discoveredResolvers + builtInResolvers + ClassResolver(strategyProvider, propertyFactories, random)
     }

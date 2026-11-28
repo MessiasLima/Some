@@ -37,6 +37,17 @@ class SomeConfigTest {
     }
 
     @Test
+    fun `SomeConfig toBuilder preserves type-level factories`() {
+        val config = SomeConfig(
+            kTypeFactories = mapOf(typeOf<List<Int>>() to { listOf(1, 2) }),
+        )
+
+        val rebuilt = config.toBuilder().build()
+
+        assertEquals(config.kTypeFactories, rebuilt.kTypeFactories)
+    }
+
+    @Test
     fun `SomeConfigBuilder rejects properties without an instance parameter`() {
         val property = String::extensionPropertyForSomeConfigTest
 
