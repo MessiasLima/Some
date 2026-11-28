@@ -51,6 +51,7 @@ class ClassResolver(
 ) : Resolver {
     private val logger by logger()
     private val defaultValueStrategy = strategyProvider.get<DefaultValueStrategy>() ?: DefaultValueStrategy.default
+    private val classResolverCache = ClassResolverCache()
 
     /**
      * Returns whether [type] can be instantiated by this resolver.
@@ -66,7 +67,7 @@ class ClassResolver(
         val kClass = type.classifier as? KClass<*> ?: return false
 
         return when {
-            kClass.constructors.isEmpty() -> false
+            classResolverCache.constructorsFor(kClass).isEmpty() -> false
 
             Modifier.isAbstract(kClass.java.modifiers) -> false
 
@@ -112,7 +113,7 @@ class ClassResolver(
         val kClass = type.classifier as KClass<*>
         val failures = mutableListOf<String>()
 
-        for (constructor in kClass.constructors) {
+        for (constructor in classResolverCache.constructorsFor(kClass)) {
             try {
                 constructor.isAccessible = true
                 val result = tryConstructor(constructor, kClass, type, chain)
@@ -130,6 +131,12 @@ class ClassResolver(
         logger.w { "All constructors failed for ${kClass.simpleName}" }
         throw SomeInstantiationException(kClass, failures)
     }
+
+    /**
+     * Number of classes with cached constructor metadata. Intended for tests.
+     */
+    internal val cachedClassCount: Int
+        get() = classResolverCache.size
 
     private fun tryConstructor(
         constructor: KFunction<*>,

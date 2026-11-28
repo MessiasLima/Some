@@ -117,6 +117,24 @@ class ClassResolverTest {
     }
 
     @Test
+    fun `ClassResolver caches constructor metadata for repeated resolutions`() {
+        resolver.resolve(typeOf<SimpleDataClass>(), defaultTestChain)
+        resolver.resolve(typeOf<SimpleDataClass>(), defaultTestChain)
+
+        assertEquals(1, resolver.cachedClassCount)
+    }
+
+    @Test
+    fun `ClassResolver reuses constructor metadata across generic instantiations`() {
+        val stringWrapper = resolver.resolve(typeOf<Wrapper<String>>(), defaultTestChain) as Wrapper<String>
+        val intWrapper = resolver.resolve(typeOf<Wrapper<Int>>(), defaultTestChain) as Wrapper<Int>
+
+        assertTrue(stringWrapper.value.isNotEmpty())
+        assertTrue(intWrapper.value is Int)
+        assertEquals(1, resolver.cachedClassCount)
+    }
+
+    @Test
     fun `ClassResolver canResolve accepts class with constructor`() {
         assertTrue(resolver.canResolve(typeOf<SimpleDataClass>()))
     }
