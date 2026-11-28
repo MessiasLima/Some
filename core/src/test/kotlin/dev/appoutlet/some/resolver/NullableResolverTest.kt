@@ -17,6 +17,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+private class VarianceBox<T>
+
 class NullableResolverTest {
     @Test
     fun `NullableResolver with AlwaysNull strategy returns null`() {
@@ -129,8 +131,8 @@ class NullableResolverTest {
         val resolver = NullableResolver(DefaultStrategyProvider(), Random.Default)
 
         assertEquals(
-            typeOf<MutableList<out String?>>(),
-            resolver.createNonNullType(typeOf<MutableList<out String?>?>()),
+            typeOf<VarianceBox<out String?>>(),
+            resolver.createNonNullType(typeOf<VarianceBox<out String?>?>()),
         )
     }
 
