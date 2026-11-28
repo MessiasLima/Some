@@ -1,8 +1,12 @@
 package dev.appoutlet.some.resolver
 
+import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.test.defaultTestChain
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 import kotlin.reflect.typeOf
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
@@ -78,5 +82,45 @@ class ValueClassResolverTest {
         // Score uses Long
         val score = resolver.resolve(typeOf<Score>(), defaultTestChain) as Score
         assertIs<Score>(score)
+    }
+
+    @Test
+    fun `ValueClassResolver caches constructor information per value class`() {
+        val resolver = ValueClassResolver()
+
+        resolver.resolve(typeOf<UserId>(), defaultTestChain)
+        resolver.resolve(typeOf<UserId>(), defaultTestChain)
+
+        assertEquals(1, resolver.cachedValueClassCount)
+    }
+
+    @Test
+    fun `ValueClassResolver keeps distinct value classes independent`() {
+        val resolver = ValueClassResolver()
+
+        resolver.resolve(typeOf<UserId>(), defaultTestChain)
+        resolver.resolve(typeOf<Email>(), defaultTestChain)
+
+        assertEquals(2, resolver.cachedValueClassCount)
+    }
+
+    @Test
+    fun `ValueClassResolver cache is safe when shared across threads`() {
+        val resolver = ValueClassResolver()
+        val executor = Executors.newFixedThreadPool(4)
+
+        try {
+            val tasks = List(32) {
+                Callable {
+                    resolver.resolve(typeOf<UserId>(), ResolverChain(defaultTestChain.resolvers, null))
+                }
+            }
+            val results = executor.invokeAll(tasks).map { it.get() }
+
+            assertTrue(results.all { it is UserId })
+            assertEquals(1, resolver.cachedValueClassCount)
+        } finally {
+            executor.shutdownNow()
+        }
     }
 }
