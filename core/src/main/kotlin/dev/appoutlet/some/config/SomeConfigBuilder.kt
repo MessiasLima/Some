@@ -42,6 +42,7 @@ import kotlin.reflect.typeOf
  * that class. A type-level factory registered with a [KType] applies only to the requested type, and takes precedence
  * over a class-level factory for the same classifier.
  */
+@Suppress("TooManyFunctions")
 class SomeConfigBuilder {
     private val _strategies: MutableMap<KClass<out Strategy>, Strategy> = mutableMapOf()
 
@@ -54,6 +55,7 @@ class SomeConfigBuilder {
     private val _typeFactories = mutableMapOf<KClass<*>, FixtureContext.() -> Any?>()
     private val _kTypeFactories = mutableMapOf<KType, FixtureContext.() -> Any?>()
     private val _propertyFactories = mutableMapOf<Pair<KClass<*>, String>, FixtureContext.() -> Any?>()
+    private val _subTypes = mutableMapOf<KClass<*>, KClass<*>>()
 
     /**
      * Registers a strategy for fixture generation.
@@ -109,6 +111,33 @@ class SomeConfigBuilder {
     }
 
     /**
+     * Registers a concrete subtype to generate whenever the parent type [T] is requested.
+     *
+     * This mapping is deterministic and applies to sealed types, abstract classes, and non-sealed interfaces. The
+     * subtype is resolved through the normal resolver chain, so its properties are generated as usual. A subtype
+     * mapping is considered after custom type factories and before random sealed-class selection.
+     *
+     * Self-mappings and cyclic mappings fail during resolution with
+     * [dev.appoutlet.some.exception.SomeSubtypeMappingException].
+     *
+     * @param T The parent type to map from.
+     * @param U The concrete subtype to generate. Must be assignable to [T].
+     */
+    inline fun <reified T : Any, reified U : T> subType() {
+        subType(T::class, U::class)
+    }
+
+    /**
+     * Registers a concrete subtype for [parent].
+     *
+     * @param parent The parent class to map from.
+     * @param subtype The concrete subtype to generate for [parent].
+     */
+    fun <T : Any> subType(parent: KClass<T>, subtype: KClass<out T>) {
+        _subTypes[parent] = subtype
+    }
+
+    /**
      * Registers a custom property factory function for a specific property of class [T].
      *
      * @param T The class containing the property.
@@ -156,6 +185,17 @@ class SomeConfigBuilder {
     }
 
     /**
+     * Populates the builder's subtype mapping with entries from an existing map.
+     *
+     * Used internally by [SomeConfig.toBuilder] to transfer subtype registrations.
+     *
+     * @param subTypes Map of subtype registrations to copy into this builder.
+     */
+    internal fun populateSubTypes(subTypes: Map<KClass<*>, KClass<*>>) {
+        _subTypes.putAll(subTypes)
+    }
+
+    /**
      * Populates the builder's property factory map with entries from an existing map.
      *
      * Used internally by [SomeConfig.toBuilder] to transfer property factory registrations.
@@ -181,7 +221,8 @@ class SomeConfigBuilder {
         seed = seed,
         typeFactories = _typeFactories.toMap(),
         propertyFactories = _propertyFactories.toMap(),
-        kTypeFactories = _kTypeFactories.toMap()
+        kTypeFactories = _kTypeFactories.toMap(),
+        subTypes = _subTypes.toMap()
     )
 }
 

@@ -33,6 +33,7 @@ nav = [
     ] },
     "kotest.md",
     "retrofit.md",
+    "subtypes.md",
     "custom-factories.md",
     "custom-resolvers.md",
     { "API Reference" = "https://some.appoutlet.dev/reference/latest/" }
