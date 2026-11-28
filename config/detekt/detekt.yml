@@ -6,3 +6,12 @@
 #
 # Add project-wide rule overrides below. Keep this file small: put rule
 # configuration here only when it should apply to every module.
+
+style:
+  ForbiddenImport:
+    active: true
+    imports:
+      - value: 'kotlin.reflect.full.isSubclassOf'
+        reason: 'Use KClass<*>.isSubclassOfCached so repeated subclass checks are cached.'
+    excludes:
+      - '**/SubclassRelationCache.kt'

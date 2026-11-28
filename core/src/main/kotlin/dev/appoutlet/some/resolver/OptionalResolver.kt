@@ -5,13 +5,13 @@ import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.get
+import dev.appoutlet.some.core.isSubclassOfCached
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.logging.logger
 import java.util.Optional
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
-import kotlin.reflect.full.isSubclassOf
 
 /**
  * Resolves [Optional] types according to the configured [NullableStrategy].
@@ -45,7 +45,7 @@ class OptionalResolver(
      */
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
-        return kClass.isSubclassOf(Optional::class)
+        return kClass.isSubclassOfCached(Optional::class)
     }
 
     /**

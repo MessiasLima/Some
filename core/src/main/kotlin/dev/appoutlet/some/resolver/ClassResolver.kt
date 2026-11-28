@@ -6,6 +6,7 @@ import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.get
+import dev.appoutlet.some.core.isSubclassOfCached
 import dev.appoutlet.some.exception.SomeCircularReferenceException
 import dev.appoutlet.some.exception.SomeInstantiationException
 import dev.appoutlet.some.logging.logger
@@ -16,7 +17,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 
 /**
@@ -70,19 +70,17 @@ class ClassResolver(
 
             Modifier.isAbstract(kClass.java.modifiers) -> false
 
-            kClass.isSubclassOf(List::class) || kClass.isSubclassOf(Set::class) || kClass.isSubclassOf(
-                Map::class
-            ) -> {
-                false
-            }
+            kClass.isSubclassOfCached(List::class) ||
+                kClass.isSubclassOfCached(Set::class) ||
+                kClass.isSubclassOfCached(Map::class) -> false
 
-            kClass.isSubclassOf(String::class) -> false
+            kClass.isSubclassOfCached(String::class) -> false
 
-            kClass.isSubclassOf(Number::class) -> false
+            kClass.isSubclassOfCached(Number::class) -> false
 
-            kClass.isSubclassOf(Boolean::class) -> false
+            kClass.isSubclassOfCached(Boolean::class) -> false
 
-            kClass.isSubclassOf(Char::class) -> false
+            kClass.isSubclassOfCached(Char::class) -> false
 
             else -> true
         }

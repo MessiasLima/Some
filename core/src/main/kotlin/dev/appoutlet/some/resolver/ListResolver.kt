@@ -5,10 +5,10 @@ import dev.appoutlet.some.core.Resolver
 import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.get
+import dev.appoutlet.some.core.isSubclassOfCached
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
@@ -26,7 +26,7 @@ class ListResolver(
 
     override fun canResolve(type: KType): Boolean {
         val kClass = type.classifier as? KClass<*> ?: return false
-        return kClass.isSubclassOf(List::class)
+        return kClass.isSubclassOfCached(List::class)
     }
 
     override fun resolve(type: KType, chain: ResolverChain): Any {
