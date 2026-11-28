@@ -13,5 +13,8 @@ style:
     imports:
       - value: 'kotlin.reflect.full.isSubclassOf'
         reason: 'Use KClass<*>.isSubclassOfCached so repeated subclass checks are cached.'
+      - value: 'kotlin.reflect.full.isSubtypeOf'
+        reason: 'Use KType.isSubtypeOfCached so repeated subtype checks are cached.'
     excludes:
       - '**/SubclassRelationCache.kt'
+      - '**/SubtypeRelationCache.kt'

@@ -6,10 +6,10 @@ import dev.appoutlet.some.core.ResolverChain
 import dev.appoutlet.some.core.StrategyProvider
 import dev.appoutlet.some.core.get
 import dev.appoutlet.some.core.isSubclassOfCached
+import dev.appoutlet.some.core.isSubtypeOfCached
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
-import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
 /**
@@ -40,7 +40,7 @@ class MapResolver(
             collectionStrategy.sizeRange.last + 1
         )
 
-        val isMutable = type.isSubtypeOf(typeOf<MutableMap<*, *>>())
+        val isMutable = type.isSubtypeOfCached(typeOf<MutableMap<*, *>>())
 
         val entries = (1..size).map {
             chain.resolve(keyType) to chain.resolve(valueType)
