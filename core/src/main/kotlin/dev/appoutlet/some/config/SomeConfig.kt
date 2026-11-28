@@ -37,6 +37,7 @@ import dev.appoutlet.some.resolver.SealedClassResolver
 import dev.appoutlet.some.resolver.SetResolver
 import dev.appoutlet.some.resolver.ShortResolver
 import dev.appoutlet.some.resolver.StringResolver
+import dev.appoutlet.some.resolver.SubtypeResolver
 import dev.appoutlet.some.resolver.ValueClassResolver
 import java.util.ServiceLoader
 import kotlin.random.Random
@@ -56,6 +57,7 @@ import kotlin.reflect.KType
  * @param propertyFactories Custom property factories keyed by class and property name.
  * @param kTypeFactories Custom type factories keyed by the complete [KType], including generic arguments and
  * nullability.
+ * @param subTypes Mapping from a supertype to the concrete subtype that should be generated for it.
  */
 data class SomeConfig(
     val strategies: Map<KClass<out Strategy>, Strategy> = emptyMap(),
@@ -63,6 +65,7 @@ data class SomeConfig(
     val typeFactories: Map<KClass<*>, FixtureContext.() -> Any?> = emptyMap(),
     val propertyFactories: Map<Pair<KClass<*>, String>, FixtureContext.() -> Any?> = emptyMap(),
     val kTypeFactories: Map<KType, FixtureContext.() -> Any?> = emptyMap(),
+    val subTypes: Map<KClass<*>, KClass<*>> = emptyMap(),
 ) : StrategyProvider {
     private val strategyProvider: StrategyProvider = DefaultStrategyProvider(strategies)
     private val logger by logger()
@@ -90,6 +93,7 @@ data class SomeConfig(
         populateTypeFactories(this@SomeConfig.typeFactories)
         populatePropertyFactories(this@SomeConfig.propertyFactories)
         populateKTypeFactories(this@SomeConfig.kTypeFactories)
+        populateSubTypes(this@SomeConfig.subTypes)
     }
 
     /**
@@ -113,6 +117,7 @@ data class SomeConfig(
      */
     fun buildResolvers(random: Random = buildRandom()): List<Resolver> {
         val builtInResolvers = listOf(
+            SubtypeResolver(subTypes),
             ObjectResolver(),
             EnumResolver(random),
             SealedClassResolver(random),

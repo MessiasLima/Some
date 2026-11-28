@@ -48,6 +48,17 @@ class SomeConfigTest {
     }
 
     @Test
+    fun `SomeConfig toBuilder preserves subtype mappings`() {
+        val config = SomeConfig(
+            subTypes = mapOf(CharSequence::class to String::class),
+        )
+
+        val rebuilt = config.toBuilder().build()
+
+        assertEquals(config.subTypes, rebuilt.subTypes)
+    }
+
+    @Test
     fun `SomeConfigBuilder rejects properties without an instance parameter`() {
         val property = String::extensionPropertyForSomeConfigTest
 
