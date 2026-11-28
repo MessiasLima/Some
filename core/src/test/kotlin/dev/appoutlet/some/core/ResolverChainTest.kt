@@ -15,6 +15,8 @@ import kotlin.test.assertTrue
 class ResolverChainTest {
     data class Node(val next: Node?)
 
+    data class SnapshotType(val value: String)
+
     @Test
     fun `resolve reuses cached resolver for repeated type`() {
         val resolver = RecordingResolver(value = { "resolved" })
@@ -113,6 +115,45 @@ class ResolverChainTest {
 
         assertEquals(1, first.checkedTypes.size)
         assertEquals(1, second.checkedTypes.size)
+    }
+
+    @Test
+    fun `stack exposes the current resolution path and is empty afterwards`() {
+        val observed = mutableListOf<List<KType>>()
+        val resolver = object : Resolver {
+            override fun canResolve(type: KType): Boolean = true
+
+            override fun resolve(type: KType, chain: ResolverChain): Any? {
+                observed += chain.stack.toList()
+                return "value"
+            }
+        }
+        val chain = ResolverChain(listOf(resolver), null)
+
+        assertEquals("value", chain.resolve(typeOf<String>()))
+
+        assertEquals(listOf(listOf(typeOf<String>())), observed)
+        assertTrue(chain.stack.isEmpty())
+    }
+
+    @Test
+    fun `fixture context receives a stable snapshot of the resolution stack`() {
+        var capturedStack: List<KType>? = null
+        val config = SomeConfig(
+            typeFactories = mapOf(
+                SnapshotType::class to {
+                    capturedStack = resolutionStack
+                    SnapshotType("snapshot")
+                },
+            ),
+        )
+        val chain = ResolverChain(config.buildResolvers(), null)
+
+        val result = assertIs<SnapshotType>(chain.resolve(typeOf<SnapshotType>()))
+
+        assertEquals("snapshot", result.value)
+        assertEquals(listOf(typeOf<SnapshotType>()), capturedStack)
+        assertTrue(chain.stack.isEmpty())
     }
 
     @Test

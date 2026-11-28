@@ -20,7 +20,6 @@ class ResolverChain(
     nullableStrategy: NullableStrategy?,
 ) {
     private val nullableStrategy = nullableStrategy ?: NullableStrategy.default
-    private val resolutionStack = mutableListOf<KType>()
 
     /**
      * Maps each requested [KType] to the first resolver that supports it, or to `null` when no resolver does.
@@ -31,11 +30,14 @@ class ResolverChain(
     private val resolverCache = mutableMapOf<KType, Resolver?>()
 
     /**
-     * Returns an immutable snapshot of the current resolution stack.
-     * Used by CustomTypeFactoryResolver to provide context to user type factories.
+     * Types currently being resolved, ordered from the outermost request to the current type.
+     *
+     * The property exposes a read-only [List] backed by a mutable list that is private to this chain. The backing
+     * field is intentionally mutable so resolution can push and pop types, while callers only observe a read-only
+     * type. The list is live: a caller that needs a stable snapshot, such as [FixtureContext], must copy it.
      */
     val stack: List<KType>
-        get() = resolutionStack.toList()
+        field = mutableListOf<KType>()
 
     /**
      * Resolves a value for [type] using the first matching resolver.
@@ -54,13 +56,13 @@ class ResolverChain(
             return handleCircularReference(type)
         }
 
-        resolutionStack.add(type)
+        stack.add(type)
 
         try {
             val resolver = findResolver(type) ?: throw SomeUnresolvableTypeException(type)
             return resolver.resolve(type, this)
         } finally {
-            resolutionStack.removeAt(resolutionStack.lastIndex)
+            stack.removeAt(stack.lastIndex)
         }
     }
 
@@ -92,13 +94,13 @@ class ResolverChain(
      */
     private fun detectCircularReference(type: KType): Boolean {
         val normalizedType = type.withNullability(false)
-        val sameTypeDetected = resolutionStack.any { it.withNullability(false) == normalizedType }
+        val sameTypeDetected = stack.any { it.withNullability(false) == normalizedType }
 
         return when {
             sameTypeDetected.not() -> false
             type.isMarkedNullable -> true
-            resolutionStack.last().isMarkedNullable &&
-                resolutionStack.last().withNullability(false) == normalizedType -> false
+            stack.last().isMarkedNullable &&
+                stack.last().withNullability(false) == normalizedType -> false
             else -> true
         }
     }
@@ -121,6 +123,6 @@ class ResolverChain(
             return null
         }
 
-        throw SomeCircularReferenceException(type, resolutionStack.toList())
+        throw SomeCircularReferenceException(type, stack.toList())
     }
 }
