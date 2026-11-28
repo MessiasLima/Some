@@ -64,6 +64,16 @@ data class SomeConfig(
     private val logger by logger()
 
     /**
+     * Providers discovered once for this configuration.
+     *
+     * Only the provider instances are cached. [ResolverProvider.createResolvers] is still invoked on every
+     * [buildResolvers] call because resolvers bind to the [StrategyProvider] and [Random] supplied at build time.
+     */
+    private val resolverProviders: List<ResolverProvider> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        discoverResolverProviders()
+    }
+
+    /**
      * Returns the strategy registered for [key].
      *
      * @param key The [KClass] of the strategy to retrieve (e.g. [NullableStrategy::class]).
@@ -149,33 +159,48 @@ data class SomeConfig(
     }
 
     /**
-     * Discovers additional [Resolver]s from third-party libraries via [java.util.ServiceLoader].
+     * Discovers [ResolverProvider]s from third-party libraries via [java.util.ServiceLoader].
      *
-     * Failures during discovery or provider instantiation are swallowed so the library always falls back to the
-     * built-in resolver chain.
+     * A provider that fails during loading is skipped so the remaining providers still load. Total discovery failure
+     * is swallowed and returns an empty list so the library always falls back to the built-in resolver chain.
      *
-     * @param strategyProvider Provider of all configured generation strategies.
-     * @param random Random source shared by discovered resolvers.
-     * @return Ordered list of discovered resolvers, or an empty list if discovery fails.
+     * @return Discovered providers in [java.util.ServiceLoader] order.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    private fun discoverResolverProviders(): List<ResolverProvider> {
+        val providers = mutableListOf<ResolverProvider>()
+
+        try {
+            val loader = ServiceLoader.load(ResolverProvider::class.java)
+            val iterator = loader.iterator()
+
+            while (iterator.hasNext()) {
+                try {
+                    providers.add(iterator.next())
+                } catch (e: Throwable) {
+                    logger.w(e) { "Failed to load a TypeResolverProvider implementation" }
+                }
+            }
+        } catch (e: Throwable) {
+            logger.w(e) { "Failed to discover resolver providers" }
+            return emptyList()
+        }
+
+        return providers
+    }
+
+    /**
+     * Creates resolvers from the cached provider list.
+     *
+     * Providers are discovered once per configuration, but their `createResolvers` method is invoked on every
+     * call so resolvers receive the current [strategyProvider] and [random].
      */
     @Suppress("TooGenericExceptionCaught")
     private fun discoverResolvers(
         strategyProvider: StrategyProvider,
         random: Random,
     ): List<Resolver> {
-        val loader = ServiceLoader.load(ResolverProvider::class.java)
-        val providers = mutableListOf<ResolverProvider>()
-        val iterator = loader.iterator()
-
-        while (iterator.hasNext()) {
-            try {
-                providers.add(iterator.next())
-            } catch (e: Throwable) {
-                logger.w(e) { "Failed to load a TypeResolverProvider implementation" }
-            }
-        }
-
-        return providers.flatMap { provider ->
+        return resolverProviders.flatMap { provider ->
             try {
                 provider.createResolvers(strategyProvider, random)
             } catch (e: Throwable) {
