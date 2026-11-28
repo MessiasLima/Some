@@ -24,6 +24,15 @@ dependencies {
     dokka(projects.kotlinFixture)
 }
 
+subprojects {
+    plugins.withId("io.gitlab.arturbosch.detekt") {
+        extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+            buildUponDefaultConfig = true
+            config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+        }
+    }
+}
+
 tasks.named("prepareKotlinBuildScriptModel") {
     dependsOn(":installGitHooks")
 }

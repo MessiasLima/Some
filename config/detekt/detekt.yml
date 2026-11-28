@@ -1,0 +1,8 @@
+# Shared Detekt configuration for all modules.
+#
+# Modules use this file together with Detekt's built-in defaults
+# (`buildUponDefaultConfig = true`), so overriding a rule here does not disable
+# unrelated rules from Detekt's default configuration.
+#
+# Add project-wide rule overrides below. Keep this file small: put rule
+# configuration here only when it should apply to every module.
