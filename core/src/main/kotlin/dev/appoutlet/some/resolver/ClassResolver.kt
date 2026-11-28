@@ -176,7 +176,7 @@ class ClassResolver(
     ): Pair<KParameter, Any?> {
         val context = FixtureContext(
             random = random,
-            resolutionStack = chain.stack,
+            resolutionStack = chain.stack.toList(),
             strategyProvider = strategyProvider,
         )
 

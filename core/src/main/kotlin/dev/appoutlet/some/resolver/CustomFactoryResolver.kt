@@ -45,8 +45,8 @@ class CustomFactoryResolver(
     /**
      * Invokes the registered type factory for [type].
      *
-     * The generated [FixtureContext] uses an immutable snapshot of [chain]'s current resolution stack so type factories
-     * can inspect the active resolution path without mutating resolver state.
+     * The generated [FixtureContext] receives a copy of [chain]'s current resolution stack. The copy is a stable
+     * snapshot, so later resolution cannot mutate it and type factories cannot mutate chain state through it.
      *
      * @param type Type to resolve.
      * @param chain Resolver chain providing the current resolution stack.
@@ -58,7 +58,7 @@ class CustomFactoryResolver(
 
         val context = FixtureContext(
             random = random,
-            resolutionStack = chain.stack,
+            resolutionStack = chain.stack.toList(),
             strategyProvider = strategyProvider,
         )
 

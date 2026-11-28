@@ -10,8 +10,9 @@ import kotlin.reflect.KType
  * context. It exposes the same random source and strategy provider used by the resolver chain so custom values can
  * stay consistent with the active [dev.appoutlet.some.config.SomeConfig].
  *
- * The context is a snapshot for the current factory invocation. In particular, [resolutionStack] is immutable from the
- * factory's perspective and should be used only for inspection or debugging, not for controlling resolver state.
+ * The context is a snapshot for the current factory invocation. In particular, [resolutionStack] is a copy of the
+ * chain's stack captured when the factory is invoked. Later resolution cannot mutate it, and the factory cannot mutate
+ * chain state through it. Use it only for inspection or debugging, not for controlling resolver behavior.
  *
  * ## Accessing strategies
  *
@@ -33,7 +34,8 @@ import kotlin.reflect.KType
  * ```
  *
  * @property random Random source for factory-generated values. This respects the configured seed when one is set.
- * @property resolutionStack Types currently being resolved, ordered from the outermost request to the current type.
+ * @property resolutionStack Snapshot of the types being resolved when the factory was invoked, ordered from the
+ * outermost request to the current type.
  * @property strategyProvider Provides access to all registered generation strategies by their base type.
  */
 data class FixtureContext(
